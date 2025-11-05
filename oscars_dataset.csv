@@ -1,0 +1,572 @@
+Unnamed: 0;Film;Oscar Year;Film Studio/Producer(s);Award;Year of Release;Movie Time;Movie Genre;Main Genre;Subgenre;IMDB Rating;IMDB Votes;Content Rating;Directors;Original Release Date;Production Company;Tomatometer Rating;Tomatometer Count;Audience Rating;Audience Count
+0;Wings;1927/28;Famous Players-Lasky;Winner;1927;144;Drama,Romance,War;Drama;Romance;7.5;12,221;PG-13;William Wellman;1927-08-12;Unknown;93.0;46.0;78.0;3530.0
+1;7th Heaven;1927/28;Fox;Nominee;1927;110;Drama,Romance;Drama;Romance;7.7;3,439;;;;;;;;
+2;The Racket;1927/28;The Caddo Company;Nominee;1928;84;Crime,Drama,Film-Noir;Crime;Drama;6.7;1,257;;;;;;;;
+3;The Broadway Melody;1928/29;Metro-Goldwyn-Mayer;Winner;1929;100;Drama,Musical,Romance;Drama;Musical;5.7;6,890;NR;Harry Beaumont;1929-02-01;MGM Home Entertainment;33.0;24.0;21.0;1813.0
+4;Alibi;1928/29;Feature Productions;Nominee;1929;91;Action,Crime,Romance;Action;Crime;5.8;765;;;;;;;;
+5;Hollywood Revue;1928/29;Metro-Goldwyn-Mayer;Nominee;1929;130;Comedy,Music;Comedy;Musical;5.7;2,004;;;;;;;;
+6;In Old Arizona;1928/29;Fox;Nominee;1928;95;Western;Western;None;5.6;1,019;NR;Irving Cummings, Raoul Walsh;1928-12-25;20th Century Fox Film Corporation;56.0;9.0;38.0;356.0
+7;The Patriot;1928/29;Paramount Famous Lasky;Nominee;1928;113;Drama,History,Thriller;Drama;History;7.4;18;;;;;;;;
+8;All Quiet on the Western Front;1929/30;Universal;Winner;1930;152;Drama,War;Drama;War;8.1;59,214;;;;;;;;
+9;The Big House;1929/30;Cosmopolitan;Nominee;1930;87;Crime,Drama,Thriller;Crime;Drama;7.1;2,079;NR;George W. Hill;1930-05-14;Warner Bros.;75.0;8.0;69.0;323.0
+10;Disraeli;1929/30;Warner Bros.;Nominee;1929;90;Biography,Drama,History;Biography;Drama;6.2;1,143;;;;;;;;
+11;The Divorcee;1929/30;Metro-Goldwyn-Mayer;Nominee;1930;84;Romance,Drama;Romance;Drama;6.7;2,982;;;;;;;;
+12;The Love Parade;1929/30;Paramount Famous Lasky;Nominee;1929;107;Comedy,Musical,Romance;Comedy;Musical;7.0;2,163;;;;;;;;
+13;Cimarron;1930/31;RKO Radio;Winner;1931;123;Drama,Western;Drama;Western;5.9;5,851;NR;Wesley Ruggles;1931-01-26;MGM Home Entertainment;50.0;24.0;25.0;1514.0
+14;East Lynne;1930/31;Fox;Nominee;1931;102;Drama,Romance;Drama;Romance;5.9;188;;;;;;;;
+15;The Front Page;1930/31;The Caddo Company;Nominee;1931;101;Comedy,Crime,Drama;Comedy;Drama;6.8;2,741;;;;;;;;
+16;Skippy;1930/31;Paramount Publix;Nominee;1931;85;Comedy,Drama,Family;Comedy;Drama;6.3;772;;;;;;;;
+17;Trader Horn;1930/31;Metro-Goldwyn-Mayer;Nominee;1931;122;Action,Adventure,Drama;Action;Adventure;6.3;957;;;;;;;;
+18;Grand Hotel;1931/32;Metro-Goldwyn-Mayer;Winner;1932;112;Drama,Romance;Drama;Romance;7.4;18,314;NR;Edmund Goulding;1932-01-01;MGM Home Entertainment;86.0;42.0;77.0;7014.0
+19;Arrowsmith;1931/32;Samuel Goldwyn Productions;Nominee;1931;108;Drama;Drama;None;6.2;1,663;;;;;;;;
+20;Bad Girl;1931/32;Fox;Nominee;1931;90;Drama,Romance;Drama;Romance;6.5;1,248;;;;;;;;
+21;The Champ;1931/32;Metro-Goldwyn-Mayer;Nominee;1931;86;Drama,Sport;Drama;Sport;7.3;3,003;NR;King Vidor;1931-11-21;MGM;90.0;10.0;74.0;617.0
+22;Five Star Final;1931/32;First National;Nominee;1931;89;Crime,Drama;Crime;Drama;7.3;1,944;;;;;;;;
+23;One Hour with You;1931/32;Paramount Publix;Nominee;1932;78;Comedy,Musical,Romance;Comedy;Musical;7.2;2,317;;;;;;;;
+24;Shanghai Express;1931/32;Paramount Publix;Nominee;1932;82;Adventure,Drama,Romance;Adventure;Drama;7.3;8,325;;;;;;;;
+25;The Smiling Lieutenant;1931/32;Paramount Publix;Nominee;1931;93;Comedy,Romance,Musical;Comedy;Romance;7.2;3,540;;;;;;;;
+26;Cavalcade;1932/33;Fox;Winner;1933;112;Drama,Romance,War;Drama;Romance;5.9;4,961;NR;Frank Lloyd;1933-01-01;20th Century Fox Film Corporation;59.0;29.0;26.0;1027.0
+27;42nd Street;1932/33;Warner Bros.;Nominee;1933;89;Comedy,Drama,Musical;Comedy;Drama;7.4;11,342;NR;Lloyd Bacon;1933-03-09;MGM Home Entertainment;96.0;25.0;74.0;7561.0
+28;A Farewell to Arms;1932/33;Paramount;Nominee;1932;80;Drama,Romance,War;Drama;Romance;6.5;5,567;NR;Frank Borzage;1932-12-08;Gravitas;93.0;14.0;53.0;5697.0
+29;I Am a Fugitive from a Chain Gang;1932/33;Warner Bros.;Nominee;1932;92;Crime,Drama,Film-Noir;Crime;Drama;8.2;12,604;;;;;;;;
+30;Lady for a Day;1932/33;Columbia;Nominee;1933;96;Comedy,Drama;Comedy;Drama;7.4;3,971;;;;;;;;
+31;Little Women;1932/33;RKO Radio;Nominee;1933;115;Drama,Family,Romance;Drama;Family;7.2;6,778;NR;George Cukor;1933-11-16;WARNER BROTHERS PICTURES;95.0;441.0;92.0;10000.0
+32;The Private Life of Henry VIII;1932/33;London Films;Nominee;1933;97;Biography,Comedy,Drama;Biography;Drama;7.1;4,090;NR;Alexander Korda;1933-09-21;Criterion Collection;100.0;16.0;74.0;1295.0
+33;She Done Him Wrong;1932/33;Paramount;Nominee;1933;66;Comedy,Drama,History;Comedy;Drama;6.4;5,899;NR;Lowell Sherman;1933-02-09;MCA Universal Home Video;91.0;22.0;53.0;2240.0
+34;Smilin' Through;1932/33;Metro-Goldwyn-Mayer;Nominee;1932;98;Drama,Romance;Drama;Romance;6.9;1,266;;;;;;;;
+35;State Fair;1932/33;Fox;Nominee;1933;99;Comedy,Drama,Romance;Comedy;Drama;6.8;829;;;;;;;;
+36;It Happened One Night;1934;Columbia;Winner;1934;105;Comedy,Romance;Comedy;Romance;8.1;98,409;NR;Frank Capra;1934-02-22;Sony Pictures Home Entertainment;98.0;60.0;93.0;33678.0
+37;The Barretts of Wimpole Street;1934;Metro-Goldwyn-Mayer;Nominee;1934;109;Biography,Drama,Romance;Biography;Drama;7.0;1,795;NR;Sidney Franklin;1934-09-08;MGM;78.0;9.0;69.0;335.0
+38;Cleopatra;1934;Paramount;Nominee;1934;100;Biography,Drama,History;Biography;Drama;6.8;3,678;;;;;;;;
+39;Flirtation Walk;1934;First National;Nominee;1934;97;Musical,Romance;Musical;Romance;5.7;700;;;;;;;;
+40;The Gay Divorcee;1934;RKO Radio;Nominee;1934;107;Comedy,Musical,Romance;Comedy;Musical;7.5;7,455;NR;Mark Sandrich;1934-10-12;RKO Radio Pictures;93.0;14.0;82.0;3378.0
+41;Here Comes the Navy;1934;Warner Bros.;Nominee;1934;87;Comedy,Drama,Romance;Comedy;Drama;6.3;940;;;;;;;;
+42;The House of Rothschild;1934;20th Century;Nominee;1934;88;Biography,Drama,History;Biography;Drama;6.6;1,127;;;;;;;;
+43;Imitation of Life;1934;Universal;Nominee;1934;111;Drama,Romance;Drama;Romance;7.5;4,423;NR;John M. Stahl;1934-11-26;Universal Studios;92.0;24.0;85.0;4562.0
+44;One Night of Love;1934;Columbia;Nominee;1934;84;Music,Romance;Music;Romance;5.7;577;;;;;;;;
+45;The Thin Man;1934;Metro-Goldwyn-Mayer;Nominee;1934;91;Comedy,Crime,Mystery;Comedy;Crime;8.0;27,959;NR;W.S. Van Dyke;1934-05-23;MGM;97.0;39.0;93.0;12999.0
+46;Viva Villa!;1934;Metro-Goldwyn-Mayer;Nominee;1934;115;Action,Biography,Romance;Action;Biography;6.4;1,277;;;;;;;;
+47;The White Parade;1934;Jesse L. Lasky (production company);Nominee;1934;80;Drama;Drama;None;6.8;86;;;;;;;;
+48;Mutiny on the Bounty;1935;Metro-Goldwyn-Mayer;Winner;1935;132;Adventure,Biography,Drama;Adventure;Biography;7.7;21,805;NR;Frank Lloyd;1935-11-08;MGM;93.0;41.0;83.0;8061.0
+49;Alice Adams;1935;RKO Radio;Nominee;1935;99;Comedy,Drama,Romance;Comedy;Drama;6.9;4,020;NR;George Stevens;1935-01-01;Turner Home Entertainment;94.0;17.0;71.0;2419.0
+50;Broadway Melody of 1936;1935;Metro-Goldwyn-Mayer;Nominee;1935;101;Musical,Romance;Musical;Romance;6.8;1,662;;;;;;;;
+51;Captain Blood;1935;Cosmopolitan;Nominee;1935;119;Action,Adventure,History;Action;Adventure;7.7;13,708;NR;Michael Curtiz;1935-12-28;Twentieth Century Fox Home Entertainment;100.0;27.0;89.0;8194.0
+52;David Copperfield;1935;Metro-Goldwyn-Mayer;Nominee;1935;130;Adventure,Drama,Romance;Adventure;Drama;7.4;4,069;;;;;;;;
+53;The Informer;1935;RKO Radio;Nominee;1935;91;Crime,Drama;Crime;Drama;7.4;6,169;NR;John Ford;1935-05-01;Media Home Entertainment;94.0;16.0;77.0;1081.0
+54;The Lives of a Bengal Lancer;1935;Paramount;Nominee;1935;109;Adventure,Drama,War;Adventure;Drama;7.1;2,813;;;;;;;;
+55;A Midsummer Night's Dream;1935;Warner Bros.;Nominee;1935;133;Comedy,Fantasy,Romance;Comedy;Fantasy;6.9;3,339;NR;William Dieterle, Max Reinhardt;1935-10-09;Warner Bros.;91.0;11.0;62.0;1229.0
+56;Les Misérables;1935;20th Century;Nominee;1935;108;Drama,History,Romance;Drama;History;7.7;3,468;;;;;;;;
+57;Naughty Marietta;1935;Metro-Goldwyn-Mayer;Nominee;1935;105;Drama,Musical,Romance;Drama;Musical;6.7;1,307;;;;;;;;
+58;Ruggles of Red Gap;1935;Paramount;Nominee;1935;90;Comedy,Romance,Western;Comedy;Romance;7.6;3,874;;;;;;;;
+59;Top Hat;1935;RKO Radio;Nominee;1935;101;Comedy,Musical,Romance;Comedy;Musical;7.8;18,339;NR;Mark Sandrich;1935-09-06;Turner Home Entertainment;100.0;42.0;91.0;9847.0
+60;The Great Ziegfeld;1936;Metro-Goldwyn-Mayer;Winner;1936;176;Biography,Drama,Musical;Biography;Drama;6.7;7,665;NR;Robert Z. Leonard;1936-01-01;MGM Home Entertainment;62.0;34.0;50.0;2778.0
+61;Anthony Adverse;1936;Warner Bros.;Nominee;1936;141;Adventure,Drama,Romance;Adventure;Drama;6.4;1,706;;;;;;;;
+62;Dodsworth;1936;Samuel Goldwyn Productions;Nominee;1936;101;Drama,Romance;Drama;Romance;7.8;8,668;NR;William Wyler;1936-09-23;Samuel Goldwyn Films;90.0;20.0;86.0;1466.0
+63;Libeled Lady;1936;Metro-Goldwyn-Mayer;Nominee;1936;98;Comedy,Romance;Comedy;Romance;7.9;7,509;NR;Jack Conway;1936-01-01;Warner Home Video;86.0;14.0;88.0;2696.0
+64;Mr. Deeds Goes to Town;1936;Columbia;Nominee;1936;115;Comedy,Drama,Romance;Comedy;Drama;7.9;20,594;NR;Frank Capra;1936-04-12;Columbia Pictures;90.0;21.0;86.0;9236.0
+65;Romeo and Juliet;1936;Metro-Goldwyn-Mayer;Nominee;1936;125;Drama,Romance;Drama;Romance;6.5;1,910;NR;George Cukor;1936-09-03;MGM;78.0;9.0;50.0;6.0
+66;San Francisco;1936;Metro-Goldwyn-Mayer;Nominee;1936;115;Drama,Musical,Romance;Drama;Musical;7.2;5,254;NR;D.W. Griffith, W.S. Van Dyke;1936-06-26;MGM;100.0;11.0;70.0;1337.0
+67;The Story of Louis Pasteur;1936;Cosmopolitan;Nominee;1936;86;Biography,Drama,History;Biography;Drama;7.3;2,601;;;;;;;;
+68;A Tale of Two Cities;1936;Metro-Goldwyn-Mayer;Nominee;1935;128;Drama,History,Romance;Drama;History;7.8;5,508;NR;Jack Conway;1935-01-01;Warner Home Video;92.0;13.0;84.0;2145.0
+69;Three Smart Girls;1936;Universal;Nominee;1936;84;Comedy,Musical,Romance;Comedy;Musical;6.7;1,344;NR;Henry Koster;1936-12-20;Universal Pictures;86.0;7.0;50.0;474.0
+70;The Life of Emile Zola;1937;Warner Bros.;Winner;1937;116;Biography,Drama;Biography;Drama;7.2;7,771;G;Irving Rapper, William Dieterle;1937-10-02;MGM Home Entertainment;82.0;33.0;73.0;2348.0
+71;The Awful Truth;1937;Columbia;Nominee;1937;90;Comedy,Romance;Comedy;Romance;7.7;18,721;NR;Leo McCarey;1937-10-21;Columbia;93.0;29.0;87.0;7597.0
+72;Captains Courageous;1937;Metro-Goldwyn-Mayer;Nominee;1937;117;Adventure,Drama,Family;Adventure;Drama;8.0;9,243;PG;Victor Fleming;1937-06-25;MGM Home Entertainment;94.0;18.0;89.0;3811.0
+73;Dead End;1937;Samuel Goldwyn Productions;Nominee;1937;93;Crime,Drama,Film-Noir;Crime;Drama;7.3;7,083;NR;William Wyler;1937-08-27;MGM;91.0;11.0;76.0;2021.0
+74;The Good Earth;1937;Metro-Goldwyn-Mayer;Nominee;1937;138;Drama,Romance;Drama;Romance;7.5;4,753;NR;Sidney Franklin, Victor Fleming;1937-01-29;WARNER BROTHERS PICTURES;95.0;19.0;76.0;1100.0
+75;In Old Chicago;1937;20th Century-Fox;Nominee;1938;95;Action,Drama,Musical;Action;Drama;6.8;2,233;;;;;;;;
+76;Lost Horizon;1937;Columbia;Nominee;1937;132;Adventure,Drama,Fantasy;Adventure;Drama;7.7;12,513;NR;Frank Capra;1937-09-01;Sony Pictures Home Entertainment;93.0;14.0;83.0;5550.0
+77;One Hundred Men and a Girl;1937;Universal;Nominee;1937;84;Comedy,Drama,Music;Comedy;Drama;6.8;1,029;;;;;;;;
+78;Stage Door;1937;RKO Radio;Nominee;1937;92;Comedy,Drama;Comedy;Drama;7.8;8,040;NR;Gregory La Cava;1937-10-08;Warner Home Video;96.0;23.0;87.0;4809.0
+79;A Star Is Born;1937;Selznick International Pictures;Nominee;1937;111;Drama,Romance;Drama;Romance;7.3;9,301;PG;William Wellman, Jack Conway;1937-04-20;Image Entertainment Inc.;100.0;20.0;78.0;2686.0
+80;You Can't Take It with You;1938;Columbia;Winner;1938;126;Comedy,Drama,Romance;Comedy;Drama;7.9;24,466;;;;;;;;
+81;The Adventures of Robin Hood;1938;Warner Bros.-First National;Nominee;1938;102;Action,Adventure,Romance;Action;Adventure;7.9;49,004;PG;Michael Curtiz, William Keighley;1938-05-14;Warner Bros.;100.0;48.0;89.0;33946.0
+82;Alexander's Ragtime Band;1938;20th Century-Fox;Nominee;1938;106;Drama,Music,Musical;Drama;Musical;6.9;2,042;NR;Henry King;1938-08-16;20th Century Fox Film Corporation;80.0;5.0;46.0;1421.0
+83;Boys Town;1938;Metro-Goldwyn-Mayer;Nominee;1938;96;Biography,Drama;Biography;Drama;7.3;5,449;G;Norman Taurog;1938-09-09;MGM Home Entertainment;90.0;20.0;81.0;4219.0
+84;The Citadel;1938;Metro-Goldwyn-Mayer;Nominee;1938;110;Drama;Drama;None;7.1;2,047;NR;King Vidor;1938-10-29;MGM Home Entertainment;89.0;9.0;72.0;411.0
+85;Four Daughters;1938;Warner Bros.-First National;Nominee;1938;90;Drama,Music,Romance;Drama;Musical;6.9;1,881;;;;;;;;
+86;Grand Illusion;1938;Realization D'Art Cinematographique;Nominee;1937;113;Drama,War;Drama;War;8.1;35,191;;;;;;;;
+87;Jezebel;1938;Warner Bros.;Nominee;1938;104;Drama,Romance;Drama;Romance;7.5;12,874;;;;;;;;
+88;Pygmalion;1938;Metro-Goldwyn-Mayer;Nominee;1938;89;Comedy,Drama,Romance;Comedy;Drama;7.8;8,321;;;;;;;;
+89;Test Pilot;1938;Metro-Goldwyn-Mayer;Nominee;1938;119;Drama,Romance;Drama;Romance;6.9;2,323;;;;;;;;
+90;Gone with the Wind;1939;Selznick International Pictures;Winner;1939;238;Drama,History,Romance;Drama;History;8.1;300,592;;;;;;;;
+91;Dark Victory;1939;Warner Bros.-First National;Nominee;1939;104;Drama,Romance;Drama;Romance;7.5;10,648;PG;Edmund Goulding;1939-04-22;Twentieth Century Fox Home Entertainment;88.0;24.0;81.0;5226.0
+92;Goodbye, Mr. Chips;1939;Metro-Goldwyn-Mayer;Nominee;1939;114;Drama,Romance;Drama;Romance;7.9;10,164;NR;Sam Wood;1939-07-28;MGM Home Entertainment;82.0;17.0;87.0;5661.0
+93;Love Affair;1939;RKO Radio;Nominee;1939;88;Comedy,Drama,Romance;Comedy;Drama;7.3;4,857;G;Leo McCarey;1939-03-16;Madacy Entertainment;86.0;7.0;71.0;1666.0
+94;Mr. Smith Goes to Washington;1939;Columbia;Nominee;1939;129;Comedy,Drama;Comedy;Drama;8.1;110,984;NR;Frank Capra;1939-10-19;Sony Pictures Home Entertainment;96.0;45.0;94.0;45845.0
+95;Ninotchka;1939;Metro-Goldwyn-Mayer;Nominee;1939;110;Comedy,Romance;Comedy;Romance;7.9;19,988;R;Ernst Lubitsch;1939-11-03;Warner Bros. Pictures;97.0;35.0;89.0;6822.0
+96;Of Mice and Men;1939;Hal Roach (production company);Nominee;1939;106;Adventure,Drama;Adventure;Drama;7.9;5,813;NR;Lewis Milestone;1939-12-30;United Artists;100.0;14.0;85.0;7138.0
+97;Stagecoach;1939;Walter Wanger (production company);Nominee;1939;96;Adventure,Drama,Western;Adventure;Drama;7.9;45,997;NR;John Ford;1939-03-02;Warner Home Video;100.0;45.0;86.0;14614.0
+98;The Wizard of Oz;1939;Metro-Goldwyn-Mayer;Nominee;1939;102;Adventure,Family,Fantasy;Adventure;Family;8.0;378,893;G;King Vidor, Victor Fleming;1939-08-25;Warner Bros. Pictures;98.0;120.0;89.0;876327.0
+99;Wuthering Heights;1939;Samuel Goldwyn Productions;Nominee;1939;104;Drama,Romance;Drama;Romance;7.6;17,314;G;William Wyler;1939-04-13;United Artists;96.0;23.0;85.0;8786.0
+100;Rebecca;1940;Selznick International Pictures;Winner;1940;130;Drama,Mystery,Romance;Drama;Mystery;8.1;130,546;;;;;;;;
+101;All This, and Heaven Too;1940;Warner Bros.;Nominee;1940;141;Drama,Romance;Drama;Romance;7.5;4,728;NR;Anatole Litvak;1940-07-04;Warner Bros. Pictures;83.0;6.0;85.0;1048.0
+102;Foreign Correspondent;1940;Walter Wanger (production company);Nominee;1940;120;Action,Romance,Thriller;Action;Romance;7.5;19,657;PG;Alfred Hitchcock;1940-08-16;Warner Home Video;95.0;39.0;81.0;6906.0
+103;The Grapes of Wrath;1940;20th Century-Fox;Nominee;1940;129;Drama,History;Drama;History;8.1;89,303;G;John Ford;1940-03-15;20th Century Fox Film Corporation;100.0;48.0;88.0;24311.0
+104;The Great Dictator;1940;Charles Chaplin Productions;Nominee;1940;125;Comedy,Drama,War;Comedy;Drama;8.4;212,446;G;Charles Chaplin;1940-01-01;Criterion Collection;93.0;43.0;95.0;43702.0
+105;Kitty Foyle;1940;RKO Radio;Nominee;1940;108;Drama,Romance;Drama;Romance;6.9;3,495;NR;Sam Wood;1940-12-27;Media Home Entertainment;80.0;10.0;72.0;937.0
+106;The Letter;1940;Warner Bros.;Nominee;1940;95;Crime,Drama,Film-Noir;Crime;Drama;7.6;12,503;PG;William Wyler;1940-11-23;MGM Home Entertainment;100.0;13.0;82.0;3725.0
+107;The Long Voyage Home;1940;Argosy-Wanger;Nominee;1940;105;Drama,War;Drama;War;7.0;4,139;;;;;;;;
+108;Our Town;1940;Sol Lesser (production company);Nominee;1940;90;Drama,Romance;Drama;Romance;6.6;2,525;NR;Sam Wood;1940-05-24;United Artists;86.0;7.0;46.0;1291.0
+109;The Philadelphia Story;1940;Metro-Goldwyn-Mayer;Nominee;1940;112;Comedy,Romance;Comedy;Romance;7.9;66,044;NR;George Cukor;1940-12-01;MGM;100.0;62.0;93.0;47191.0
+110;How Green Was My Valley;1941;20th Century-Fox;Winner;1941;118;Drama,Family;Drama;Family;7.7;22,753;NR;John Ford;1941-01-01;Twentieth Century Fox Home Entertainment;89.0;47.0;81.0;7950.0
+111;Blossoms in the Dust;1941;Metro-Goldwyn-Mayer;Nominee;1941;99;Biography,Drama,Romance;Biography;Drama;6.9;1,919;NR;Mervyn LeRoy;1941-01-01;WARNER BROTHERS PICTURES;33.0;9.0;72.0;379.0
+112;Citizen Kane;1941;Mercury;Nominee;1941;119;Drama,Mystery;Drama;Mystery;8.3;420,959;PG;Orson Welles;1941-05-01;RKO Radio Pictures;100.0;93.0;90.0;159199.0
+113;Here Comes Mr. Jordan;1941;Columbia;Nominee;1941;94;Comedy,Fantasy,Romance;Comedy;Fantasy;7.6;6,154;NR;Alexander Hall;1941-01-01;Sony Pictures Entertainment;100.0;20.0;83.0;1120.0
+114;Hold Back the Dawn;1941;Paramount;Nominee;1941;116;Drama,Romance;Drama;Romance;7.4;2,247;;;;;;;;
+115;The Little Foxes;1941;Samuel Goldwyn Productions;Nominee;1941;116;Drama,Romance;Drama;Romance;8.0;11,254;PG-13;William Wyler;1941-08-21;RKO;100.0;15.0;88.0;3522.0
+116;The Maltese Falcon;1941;Warner Bros.;Nominee;1941;100;Crime,Film-Noir,Mystery;Crime;Noir;8.0;152,988;PG;John Huston;1941-10-18;Warner Bros.;100.0;56.0;91.0;57852.0
+117;One Foot in Heaven;1941;Warner Bros.;Nominee;1941;108;Biography,Drama;Biography;Drama;6.8;1,213;;;;;;;;
+118;Sergeant York;1941;Warner Bros.;Nominee;1941;134;Biography,Drama,History;Biography;Drama;7.7;17,415;NR;Howard Hawks;1941-09-27;Warner Bros. Pictures;86.0;22.0;87.0;5674.0
+119;Suspicion;1941;RKO Radio;Nominee;1941;99;Film-Noir,Mystery,Thriller;Film-Noir;Mystery;7.4;36,081;NR;Alfred Hitchcock;1941-11-14;WARNER BROTHERS PICTURES;97.0;33.0;78.0;14737.0
+120;Mrs. Miniver;1942;Metro-Goldwyn-Mayer;Winner;1942;134;Drama,Romance,War;Drama;Romance;7.6;16,879;G;William Wyler;1942-06-04;MGM Home Entertainment;93.0;30.0;85.0;6063.0
+121;49th Parallel;1942;Ortus;Nominee;1941;123;Drama,Thriller,War;Drama;Thriller;7.3;6,333;;;;;;;;
+122;Kings Row;1942;Warner Bros.;Nominee;1942;127;Drama,Mystery,Romance;Drama;Mystery;7.5;4,285;NR;Sam Wood;1942-01-01;Warner Home Video;100.0;16.0;76.0;1081.0
+123;The Magnificent Ambersons;1942;Mercury;Nominee;1942;88;Drama,Romance;Drama;Romance;7.7;23,662;NR;Orson Welles;1942-07-10;RKO Radio Pictures;89.0;44.0;85.0;6468.0
+124;The Pied Piper;1942;20th Century-Fox;Nominee;1942;87;Drama,War;Drama;War;7.1;565;;;;;;;;
+125;The Pride of the Yankees;1942;Samuel Goldwyn Productions;Nominee;1942;128;Biography,Drama,Romance;Biography;Drama;7.7;10,459;NR;Sam Wood;1942-01-01;MGM;93.0;29.0;89.0;6839.0
+126;Random Harvest;1942;Metro-Goldwyn-Mayer;Nominee;1942;126;Adventure,Drama,Family;Adventure;Drama;8.0;7,331;NR;Mervyn LeRoy;1942-12-17;MGM Home Entertainment;90.0;10.0;88.0;2805.0
+127;The Talk of the Town;1942;Columbia;Nominee;1942;118;Comedy,Drama,Romance;Comedy;Drama;7.5;7,884;NR;George Stevens;1942-01-01;Sony Pictures Entertainment;94.0;17.0;84.0;3083.0
+128;Wake Island;1942;Paramount;Nominee;1942;88;Action,Drama,War;Action;Drama;6.8;1,924;;;;;;;;
+129;Yankee Doodle Dandy;1942;Warner Bros.;Nominee;1942;126;Biography,Drama,Music;Biography;Drama;7.7;14,872;G;Michael Curtiz, Hugh MacMullan;1942-06-06;MGM Home Entertainment;90.0;29.0;83.0;8136.0
+130;Casablanca;1943;Warner Bros.;Winner;1942;102;Drama,Romance,War;Drama;Romance;8.5;541,023;PG;Michael Curtiz;1942-11-26;Warner Bros. Pictures;99.0;92.0;95.0;357518.0
+131;For Whom the Bell Tolls;1943;Paramount;Nominee;1943;170;Adventure,Drama,History;Adventure;Drama;6.9;8,880;G;Sam Wood;1943-01-01;MCA Universal Home Video;71.0;14.0;69.0;40.0
+132;Heaven Can Wait;1943;20th Century-Fox;Nominee;1943;112;Comedy,Drama,Fantasy;Comedy;Drama;7.4;10,272;G;Ernst Lubitsch;1943-08-11;20th Century Fox Film Corporation;85.0;13.0;75.0;4380.0
+133;The Human Comedy;1943;Metro-Goldwyn-Mayer;Nominee;1943;117;Comedy,Drama,Family;Comedy;Drama;7.0;2,044;NR;Clarence Brown;1943-03-02;Warner Home Video;80.0;5.0;68.0;360.0
+134;In Which We Serve;1943;Two Cities Films;Nominee;1942;115;Drama,War;Drama;War;7.2;5,442;NR;David Lean, Noel Coward;1942-10-16;MCA Universal Home Video;89.0;18.0;76.0;861.0
+135;Madame Curie;1943;Metro-Goldwyn-Mayer;Nominee;1943;124;Biography,Drama,Romance;Biography;Drama;7.2;2,779;NR;Mervyn LeRoy;1943-12-16;Warner Bros. Pictures;86.0;7.0;67.0;495.0
+136;The More the Merrier;1943;Columbia;Nominee;1943;104;Comedy,Romance,War;Comedy;Romance;7.7;6,264;NR;George Stevens;1943-03-26;Columbia Pictures;94.0;18.0;82.0;1310.0
+137;The Ox-Bow Incident;1943;20th Century-Fox;Nominee;1942;75;Adventure,Drama,Western;Adventure;Drama;8.0;22,189;;;;;;;;
+138;The Song of Bernadette;1943;20th Century-Fox;Nominee;1943;156;Biography,Drama;Biography;Drama;7.6;6,554;NR;Henry King;1943-12-21;Twentieth Century Fox Home Entertainment;87.0;15.0;80.0;3262.0
+139;Watch on the Rhine;1943;Warner Bros.;Nominee;1943;114;Drama,Thriller;Drama;Thriller;7.3;4,246;NR;Herman Shumlin;1943-08-27;Warner Home Video;80.0;5.0;63.0;600.0
+140;Going My Way;1944;Paramount;Winner;1944;126;Comedy,Drama,Music;Comedy;Drama;7.1;11,187;G;Leo McCarey;1944-05-03;Paramount Pictures;81.0;31.0;75.0;5784.0
+141;Double Indemnity;1944;Paramount;Nominee;1944;107;Crime,Drama,Film-Noir;Crime;Drama;8.3;149,399;NR;Billy Wilder;1944-09-06;Paramount Pictures;97.0;64.0;95.0;35764.0
+142;Gaslight;1944;Metro-Goldwyn-Mayer;Nominee;1944;114;Crime,Drama,Mystery;Crime;Drama;7.8;26,296;PG;George Cukor;1944-05-11;MGM;87.0;31.0;90.0;8527.0
+143;Since You Went Away;1944;Selznick International Pictures;Nominee;1944;177;Drama,Romance,War;Drama;Romance;7.5;4,428;;;;;;;;
+144;Wilson;1944;20th Century-Fox;Nominee;1944;154;Biography,Drama,History;Biography;Drama;6.4;1,525;;;;;;;;
+145;The Lost Weekend;1945;Paramount;Winner;1945;101;Drama,Film-Noir;Drama;Noir;7.9;35,261;NR;Billy Wilder;1945-11-16;Paramount Pictures;97.0;39.0;90.0;8866.0
+146;Anchors Aweigh;1945;Metro-Goldwyn-Mayer;Nominee;1945;140;Comedy,Fantasy,Music;Comedy;Fantasy;7.1;8,298;NR;George Sidney;1945-01-01;MGM Home Entertainment;62.0;13.0;79.0;8284.0
+147;The Bells of St. Mary's;1945;Rainbow Productions;Nominee;1945;126;Drama;Drama;None;7.3;7,546;;;;;;;;
+148;Mildred Pierce;1945;Warner Bros.;Nominee;1945;111;Crime,Drama,Film-Noir;Crime;Drama;8.0;24,288;NR;Michael Curtiz;1945-10-20;MGM Home Entertainment;86.0;44.0;90.0;8234.0
+149;Spellbound;1945;Selznick International Pictures;Nominee;1945;111;Film-Noir,Mystery,Romance;Film-Noir;Mystery;7.5;46,578;;;;;;;;
+150;The Best Years of Our Lives;1946;Samuel Goldwyn Productions;Winner;1946;170;Drama,Romance,War;Drama;Romance;8.1;60,810;NR;William Wyler;1946-11-21;RKO Radio Pictures;97.0;60.0;93.0;10819.0
+151;Henry V;1946;Two Cities Films;Nominee;1944;137;Biography,Drama,History;Biography;Drama;7.1;6,145;;;;;;;;
+152;It's a Wonderful Life;1946;Liberty Films;Nominee;1946;130;Drama,Family,Fantasy;Drama;Family;8.6;420,975;PG;Frank Capra;1946-12-25;Liberty Films;94.0;82.0;95.0;218883.0
+153;The Razor's Edge;1946;20th Century-Fox;Nominee;1946;145;Drama,Romance;Drama;Romance;7.4;5,770;NR;Edmund Goulding;1946-01-01;Twentieth Century Fox;71.0;7.0;72.0;1905.0
+154;The Yearling;1946;Metro-Goldwyn-Mayer;Nominee;1946;128;Drama,Family,Western;Drama;Family;7.2;5,658;G;Clarence Brown;1946-12-18;MGM Home Entertainment;100.0;14.0;76.0;3770.0
+155;Gentleman's Agreement;1947;20th Century-Fox;Winner;1947;118;Drama,Romance;Drama;Romance;7.2;15,593;PG;Elia Kazan;1947-11-11;Twentieth Century Fox Home Entertainment;76.0;45.0;78.0;5627.0
+156;The Bishop's Wife;1947;Samuel Goldwyn Productions;Nominee;1947;109;Comedy,Drama,Fantasy;Comedy;Drama;7.6;15,790;;;;;;;;
+157;Crossfire;1947;RKO Radio;Nominee;1947;86;Crime,Drama,Film-Noir;Crime;Drama;7.3;8,030;NR;Edward Dmytryk;1947-01-01;WARNER BROTHERS PICTURES;82.0;17.0;74.0;1885.0
+158;Great Expectations;1947;J. Arthur Rank-Cineguild;Nominee;1946;118;Adventure,Drama,Mystery;Adventure;Drama;7.8;23,120;;;;;;;;
+159;Miracle on 34th Street;1947;20th Century-Fox;Nominee;1947;96;Comedy,Drama,Family;Comedy;Drama;7.9;44,012;NR;George Seaton;1947-01-01;20th Century Fox;96.0;47.0;87.0;47572.0
+160;Hamlet;1948;J. Arthur Rank-Two Cities Films;Winner;1948;154;Drama;Drama;None;7.6;16,167;NR;Laurence Olivier;1948-05-04;Universal;95.0;40.0;80.0;7542.0
+161;Johnny Belinda;1948;Warner Bros.;Nominee;1948;102;Drama;Drama;None;7.8;4,549;NR;Jean Negulesco;1948-09-14;Warner Bros. Pictures;89.0;9.0;88.0;1429.0
+162;The Red Shoes;1948;J. Arthur Rank-Archers;Nominee;1948;135;Drama,Music,Romance;Drama;Musical;8.1;32,804;R;Michael Powell, Emeric Pressburger;1948-09-06;Eagle-Lion Films;97.0;59.0;92.0;11766.0
+163;The Snake Pit;1948;20th Century-Fox;Nominee;1948;108;Drama,Mystery;Drama;Mystery;7.6;7,232;NR;Anatole Litvak;1948-11-04;20th Century Fox Film Corporation;100.0;8.0;83.0;2656.0
+164;The Treasure of the Sierra Madre;1948;Warner Bros.;Nominee;1948;126;Adventure,Drama,Western;Adventure;Drama;8.2;119,133;NR;John Huston;1948-01-07;WARNER BROTHERS PICTURES;100.0;49.0;93.0;26122.0
+165;All the King's Men;1949;Columbia;Winner;1949;110;Drama,Film-Noir;Drama;Noir;7.5;14,270;PG;Robert Rossen;1949-11-08;Sony Pictures Home Entertainment;95.0;42.0;78.0;4866.0
+166;Battleground;1949;Metro-Goldwyn-Mayer;Nominee;1949;118;Action,Drama,History;Action;Drama;7.5;6,970;NR;William Wellman;1949-11-09;MGM;75.0;8.0;82.0;2737.0
+167;The Heiress;1949;Paramount;Nominee;1949;115;Drama,Romance;Drama;Romance;8.2;14,871;;;;;;;;
+168;A Letter to Three Wives;1949;20th Century-Fox;Nominee;1949;103;Drama,Romance;Drama;Romance;7.7;9,000;NR;Joseph L. Mankiewicz;1949-01-20;Fox;94.0;18.0;86.0;3781.0
+169;Twelve O'Clock High;1949;20th Century-Fox;Nominee;1949;132;Drama,War;Drama;War;7.7;13,989;NR;Henry King;1949-01-01;Twentieth Century Fox Home Entertainment;96.0;25.0;87.0;6019.0
+170;All About Eve;1950;20th Century-Fox;Winner;1950;138;Drama;Drama;None;8.2;125,426;PG;Joseph L. Mankiewicz;1950-01-01;20th Century Fox;99.0;77.0;94.0;45248.0
+171;Born Yesterday;1950;Columbia;Nominee;1950;103;Comedy,Drama,Romance;Comedy;Drama;7.6;10,597;NR;George Cukor;1950-12-26;Columbia Pictures;97.0;34.0;86.0;4780.0
+172;Father of the Bride;1950;Metro-Goldwyn-Mayer;Nominee;1950;92;Comedy,Romance;Comedy;Romance;7.2;10,742;G;Vincente Minnelli;1950-01-01;MGM;90.0;31.0;74.0;13901.0
+173;King Solomon's Mines;1950;Metro-Goldwyn-Mayer;Nominee;1950;103;Action,Adventure,Romance;Action;Adventure;6.8;5,929;G;Compton Bennett, Andrew Marton;1950-11-24;MGM Home Entertainment;92.0;12.0;59.0;3242.0
+174;Sunset Boulevard;1950;Paramount;Nominee;1950;110;Drama,Film-Noir;Drama;Noir;8.4;210,129;G;Billy Wilder;1950-08-04;Paramount Pictures;99.0;69.0;95.0;53464.0
+175;An American in Paris;1951;Arthur Freed;Winner;1951;114;Drama,Musical,Romance;Drama;Musical;7.2;31,953;G;Vincente Minnelli;1951-10-04;MGM;96.0;68.0;79.0;26460.0
+176;Decision Before Dawn;1951;Anatole Litvak and Frank McCarthy;Nominee;1951;119;Drama,War;Drama;War;7.2;2,596;NR;Anatole Litvak;1951-12-21;20th Century Fox Film Corporation;100.0;6.0;71.0;341.0
+177;A Place in the Sun;1951;George Stevens;Nominee;1951;122;Drama,Romance;Drama;Romance;7.8;21,429;NR;George Stevens;1951-08-15;Paramount Pictures;77.0;31.0;84.0;8530.0
+178;Quo Vadis;1951;Sam Zimbalist;Nominee;1951;171;Biography,Drama,History;Biography;Drama;7.2;14,371;;;;;;;;
+179;A Streetcar Named Desire;1951;Charles K. Feldman;Nominee;1951;122;Drama;Drama;None;8.0;103,781;PG;Elia Kazan;1951-09-19;Warner Bros. Pictures;98.0;60.0;90.0;55148.0
+180;The Greatest Show on Earth;1952;Cecil B. DeMille;Winner;1952;152;Drama,Family,Romance;Drama;Family;6.6;13,797;NR;Cecil B. DeMille;1952-02-21;Paramount Pictures;42.0;31.0;54.0;6192.0
+181;High Noon;1952;Stanley Kramer;Nominee;1952;85;Drama,Thriller,Western;Drama;Thriller;8.0;100,501;PG;Fred Zinnemann;1952-07-24;United Artists;97.0;58.0;89.0;25442.0
+182;Ivanhoe;1952;Pandro S. Berman;Nominee;1952;106;Adventure,Drama,History;Adventure;Drama;6.8;8,627;G;Richard Thorpe;1952-07-31;MGM Home Entertainment;81.0;16.0;64.0;5038.0
+183;Moulin Rouge;1952;John Huston, John Woolf and James Woolf;Nominee;1952;119;Biography,Drama,Music;Biography;Drama;7.1;5,284;NR;John Huston;1952-12-23;United Artists;78.0;9.0;90.0;68249.0
+184;The Quiet Man;1952;John Ford and Merian C. Cooper;Nominee;1952;129;Comedy,Drama,Romance;Comedy;Drama;7.8;36,499;G;John Ford;1952-08-14;Republic Pictures;91.0;45.0;91.0;30417.0
+185;From Here to Eternity;1953;Buddy Adler;Winner;1953;118;Drama,Romance,War;Drama;Romance;7.6;45,045;G;Fred Zinnemann;1953-08-05;NCM Fathom;92.0;61.0;84.0;14883.0
+186;Julius Caesar;1953;John Houseman;Nominee;1953;120;Biography,Drama,History;Biography;Drama;7.3;11,012;NR;Joseph L. Mankiewicz;1953-06-03;MGM Home Entertainment;95.0;22.0;81.0;5248.0
+187;The Robe;1953;Frank Ross;Nominee;1953;135;Drama,History;Drama;History;6.8;9,876;G;Henry Koster;1953-09-16;20th Century Fox;33.0;18.0;69.0;6018.0
+188;Roman Holiday;1953;William Wyler;Nominee;1953;118;Comedy,Romance;Comedy;Romance;8.0;132,970;NR;William Wyler;1953-09-02;Paramount Pictures;97.0;59.0;93.0;63470.0
+189;Shane;1953;George Stevens;Nominee;1953;118;Drama,Western;Drama;Western;7.6;38,752;G;George Stevens;1953-04-24;Paramount Home Video;97.0;36.0;81.0;15548.0
+190;On the Waterfront;1954;Sam Spiegel;Winner;1954;108;Crime,Drama,Thriller;Crime;Drama;8.1;147,893;NR;Elia Kazan;1954-07-28;Sony Pictures;99.0;72.0;95.0;52205.0
+191;The Caine Mutiny;1954;Stanley Kramer;Nominee;1954;124;Drama,War;Drama;War;7.7;26,649;PG;Edward Dmytryk;1954-06-24;Sony Pictures Home Entertainment;92.0;25.0;87.0;7557.0
+192;The Country Girl;1954;William Perlberg;Nominee;1954;104;Drama,Music;Drama;Musical;7.3;5,766;NR;George Seaton;1954-12-15;Paramount Pictures;86.0;7.0;77.0;3106.0
+193;Seven Brides for Seven Brothers;1954;Jack Cummings;Nominee;1954;102;Comedy,Drama,Musical;Comedy;Drama;7.4;23,448;G;Stanley Donen;1954-07-22;MGM Home Entertainment;88.0;26.0;87.0;54305.0
+194;Three Coins in the Fountain;1954;Sol C. Siegel;Nominee;1954;102;Drama,Romance;Drama;Romance;6.3;3,276;NR;Jean Negulesco;1954-06-02;20th Century Fox Film Corporation;60.0;10.0;43.0;2021.0
+195;Marty;1955;Harold Hecht;Winner;1955;90;Drama,Romance;Drama;Romance;7.7;22,916;NR;Delbert Mann;1955-04-11;MGM Home Entertainment;98.0;42.0;87.0;6757.0
+196;Love Is a Many-Splendored Thing;1955;Buddy Adler;Nominee;1955;102;Biography,Drama,Romance;Biography;Drama;6.5;4,688;;;;;;;;
+197;Mister Roberts;1955;Leland Hayward;Nominee;1955;123;Comedy,Drama,War;Comedy;Drama;7.7;16,057;NR;John Ford, Mervyn LeRoy;1955-07-30;Warner Home Video;92.0;25.0;84.0;6728.0
+198;Picnic;1955;Fred Kohlmar;Nominee;1955;115;Drama,Romance;Drama;Romance;7.1;8,425;PG;Joshua Logan;1955-11-01;Sony Pictures Home Entertainment;50.0;8.0;54.0;2519.0
+199;The Rose Tattoo;1955;Hal B. Wallis;Nominee;1955;117;Comedy,Drama,Romance;Comedy;Drama;7.0;3,763;NR;Daniel Mann;1955-12-12;Paramount Pictures;67.0;6.0;74.0;1108.0
+200;Around the World in 80 Days;1956;Michael Todd;Winner;1956;175;Adventure,Comedy,Family;Adventure;Comedy;6.8;26,019;G;Michael Anderson;1956-10-17;United Artists;69.0;42.0;57.0;33440.0
+201;Friendly Persuasion;1956;William Wyler;Nominee;1956;137;Drama,Romance,War;Drama;Romance;7.4;6,784;NR;William Wyler;1956-01-01;Twentieth Century Fox Home Entertainment;88.0;8.0;81.0;1251.0
+202;Giant;1956;George Stevens and Henry Ginsberg;Nominee;1956;201;Drama,Western;Drama;Western;7.6;36,951;G;George Stevens;1956-11-24;Warner Bros. Pictures;95.0;44.0;87.0;24255.0
+203;The King and I;1956;Charles Brackett;Nominee;1956;133;Biography,Drama,Musical;Biography;Drama;7.4;24,685;G;Walter Lang;1956-06-29;20th Century Fox;96.0;26.0;83.0;61003.0
+204;The Ten Commandments;1956;Cecil B. DeMille;Nominee;1956;220;Adventure,Drama;Adventure;Drama;7.9;66,969;G;Cecil B. DeMille;1956-10-05;Paramount Pictures;89.0;37.0;87.0;60242.0
+205;The Bridge on the River Kwai;1957;Sam Spiegel;Winner;1957;161;Adventure,Drama,War;Adventure;Drama;8.1;210,558;PG;David Lean;1957-10-02;Columbia Pictures;95.0;59.0;93.0;54711.0
+206;12 Angry Men;1957;Henry Fonda and Reginald Rose;Nominee;1957;96;Crime,Drama;Crime;Drama;9.0;725,938;;;;;;;;
+207;Peyton Place;1957;Jerry Wald;Nominee;1957;157;Drama,Romance;Drama;Romance;7.2;5,707;NR;Mark Robson;1957-12-13;20th Century Fox;65.0;17.0;72.0;3106.0
+208;Sayonara;1957;William Goetz;Nominee;1957;147;Drama,Romance;Drama;Romance;7.1;6,473;;;;;;;;
+209;Witness for the Prosecution;1957;Arthur Hornblow Jr.;Nominee;1957;116;Crime,Drama,Mystery;Crime;Drama;8.4;115,545;NR;Billy Wilder;1957-12-01;MGM;100.0;31.0;95.0;8968.0
+210;Gigi;1958;Arthur Freed;Winner;1958;115;Comedy,Musical,Romance;Comedy;Musical;6.7;21,807;G;Vincente Minnelli;1958-05-01;MGM Home Entertainment;81.0;37.0;74.0;20979.0
+211;Auntie Mame;1958;Jack L. Warner;Nominee;1958;143;Comedy,Drama,Romance;Comedy;Drama;7.9;10,825;NR;Morton DaCosta;1958-12-27;Warner Bros. Pictures;93.0;15.0;93.0;8232.0
+212;Cat on a Hot Tin Roof;1958;Lawrence Weingarten;Nominee;1958;108;Drama;Drama;None;8.0;47,222;PG;Richard Brooks;1958-09-20;MGM Home Entertainment;97.0;37.0;92.0;31748.0
+213;The Defiant Ones;1958;Stanley Kramer;Nominee;1958;96;Crime,Drama;Crime;Drama;7.6;14,358;PG;Stanley Kramer;1958-09-24;MGM Home Entertainment;83.0;24.0;87.0;5151.0
+214;Separate Tables;1958;Harold Hecht;Nominee;1958;100;Drama,Romance;Drama;Romance;7.4;7,248;G;Delbert Mann;1958-12-18;MGM Home Entertainment;69.0;16.0;76.0;1355.0
+215;Ben-Hur;1959;Sam Zimbalist;Winner;1959;212;Adventure,Drama,History;Adventure;Drama;8.1;227,894;G;William Wyler;1959-11-18;MGM;86.0;50.0;89.0;106187.0
+216;Anatomy of a Murder;1959;Otto Preminger;Nominee;1959;161;Crime,Drama,Mystery;Crime;Drama;8.0;62,835;G;Otto Preminger;1959-07-01;Sony Pictures Home Entertainment;100.0;47.0;90.0;12375.0
+217;The Diary of Anne Frank;1959;George Stevens;Nominee;1959;180;Biography,Drama,Family;Biography;Drama;7.4;12,413;PG;George Stevens;1959-03-18;Fox;79.0;19.0;77.0;27953.0
+218;The Nun's Story;1959;Henry Blanke;Nominee;1959;149;Drama;Drama;None;7.6;9,968;NR;Fred Zinnemann;1959-07-18;Warner Home Video;94.0;16.0;82.0;5552.0
+219;Room at the Top;1959;John Woolf and James Woolf;Nominee;1959;115;Drama,Romance;Drama;Romance;7.5;5,746;;;;;;;;
+220;The Apartment;1960;Billy Wilder;Winner;1960;125;Comedy,Drama,Romance;Comedy;Drama;8.3;171,390;NR;Billy Wilder;1960-06-15;United Artists;93.0;71.0;94.0;38188.0
+221;The Alamo;1960;John Wayne;Nominee;1960;162;Adventure,Drama,History;Adventure;Drama;6.8;15,189;NR;John Wayne;1960-10-24;Batjac Productions;52.0;21.0;63.0;7337.0
+222;Elmer Gantry;1960;Bernard Smith;Nominee;1960;146;Drama;Drama;None;7.8;11,043;;;;;;;;
+223;Sons and Lovers;1960;Jerry Wald;Nominee;1960;103;Drama;Drama;None;7.1;1,506;;;;;;;;
+224;The Sundowners;1960;Fred Zinnemann;Nominee;1960;133;Adventure,Drama;Adventure;Drama;7.1;4,031;NR;Fred Zinnemann;1960-12-08;Warner Home Video;75.0;12.0;62.0;589.0
+225;West Side Story;1961;Robert Wise;Winner;1961;153;Crime,Drama,Musical;Crime;Drama;7.5;101,270;PG;Robert Wise, Jerome Robbins;1961-10-18;United Artists Films;92.0;78.0;84.0;168990.0
+226;Fanny;1961;Joshua Logan;Nominee;1961;134;Drama,Romance;Drama;Romance;6.9;2,121;;;;;;;;
+227;The Guns of Navarone;1961;Carl Foreman;Nominee;1961;158;Action,Adventure,Drama;Action;Adventure;7.5;47,296;PG;J. Lee Thompson;1961-06-22;Columbia Pictures;92.0;24.0;86.0;20751.0
+228;The Hustler;1961;Robert Rossen;Nominee;1961;134;Drama,Sport;Drama;Sport;8.0;78,871;NR;Robert Rossen;1961-09-25;Fox;98.0;44.0;93.0;31217.0
+229;Judgment at Nuremberg;1961;Stanley Kramer;Nominee;1961;179;Drama,War;Drama;War;8.2;73,363;;;;;;;;
+230;Lawrence of Arabia;1962;Sam Spiegel;Winner;1962;228;Adventure,Biography,Drama;Adventure;Biography;8.3;278,596;PG;David Lean;1962-12-16;Columbia Pictures;98.0;88.0;93.0;75122.0
+231;The Longest Day;1962;Darryl F. Zanuck;Nominee;1962;178;Action,Drama,History;Action;Drama;7.8;53,759;G;Ken Annakin, Andrew Marton, Gerd Oswald, Bernhard Wicki, Darryl F. Zanuck;1962-06-01;Twentieth Century Fox Home Entertainment;87.0;23.0;90.0;42928.0
+232;The Music Man;1962;Morton DaCosta;Nominee;1962;151;Comedy,Family,Musical;Comedy;Family;7.7;16,665;G;Morton DaCosta;1962-06-19;Warner Bros. Pictures;94.0;17.0;85.0;30549.0
+233;Mutiny on the Bounty;1962;Aaron Rosenberg;Winner;1962;178;Adventure,Drama,History;Adventure;Drama;7.2;15,634;NR;Lewis Milestone, Carol Reed;1962-11-08;WARNER BROTHERS PICTURES;68.0;19.0;73.0;4471.0
+234;To Kill a Mockingbird;1962;Alan J. Pakula;Nominee;1962;129;Crime,Drama;Crime;Drama;8.3;303,387;;;;;;;;
+235;Tom Jones;1963;Tony Richardson;Winner;1963;129;Adventure,Comedy,History;Adventure;Comedy;6.5;12,448;NR;Tony Richardson;1963-01-01;Woodfall Film Productions;82.0;39.0;58.0;5491.0
+236;America America;1963;Elia Kazan;Nominee;1963;174;Drama;Drama;None;7.8;5,215;NR;Elia Kazan;1963-12-15;Warner Home Video;67.0;9.0;85.0;976.0
+237;Cleopatra;1963;Walter Wanger;Nominee;1963;192;Biography,Drama,History;Biography;Drama;7.0;31,027;G;Joseph L. Mankiewicz;1963-06-12;20th Century Fox;62.0;39.0;69.0;20541.0
+238;How the West Was Won;1963;Bernard Smith;Nominee;1962;164;Western;Western;None;7.1;19,741;;;;;;;;
+239;Lilies of the Field;1963;Ralph Nelson;Nominee;1963;94;Drama;Drama;None;7.6;9,751;NR;Ralph Nelson;1963-01-01;Twentieth Century Fox Home Entertainment;91.0;23.0;86.0;6139.0
+240;My Fair Lady;1964;Jack L. Warner;Winner;1964;170;Drama,Family,Musical;Drama;Family;7.8;90,361;;;;;;;;
+241;Becket;1964;Hal B. Wallis;Nominee;1964;148;Biography,Drama,History;Biography;Drama;7.8;14,231;PG-13;Peter Glenville;1964-03-11;Slowhand Releasing;76.0;25.0;87.0;5611.0
+242;Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb;1964;Stanley Kubrick;Nominee;1964;95;Comedy;Comedy;None;8.4;466,261;;;;;;;;
+243;Mary Poppins;1964;Walt Disney and Bill Walsh;Nominee;1964;139;Comedy,Family,Fantasy;Comedy;Family;7.8;163,118;G;Robert Stevenson;1964-08-26;Walt Disney Productions;100.0;51.0;86.0;682486.0
+244;Zorba the Greek;1964;Michael Cacoyannis;Nominee;1964;142;Comedy,Drama;Comedy;Drama;7.7;21,591;NR;;1964-12-17;Fox;80.0;10.0;86.0;7146.0
+245;The Sound of Music;1965;Robert Wise;Winner;1965;172;Biography,Drama,Family;Biography;Drama;8.0;215,374;G;Robert Wise;1965-03-02;20th Century-Fox;83.0;71.0;91.0;606397.0
+246;Darling;1965;Joseph Janni;Nominee;1965;128;Drama,Romance;Drama;Romance;7.1;6,468;NR;John Schlesinger;1965-01-01;Lionsgate;67.0;18.0;71.0;2184.0
+247;Doctor Zhivago;1965;Carlo Ponti;Nominee;1965;197;Drama,Romance,War;Drama;Romance;8.0;72,548;PG-13;David Lean;1965-12-22;MGM;84.0;49.0;88.0;45777.0
+248;Ship of Fools;1965;Stanley Kramer;Nominee;1965;149;Drama,Romance,War;Drama;Romance;7.1;5,725;NR;Stanley Kramer;1965-07-29;Columbia Pictures;72.0;18.0;78.0;1178.0
+249;A Thousand Clowns;1965;Fred Coe;Nominee;1965;118;Comedy,Drama,Romance;Comedy;Drama;7.4;3,349;;;;;;;;
+250;A Man for All Seasons;1966;Fred Zinnemann;Winner;1966;120;Biography,Drama,History;Biography;Drama;7.7;33,107;G;Fred Zinnemann;1966-12-12;Sony Pictures Home Entertainment;83.0;42.0;87.0;9774.0
+251;Alfie;1966;Lewis Gilbert;Nominee;1966;114;Comedy,Drama;Comedy;Drama;7.0;14,178;PG;Lewis Gilbert;1966-08-24;Paramount Pictures;96.0;27.0;76.0;14669.0
+252;The Russians Are Coming, the Russians Are Coming;1966;Norman Jewison;Nominee;1966;126;Comedy,War;Comedy;War;7.0;8,473;G;Norman Jewison;1966-05-25;MGM;86.0;21.0;75.0;4763.0
+253;The Sand Pebbles;1966;Robert Wise;Nominee;1966;182;Adventure,Drama,Romance;Adventure;Drama;7.6;14,184;PG-13;Robert Wise;1966-01-01;Twentieth Century Fox Home Entertainment;89.0;18.0;88.0;5639.0
+254;Who's Afraid of Virginia Woolf?;1966;Ernest Lehman;Nominee;1966;131;Drama;Drama;None;8.0;72,597;R;Mike Nichols;1966-06-22;Warner Home Video;95.0;43.0;91.0;21663.0
+255;In the Heat of the Night;1967;Walter Mirisch;Winner;1967;110;Crime,Drama,Mystery;Crime;Drama;7.9;70,719;G;Norman Jewison;1967-08-02;MGM;95.0;55.0;92.0;23185.0
+256;Bonnie and Clyde;1967;Warren Beatty;Nominee;1967;111;Action,Biography,Crime;Action;Biography;7.8;107,803;R;Arthur Penn;1967-08-13;Warner Brothers/Seven Arts;88.0;64.0;88.0;56566.0
+257;Doctor Dolittle;1967;Arthur P. Jacobs;Nominee;1967;152;Adventure,Comedy,Family;Adventure;Comedy;6.2;9,028;G;Richard Fleischer;1967-12-19;20th Century Fox;29.0;21.0;57.0;73397.0
+258;The Graduate;1967;Lawrence Turman;Nominee;1967;106;Comedy,Drama,Romance;Comedy;Drama;8.0;261,921;PG;Mike Nichols;1967-12-21;Embassy Pictures/Rialto Pictures;87.0;82.0;90.0;183610.0
+259;Guess Who's Coming to Dinner;1967;Stanley Kramer;Nominee;1967;108;Comedy,Drama;Comedy;Drama;7.8;41,907;NR;Stanley Kramer;1967-12-11;Columbia Pictures Corporation;70.0;37.0;85.0;38252.0
+260;Oliver!;1968;John Woolf;Winner;1968;153;Drama,Family,Musical;Drama;Family;7.4;36,386;G;Carol Reed;1968-12-11;Sony Pictures Home Entertainment;82.0;34.0;81.0;56092.0
+261;Funny Girl;1968;Ray Stark;Nominee;1968;151;Biography,Comedy,Drama;Biography;Drama;7.4;21,174;G;William Wyler;1968-09-19;Columbia Pictures;93.0;45.0;85.0;19884.0
+262;The Lion in Winter;1968;Martin Poll;Nominee;1968;134;Biography,Drama,History;Biography;Drama;7.9;30,196;PG;Anthony Harvey;1968-10-30;Nelson Entertainment;90.0;40.0;90.0;13105.0
+263;Rachel, Rachel;1968;Paul Newman;Nominee;1968;101;Drama,Romance;Drama;Romance;7.3;3,213;R;Paul Newman;1968-08-26;Warner Bros.;86.0;7.0;77.0;492.0
+264;Romeo and Juliet;1968;Anthony Havelock-Allan and John Brabourne;Nominee;1968;138;Drama,Romance;Drama;Romance;7.6;30,500;PG;Franco Zeffirelli;1968-10-08;Paramount Home Video;95.0;37.0;74.0;65196.0
+265;Midnight Cowboy;1969;Jerome Hellman;Winner;1969;113;Drama;Drama;None;7.8;106,077;R;John Schlesinger;1969-05-25;United Artists;88.0;75.0;88.0;40013.0
+266;Anne of the Thousand Days;1969;Hal B. Wallis;Nominee;1969;145;Biography,Drama,History;Biography;Drama;7.5;7,138;PG;Charles Jarrott;1969-12-18;Universal Pictures;38.0;13.0;83.0;3281.0
+267;Butch Cassidy and the Sundance Kid;1969;John Foreman;Nominee;1969;110;Biography,Crime,Drama;Biography;Crime;8.0;208,400;PG;George Roy Hill;1969-10-24;20th Century Fox;90.0;51.0;92.0;71183.0
+268;Hello, Dolly!;1969;Ernest Lehman;Nominee;1969;146;Adventure,Comedy,Musical;Adventure;Comedy;7.1;14,420;G;Gene Kelly;1969-12-16;20th Century Fox;43.0;30.0;76.0;21196.0
+269;Z;1969;Jacques Perrin and Ahmed Rachedi;Nominee;1969;127;Crime,Drama,History;Crime;Drama;8.3;25,227;PG;Costa-Gavras;1969-02-26;Rialto Pictures;93.0;46.0;93.0;6526.0
+270;Patton;1970;Frank McCarthy;Winner;1970;172;Biography,Drama,War;Biography;Drama;7.9;98,155;PG;Franklin J. Schaffner;1970-04-02;Twentieth Century Fox Home Entertainment;94.0;49.0;93.0;43309.0
+271;Airport;1970;Ross Hunter;Nominee;1970;137;Action,Drama,Thriller;Action;Drama;6.6;18,289;G;George Seaton, Henry Hathaway;1970-03-05;Universal Pictures;73.0;15.0;53.0;11263.0
+272;Five Easy Pieces;1970;Bob Rafelson and Richard Wechsler;Nominee;1970;98;Drama;Drama;None;7.5;35,199;R;Bob Rafelson, Dennis Hopper;1970-09-12;Columbia Pictures;88.0;50.0;84.0;13154.0
+273;Love Story;1970;Howard G. Minsky;Nominee;1970;100;Drama,Romance;Drama;Romance;6.9;32,681;PG;Arthur Hiller;1970-12-16;Paramount Pictures;68.0;25.0;75.0;35290.0
+274;M*A*S*H;1970;Ingo Preminger;Nominee;1970;116;Comedy,Drama,War;Comedy;War;7.5;69,897;PG;Robert Altman;1970-12-31;20th Century Fox;87.0;53.0;83.0;53152.0
+275;The French Connection;1971;Philip D'Antoni;Winner;1971;104;Action,Crime,Drama;Action;Crime;7.7;115,341;R;William Friedkin;1971-10-09;20th Century Fox;98.0;60.0;87.0;44341.0
+276;A Clockwork Orange;1971;Stanley Kubrick;Nominee;1971;136;Crime,Drama,Sci-Fi;Crime;Drama;8.3;783,346;R;Stanley Kubrick;1971-12-19;Warner Bros.;88.0;64.0;93.0;436890.0
+277;Fiddler on the Roof;1971;Norman Jewison;Nominee;1971;181;Drama,Family,Musical;Drama;Family;8.0;41,233;G;Norman Jewison;1971-11-03;United Artists;83.0;41.0;92.0;52560.0
+278;The Last Picture Show;1971;Stephen J. Friedman;Nominee;1971;118;Drama,Romance;Drama;Romance;8.0;44,843;R;Peter Bogdanovich;1971-10-22;Columbia Pictures;100.0;57.0;90.0;14148.0
+279;Nicholas and Alexandra;1971;Sam Spiegel;Nominee;1971;183;Biography,Drama,History;Biography;Drama;7.2;4,671;PG;Franklin J. Schaffner;1971-12-13;Sony Pictures Home Entertainment;67.0;15.0;78.0;1674.0
+280;The Godfather;1972;Albert S. Ruddy;Winner;1972;175;Crime,Drama;Crime;Drama;9.2;1,697,396;R;Francis Ford Coppola;1972-03-24;Paramount Pictures;98.0;99.0;98.0;733939.0
+281;Cabaret;1972;Cy Feuer;Nominee;1972;124;Drama,Music,Musical;Drama;Musical;7.8;51,698;PG;Bob Fosse;1972-02-13;Twentieth Century Fox Home Entertainment;93.0;43.0;87.0;36098.0
+282;Deliverance;1972;John Boorman;Nominee;1972;109;Adventure,Drama,Thriller;Adventure;Drama;7.7;102,934;R;John Boorman;1972-07-21;Warner Bros.;89.0;63.0;82.0;49424.0
+283;The Emigrants;1972;Bengt Forslund;Nominee;1971;151;Drama,History;Drama;History;8.0;6,121;;;;;;;;
+284;Sounder;1972;Robert B. Radnitz;Nominee;1972;105;Drama,Family;Drama;Family;7.6;3,920;;;;;;;;
+285;The Sting;1973;Tony Bill, Michael Phillips, and Julia Phillips;Winner;1973;129;Comedy,Crime,Drama;Comedy;Drama;8.3;249,856;PG;George Roy Hill;1973-12-01;Universal Pictures;94.0;63.0;95.0;61731.0
+286;American Graffiti;1973;Francis Ford Coppola and Gary Kurtz;Nominee;1973;110;Comedy,Drama;Comedy;Drama;7.4;85,117;PG;George Lucas;1973-08-01;Universal Pictures;96.0;52.0;84.0;64618.0
+287;Cries and Whispers;1973;Ingmar Bergman;Nominee;1972;91;Drama;Drama;None;8.1;32,122;R;Ingmar Bergman;1972-12-21;Criterion Collection;90.0;30.0;91.0;9251.0
+288;The Exorcist;1973;William Peter Blatty;Nominee;1973;122;Horror;Horror;None;8.0;375,156;R;William Friedkin;1973-12-26;Warner Bros. Pictures;83.0;81.0;87.0;420304.0
+289;A Touch of Class;1973;Melvin Frank;Nominee;1973;106;Comedy,Romance;Comedy;Romance;6.5;2,991;PG;Melvin Frank;1973-06-20;Media Home Entertainment;83.0;12.0;64.0;2032.0
+290;The Godfather Part II;1974;Francis Ford Coppola, Gray Frederickson, and Fred Roos;Winner;1974;202;Crime,Drama;Crime;Drama;9.0;1,178,981;;;;;;;;
+291;Chinatown;1974;Robert Evans;Nominee;1974;130;Drama,Mystery,Thriller;Drama;Mystery;8.2;308,349;R;Roman Polanski;1974-01-01;Paramount Pictures;99.0;75.0;93.0;77911.0
+292;The Conversation;1974;Francis Ford Coppola;Nominee;1974;113;Drama,Mystery,Thriller;Drama;Mystery;7.8;105,312;PG;Francis Ford Coppola;1974-04-07;Paramount Pictures;96.0;55.0;90.0;35156.0
+293;Lenny;1974;Marvin Worth;Nominee;1974;111;Biography,Drama;Biography;Drama;7.6;15,444;R;Bob Fosse;1974-01-01;Twentieth Century Fox Home Entertainment;88.0;25.0;88.0;6547.0
+294;The Towering Inferno;1974;Irwin Allen;Nominee;1974;165;Action,Drama,Thriller;Action;Drama;7.0;41,582;PG;John Guillermin, Irwin Allen;1974-12-17;20th Century Fox;69.0;32.0;72.0;28338.0
+295;One Flew Over the Cuckoo's Nest;1975;Michael Douglas and Saul Zaentz;Winner;1975;133;Drama;Drama;None;8.7;950,833;R;Milos Forman;1975-11-19;United Artists;94.0;80.0;96.0;279760.0
+296;Barry Lyndon;1975;Stanley Kubrick;Nominee;1975;185;Adventure,Drama,History;Adventure;Drama;8.1;157,491;PG;Stanley Kubrick;1975-01-01;Warner Bros.;91.0;74.0;92.0;45079.0
+297;Dog Day Afternoon;1975;Martin Bregman and Martin Elfand;Nominee;1975;125;Biography,Crime,Drama;Biography;Crime;8.0;245,162;R;Sidney Lumet;1975-09-21;WARNER BROTHERS PICTURES;96.0;45.0;90.0;110209.0
+298;Jaws;1975;Richard D. Zanuck and David Brown;Nominee;1975;124;Adventure,Thriller;Adventure;Thriller;8.0;563,056;PG;Steven Spielberg;1975-06-01;Universal Pictures;98.0;88.0;90.0;944601.0
+299;Nashville;1975;Robert Altman;Nominee;1975;160;Comedy,Drama,Music;Comedy;Drama;7.7;25,084;R;Robert Altman;1975-06-11;Paramount Pictures;90.0;62.0;84.0;10086.0
+300;Rocky;1976;Irwin Winkler and Robert Chartoff;Winner;1976;120;Drama,Sport;Drama;Sport;8.1;537,813;PG;John G. Avildsen;1976-11-21;United Artists;94.0;65.0;69.0;33403994.0
+301;All the President's Men;1976;Walter Coblenz;Nominee;1976;138;Biography,Drama,History;Biography;Drama;8.0;109,033;PG;Alan J. Pakula;1976-04-04;Warner Home Video;94.0;63.0;92.0;50300.0
+302;Bound for Glory;1976;Robert F. Blumofe and Harold Leventhal;Nominee;1976;147;Biography,Drama,Music;Biography;Drama;7.3;4,892;;;;;;;;
+303;Network;1976;Howard Gottfried;Nominee;1976;121;Drama;Drama;None;8.1;151,780;R;Sidney Lumet;1976-11-27;MGM/United Artists;91.0;68.0;93.0;36359.0
+304;Taxi Driver;1976;Michael Phillips and Julia Phillips;Nominee;1976;114;Crime,Drama;Crime;Drama;8.2;758,393;R;Martin Scorsese;1976-02-08;Columbia Pictures;96.0;92.0;93.0;260593.0
+305;Annie Hall;1977;Charles H. Joffe;Winner;1977;93;Comedy,Romance;Comedy;Romance;8.0;257,550;PG;Woody Allen;1977-04-20;United Artists;98.0;82.0;92.0;153745.0
+306;The Goodbye Girl;1977;Ray Stark;Nominee;1977;111;Comedy,Drama,Romance;Comedy;Drama;7.4;13,292;PG;Herbert Ross;1977-11-30;MGM Home Entertainment;84.0;19.0;84.0;7479.0
+307;Julia;1977;Richard Roth;Nominee;1977;117;Drama;Drama;None;7.2;9,219;;;;;;;;
+308;Star Wars;1977;Gary Kurtz;Nominee;1977;121;Action,Adventure,Fantasy;Action;Adventure;8.6;1,272,908;;;;;;;;
+309;The Turning Point;1977;Herbert Ross and Arthur Laurents;Nominee;1977;119;Drama,Romance;Drama;Romance;6.9;4,457;;;;;;;;
+310;The Deer Hunter;1978;Barry Spikings, Michael Deeley, Michael Cimino, and John Peverall;Winner;1978;183;Drama,War;Drama;War;8.1;323,543;R;Michael Cimino;1978-12-08;Universal Pictures;93.0;76.0;92.0;103489.0
+311;Coming Home;1978;Jerome Hellman;Nominee;1978;127;Drama,Romance,War;Drama;Romance;7.3;13,023;;;;;;;;
+312;Heaven Can Wait;1978;Warren Beatty;Nominee;1978;101;Comedy,Fantasy,Romance;Comedy;Fantasy;6.9;19,822;PG;Warren Beatty, Buck Henry;1978-06-28;Paramount Home Video;88.0;41.0;68.0;13232.0
+313;Midnight Express;1978;Alan Marshall and David Puttnam;Nominee;1978;121;Biography,Crime,Drama;Biography;Crime;7.6;76,311;R;Alan Parker;1978-09-20;Sony Pictures Home Entertainment;96.0;26.0;89.0;31089.0
+314;An Unmarried Woman;1978;Paul Mazursky and Tony Ray;Nominee;1978;124;Comedy,Drama,Romance;Comedy;Drama;7.2;5,113;;;;;;;;
+315;Kramer vs. Kramer;1979;Stanley R. Jaffe;Winner;1979;105;Drama;Drama;None;7.8;138,582;PG;Robert Benton;1979-12-19;Sony Pictures Home Entertainment;88.0;52.0;89.0;43464.0
+316;All That Jazz;1979;Robert Alan Aurthur;Nominee;1979;123;Drama,Music,Musical;Drama;Musical;7.9;29,674;;;;;;;;
+317;Apocalypse Now;1979;Francis Ford Coppola, Fred Roos, Gray Frederickson, and Tom Sternberg;Nominee;1979;147;Drama,Mystery,War;Drama;Mystery;8.4;627,726;R;Francis Ford Coppola;1979-01-01;United Artists;98.0;95.0;94.0;286037.0
+318;Breaking Away;1979;Peter Yates;Nominee;1979;101;Comedy,Drama,Romance;Comedy;Drama;7.7;22,594;PG;Peter Yates;1979-07-13;Twentieth Century Fox;95.0;37.0;88.0;9343.0
+319;Norma Rae;1979;Tamara Asseyev and Alex Rose;Nominee;1979;114;Drama;Drama;None;7.3;11,062;;;;;;;;
+320;Ordinary People;1980;Ronald L. Schwary;Winner;1980;124;Drama;Drama;None;7.7;49,328;R;Robert Redford;1980-09-19;Paramount Pictures;89.0;54.0;88.0;23217.0
+321;Coal Miner's Daughter;1980;Bernard Schwartz;Nominee;1980;124;Biography,Drama,Music;Biography;Drama;7.5;17,579;PG;Michael Apted;1980-03-07;MCA Universal Home Video;86.0;22.0;86.0;36305.0
+322;The Elephant Man;1980;Jonathan Sanger;Nominee;1980;124;Biography,Drama;Biography;Drama;8.1;229,693;PG;David Lynch;1980-10-03;Paramount;92.0;53.0;93.0;64544.0
+323;Raging Bull;1980;Irwin Winkler and Robert Chartoff;Nominee;1980;129;Biography,Drama,Sport;Biography;Drama;8.2;334,550;R;Martin Scorsese;1980-12-19;United Artists;93.0;74.0;93.0;131407.0
+324;Tess;1980;Claude Berri and Timothy Burrill;Nominee;1979;186;Drama,Romance;Drama;Romance;7.3;15,999;PG;Roman Polanski;1979-10-01;Criterion Collection;81.0;26.0;78.0;6331.0
+325;Chariots of Fire;1981;David Puttnam;Winner;1981;125;Biography,Drama,Sport;Biography;Drama;7.2;57,292;PG;Hugh Hudson;1981-09-25;20th Century Fox;82.0;73.0;80.0;37166.0
+326;Atlantic City;1981;Denis Héroux;Nominee;1980;104;Crime,Drama,Romance;Crime;Drama;7.3;16,039;R;Louis Malle;1980-09-02;Paramount Home Video;100.0;33.0;77.0;5228.0
+327;On Golden Pond;1981;Bruce Gilbert;Nominee;1981;109;Drama;Drama;None;7.6;29,276;PG;Mark Rydell;1981-12-04;Twentieth Century Fox Home Entertainment;93.0;29.0;87.0;20566.0
+328;Raiders of the Lost Ark;1981;Frank Marshall;Nominee;1981;115;Action,Adventure;Action;Adventure;8.4;914,188;PG;Steven Spielberg;1981-06-12;Paramount Pictures;95.0;80.0;96.0;826663.0
+329;Reds;1981;Warren Beatty;Nominee;1975;127;Horror,Mystery,Thriller;Horror;Mystery;7.6;35,213;;;;;;;;
+330;Gandhi;1982;Richard Attenborough;Winner;1982;191;Biography,Drama,History;Biography;Drama;8.0;223,282;PG;Richard Attenborough;1982-12-06;Columbia Pictures;85.0;61.0;92.0;49831.0
+331;E.T. the Extra-Terrestrial;1982;Steven Spielberg and Kathleen Kennedy;Nominee;1982;115;Family,Sci-Fi;Family;Sci-Fi;7.8;386,073;;;;;;;;
+332;Missing;1982;Edward Lewis and Mildred Lewis;Nominee;1982;122;Biography,Drama,History;Biography;Drama;7.7;20,689;;;;;;;;
+333;Tootsie;1982;Sydney Pollack and Dick Richards;Nominee;1982;116;Comedy,Drama,Romance;Comedy;Drama;7.4;101,492;PG;Sydney Pollack;1982-12-01;Columbia Pictures;90.0;51.0;81.0;58527.0
+334;The Verdict;1982;Richard D. Zanuck and David Brown;Nominee;1982;129;Drama;Drama;None;7.7;37,826;R;Sidney Lumet;1982-12-08;Twentieth Century Fox Home Entertainment;88.0;33.0;88.0;10381.0
+335;Terms of Endearment;1983;James L. Brooks;Winner;1983;132;Comedy,Drama;Comedy;Drama;7.4;57,538;PG;James L. Brooks;1983-11-23;Paramount Pictures;78.0;54.0;83.0;36329.0
+336;The Big Chill;1983;Michael Shamberg;Nominee;1983;105;Comedy,Drama;Comedy;Drama;7.2;34,895;R;Lawrence Kasdan;1983-09-28;Columbia Pictures;68.0;38.0;77.0;22301.0
+337;The Dresser;1983;Peter Yates;Nominee;1983;118;Drama;Drama;None;7.6;5,072;PG;Peter Yates;1983-12-06;Sony Pictures Entertainment;100.0;14.0;87.0;1802.0
+338;The Right Stuff;1983;Irwin Winkler and Robert Chartoff;Nominee;1983;193;Adventure,Biography,Drama;Adventure;Biography;7.8;59,265;;;;;;;;
+339;Tender Mercies;1983;Philip S. Hobel;Nominee;1983;92;Drama,Music;Drama;Musical;7.4;10,060;PG;Bruce Beresford;1983-03-04;HBO Video;84.0;25.0;82.0;3613.0
+340;Amadeus;1984;Saul Zaentz;Winner;1984;160;Biography,Drama,History;Biography;Drama;8.3;381,101;R;Milos Forman;1984-09-06;Warner Bros. Pictures;93.0;99.0;95.0;180143.0
+341;The Killing Fields;1984;David Puttnam;Nominee;1984;141;Biography,Drama,History;Biography;Drama;7.8;53,545;R;Roland Joffé;1984-11-02;Warner Home Video;93.0;43.0;92.0;23126.0
+342;A Passage to India;1984;John Brabourne and Richard B. Goodwin;Nominee;1984;164;Adventure,Drama,History;Adventure;Drama;7.3;18,017;PG;David Lean;1984-12-14;Sony Pictures Entertainment;76.0;25.0;78.0;6936.0
+343;Places in the Heart;1984;Arlene Donovan;Nominee;1984;111;Drama;Drama;None;7.4;11,271;PG;Robert Benton;1984-09-21;Twentieth Century Fox Home Entertainment;89.0;38.0;83.0;6741.0
+344;A Soldier's Story;1984;Norman Jewison, Ronald L. Schwary, and Patrick Palmer;Nominee;1984;101;Crime,Drama,Mystery;Crime;Drama;7.2;9,570;PG;Norman Jewison;1984-09-14;Sony Pictures Home Entertainment;90.0;20.0;81.0;6506.0
+345;Out of Africa;1985;Sydney Pollack;Winner;1985;161;Biography,Drama,Romance;Biography;Drama;7.2;76,084;PG;Sydney Pollack;1985-12-18;Universal Pictures;59.0;54.0;83.0;40320.0
+346;The Color Purple;1985;Steven Spielberg, Kathleen Kennedy, Frank Marshall, and Quincy Jones;Nominee;1985;154;Drama;Drama;None;7.8;82,027;PG-13;Steven Spielberg;1985-12-16;Warner Home Video;81.0;31.0;94.0;180874.0
+347;Kiss of the Spider Woman;1985;David Weisman;Nominee;1985;120;Drama;Drama;None;7.4;15,003;R;Hector Babenco;1985-08-01;Strand Releasing;87.0;30.0;81.0;7183.0
+348;Prizzi's Honor;1985;John Foreman;Nominee;1985;130;Comedy,Crime,Drama;Comedy;Drama;6.7;23,681;;;;;;;;
+349;Witness;1985;Edward S. Feldman;Nominee;1985;112;Crime,Drama,Romance;Crime;Drama;7.4;90,252;R;Peter Weir;1985-02-08;Paramount Pictures;93.0;41.0;80.0;46814.0
+350;Platoon;1986;Arnold Kopelson;Winner;1986;120;Drama,War;Drama;War;8.1;394,151;R;Oliver Stone;1986-12-24;Orion Pictures;88.0;67.0;93.0;239850.0
+351;Children of a Lesser God;1986;Burt Sugarman and Patrick J. Palmer;Nominee;1986;119;Drama,Romance;Drama;Romance;7.2;15,807;R;Randa Haines;1986-10-03;Paramount Pictures;82.0;33.0;79.0;8543.0
+352;Hannah and Her Sisters;1986;Robert Greenhut;Nominee;1986;107;Comedy,Drama;Comedy;Drama;7.9;69,273;PG-13;Woody Allen;1986-02-07;Orion Pictures;91.0;56.0;90.0;31072.0
+353;The Mission;1986;Fernando Ghia and David Puttnam;Nominee;1986;125;Adventure,Drama,History;Adventure;Drama;7.4;58,975;PG;Roland Joffé;1986-10-31;Warner Home Video;64.0;25.0;87.0;38896.0
+354;A Room with a View;1986;Ismail Merchant;Nominee;1985;117;Drama,Romance;Drama;Romance;7.3;41,517;;;;;;;;
+355;The Last Emperor;1987;Jeremy Thomas;Winner;1987;163;Biography,Drama,History;Biography;Drama;7.7;98,273;PG-13;Bernardo Bertolucci;1987-11-18;Columbia Pictures;89.0;72.0;88.0;39918.0
+356;Broadcast News;1987;James L. Brooks;Nominee;1987;133;Comedy,Drama,Romance;Comedy;Drama;7.2;28,908;R;James L. Brooks, James A. Brooks;1987-12-16;Twentieth Century Fox Home Entertainment;98.0;51.0;79.0;11001.0
+357;Fatal Attraction;1987;Stanley R. Jaffe and Sherry Lansing;Nominee;1987;119;Drama,Thriller;Drama;Thriller;6.9;80,634;R;Adrian Lyne;1987-09-11;Paramount Pictures;76.0;54.0;72.0;53027.0
+358;Hope and Glory;1987;John Boorman;Nominee;1987;113;Comedy,Drama,Romance;Comedy;Drama;7.3;13,104;;;;;;;;
+359;Moonstruck;1987;Patrick J. Palmer and Norman Jewison;Nominee;1987;102;Comedy,Drama,Romance;Comedy;Drama;7.1;54,964;PG;Norman Jewison;1987-12-18;MGM Home Entertainment;93.0;61.0;81.0;44806.0
+360;Rain Man;1988;Mark Johnson;Winner;1988;133;Drama;Drama;None;8.0;488,860;R;Barry Levinson;1988-12-16;MGM;89.0;80.0;90.0;314120.0
+361;The Accidental Tourist;1988;Lawrence Kasdan, Charles Okun, and Michael Grillo;Nominee;1988;121;Drama,Romance;Drama;Romance;6.8;15,488;PG;Lawrence Kasdan;1988-12-23;Warner Home Video;81.0;32.0;60.0;6208.0
+362;Dangerous Liaisons;1988;Norma Heyman and Hank Moonjean;Nominee;1988;119;Drama,Romance;Drama;Romance;7.6;66,909;R;Stephen Frears;1988-01-01;Warner Home Video;93.0;30.0;83.0;46589.0
+363;Mississippi Burning;1988;Frederick Zollo and Robert F. Colesberry;Nominee;1988;128;Crime,Drama,History;Crime;Drama;7.8;94,171;R;Alan Parker;1988-12-09;Orion Pictures Corporation;84.0;25.0;90.0;39455.0
+364;Working Girl;1988;Douglas Wick;Nominee;1988;113;Comedy,Drama,Romance;Comedy;Drama;6.8;54,343;R;Mike Nichols;1988-12-20;20th Century Fox;84.0;44.0;67.0;33603.0
+365;Driving Miss Daisy;1989;Richard D. Zanuck and Lili Fini Zanuck;Winner;1989;99;Drama;Drama;None;7.4;104,806;;;;;;;;
+366;Born on the Fourth of July;1989;A. Kitman Ho and Oliver Stone;Nominee;1989;145;Biography,Drama,War;Biography;War;7.2;101,778;R;Oliver Stone;1989-12-20;Universal Pictures;85.0;48.0;76.0;59360.0
+367;Dead Poets Society;1989;Steven Haft, Paul Junger Witt, and Tony Thomas;Nominee;1989;128;Comedy,Drama;Comedy;Drama;8.1;446,811;PG;Peter Weir;1989-06-02;Buena Vista Pictures;84.0;57.0;92.0;307114.0
+368;Field of Dreams;1989;Lawrence Gordon and Charles Gordon;Nominee;1989;107;Drama,Family,Fantasy;Drama;Family;7.5;113,841;PG;Phil Alden Robinson;1989-04-21;Universal Pictures;87.0;60.0;86.0;192920.0
+369;My Left Foot;1989;Noel Pearson;Nominee;1989;103;Biography,Drama;Biography;Drama;7.9;71,014;R;Jim Sheridan;1989-09-13;Miramax Films;98.0;41.0;92.0;26763.0
+370;Dances with Wolves;1990;Jim Wilson and Kevin Costner;Winner;1990;181;Adventure,Drama,Western;Adventure;Drama;8.0;249,524;;;;;;;;
+371;Awakenings;1990;Walter Parkes and Lawrence Lasker;Nominee;1990;121;Biography,Drama;Biography;Drama;7.8;132,136;PG-13;Penny Marshall;1990-12-19;Columbia Pictures;88.0;33.0;89.0;55182.0
+372;Ghost;1990;Lisa Weinstein;Nominee;1990;127;Drama,Fantasy,Romance;Drama;Fantasy;7.1;204,848;PG-13;Jerry Zucker;1990-07-13;Paramount Pictures;74.0;74.0;80.0;469588.0
+373;The Godfather Part III;1990;Francis Ford Coppola;Nominee;1990;162;Crime,Drama;Crime;Drama;7.6;373,892;;;;;;;;
+374;Goodfellas;1990;Irwin Winkler;Nominee;1990;146;Biography,Crime,Drama;Biography;Crime;8.7;1,065,109;;;;;;;;
+375;The Silence of the Lambs;1991;Edward Saxon, Kenneth Utt, and Ron Bozman;Winner;1991;118;Crime,Drama,Thriller;Crime;Drama;8.6;1,326,186;R;Jonathan Demme;1991-02-13;Orion Pictures Corporation;96.0;101.0;95.0;847028.0
+376;Beauty and the Beast;1991;Don Hahn;Nominee;1991;84;Animation,Family,Fantasy;Animation;Family;8.0;427,333;G;Gary Trousdale;1991-11-22;Buena Vista;94.0;117.0;92.0;760077.0
+377;Bugsy;1991;Mark Johnson, Barry Levinson and Warren Beatty;Nominee;1991;136;Biography,Crime,Drama;Biography;Crime;6.8;27,635;R;Barry Levinson;1991-12-13;Sony Pictures Home Entertainment;85.0;60.0;69.0;10228.0
+378;JFK;1991;A. Kitman Ho and Oliver Stone;Nominee;1991;189;Drama,History,Thriller;Drama;History;8.0;147,893;R;Oliver Stone;1991-12-20;Warner Bros.;84.0;63.0;88.0;62583.0
+379;The Prince of Tides;1991;Barbra Streisand and Andrew S. Karsch;Nominee;1991;132;Drama,Romance;Drama;Romance;6.7;17,342;R;Barbra Streisand;1991-12-25;Sony Pictures Home Entertainment;69.0;32.0;70.0;9233.0
+380;Unforgiven;1992;Clint Eastwood;Winner;1992;130;Drama,Western;Drama;Western;8.2;390,280;R;Clint Eastwood;1992-08-03;Warner Bros. Pictures;96.0;106.0;93.0;122729.0
+381;The Crying Game;1992;Stephen Woolley;Nominee;1992;112;Crime,Drama,Romance;Crime;Drama;7.3;53,289;R;Neil Jordan;1992-11-25;Live Home Video;94.0;67.0;78.0;31834.0
+382;A Few Good Men;1992;David Brown, Rob Reiner, and Andrew Scheinman;Nominee;1992;138;Drama,Thriller;Drama;Thriller;7.7;245,903;R;Rob Reiner;1992-12-11;Columbia Pictures;83.0;64.0;89.0;325423.0
+383;Howards End;1992;Ismail Merchant;Nominee;1992;142;Drama,Romance;Drama;Romance;7.4;30,508;PG;James Ivory;1992-03-13;Sony Pictures Home Entertainment;94.0;66.0;82.0;13673.0
+384;Scent of a Woman;1992;Martin Brest;Nominee;1992;156;Drama;Drama;None;8.0;277,333;R;Martin Brest;1992-12-23;Universal Pictures;89.0;44.0;92.0;119250.0
+385;Schindler's List;1993;Steven Spielberg, Gerald R. Molen, and Branko Lustig;Winner;1993;195;Biography,Drama,History;Biography;Drama;8.9;1,261,563;R;Steven Spielberg;1993-12-15;Universal Pictures;97.0;100.0;97.0;411608.0
+386;The Fugitive;1993;Arnold Kopelson;Nominee;1993;130;Action,Crime,Drama;Action;Crime;7.8;278,006;PG-13;Andrew Davis;1993-08-06;Warner Bros. Pictures;96.0;77.0;89.0;267812.0
+387;In the Name of the Father;1993;Jim Sheridan;Nominee;1993;133;Biography,Crime,Drama;Biography;Crime;8.1;165,134;R;Jim Sheridan;1993-12-29;Universal Pictures;94.0;50.0;95.0;41328.0
+388;The Piano;1993;Jan Chapman;Nominee;1993;121;Drama,Music,Romance;Drama;Musical;7.6;81,749;R;Jane Campion;1993-11-19;Miramax Films;92.0;61.0;86.0;48469.0
+389;The Remains of the Day;1993;Mike Nichols, John Calley, and Ismail Merchant;Nominee;1993;134;Drama,Romance;Drama;Romance;7.8;69,613;PG;James Ivory;1993-11-05;Sony Pictures Home Entertainment;95.0;42.0;89.0;24343.0
+390;Forrest Gump;1994;Wendy Finerman, Steve Tisch, and Steve Starkey;Winner;1994;142;Drama,Romance;Drama;Romance;8.8;1,895,991;PG-13;Robert Zemeckis;1994-07-06;Paramount Pictures;71.0;103.0;95.0;1244237.0
+391;Four Weddings and a Funeral;1994;Duncan Kenworthy;Nominee;1994;117;Comedy,Drama,Romance;Comedy;Drama;7.1;145,046;R;Mike Newell;1994-03-09;Gramercy Pictures;96.0;69.0;74.0;185024.0
+392;Pulp Fiction;1994;Lawrence Bender;Nominee;1994;154;Crime,Drama;Crime;Drama;8.9;1,900,918;R;Quentin Tarantino;1994-09-23;Miramax Films;92.0;106.0;96.0;1127813.0
+393;Quiz Show;1994;Michael Jacobs, Julian Krainin, Michael Nozik, and Robert Redford;Nominee;1994;133;Biography,Drama,History;Biography;Drama;7.5;66,948;PG-13;Robert Redford;1994-09-14;Buena Vista Internationa;96.0;56.0;87.0;31595.0
+394;The Shawshank Redemption;1994;Niki Marvin;Nominee;1994;142;Drama;Drama;None;9.3;2,452,594;R;Frank Darabont;1994-09-10;Columbia Pictures;91.0;75.0;98.0;886485.0
+395;Braveheart;1995;Mel Gibson, Alan Ladd Jr., and Bruce Davey;Winner;1995;178;Biography,Drama,History;Biography;Drama;8.3;986,016;R;Mel Gibson;1995-05-26;Paramount Pictures;78.0;82.0;85.0;32708456.0
+396;Apollo 13;1995;Brian Grazer;Nominee;1995;140;Adventure,Drama,History;Adventure;Drama;7.6;279,684;PG;Ron Howard;1995-06-30;Universal Pictures;96.0;92.0;87.0;432986.0
+397;Babe;1995;Bill Miller, George Miller, and Doug Mitchell;Nominee;1995;91;Comedy,Drama,Family;Comedy;Drama;6.8;120,428;G;Chris Noonan;1995-08-04;Universal Pictures;97.0;70.0;67.0;508807.0
+398;The Postman (Il Postino);1995;Mario Cecchi Gori, Vittorio Cecchi Gori, and Gaetano Daniele;Nominee;1994;108;Biography,Comedy,Drama;Biography;Drama;7.7;34,974;;;;;;;;
+399;Sense and Sensibility;1995;Lindsay Doran;Nominee;1995;136;Drama,Romance;Drama;Romance;7.7;108,657;;;;;;;;
+400;The English Patient;1996;Saul Zaentz;Winner;1996;162;Drama,Romance,War;Drama;Romance;7.4;183,677;R;Anthony Minghella;1996-11-15;Miramax Films;85.0;88.0;83.0;81711.0
+401;Fargo;1996;Ethan Coen;Nominee;1996;98;Crime,Drama,Thriller;Crime;Drama;8.1;641,314;R;Joel Coen, Ethan Coen;1996-03-08;Gramercy Pictures;94.0;96.0;93.0;234273.0
+402;Jerry Maguire;1996;James L. Brooks, Laurence Mark, Richard Sakai, and Cameron Crowe;Nominee;1996;139;Comedy,Drama,Romance;Comedy;Drama;7.3;251,072;;;;;;;;
+403;Secrets & Lies;1996;Simon Channing-Williams;Nominee;1996;136;Comedy,Drama;Comedy;Drama;8.0;41,079;;;;;;;;
+404;Shine;1996;Jane Scott;Nominee;1996;105;Biography,Drama,Music;Biography;Drama;7.7;52,751;PG-13;Scott Hicks;1996-11-20;New Line Home Entertainment;91.0;44.0;90.0;30884.0
+405;Titanic;1997;James Cameron and Jon Landau;Winner;1997;194;Drama,Romance;Drama;Romance;7.8;1,089,044;PG-13;James Cameron;1997-12-19;Paramount Pictures;89.0;192.0;69.0;35797635.0
+406;As Good as It Gets;1997;James L. Brooks, Bridget Johnson, and Kristi Zea;Nominee;1997;139;Comedy,Drama,Romance;Comedy;Drama;7.7;285,908;PG-13;James L. Brooks;1997-12-23;TriStar Pictures;85.0;79.0;86.0;378698.0
+407;The Full Monty;1997;Uberto Pasolini;Nominee;1997;91;Comedy,Drama;Comedy;Drama;7.2;102,282;R;Peter Cattaneo;1997-08-13;Twentieth Century Fox Home Entertainment;96.0;50.0;79.0;180109.0
+408;Good Will Hunting;1997;Lawrence Bender;Nominee;1997;126;Drama,Romance;Drama;Romance;8.3;896,929;R;Gus Van Sant;1997-12-05;Miramax Films;97.0;79.0;94.0;364798.0
+409;L.A. Confidential;1997;Curtis Hanson, Arnon Milchan, and Michael Nathanson;Nominee;1997;138;Crime,Drama,Mystery;Crime;Drama;8.2;550,162;R;Curtis Hanson;1997-09-19;Warner Bros. Pictures;99.0;114.0;94.0;150735.0
+410;Shakespeare in Love;1998;David Parfitt, Donna Gigliotti, Harvey Weinstein, Edward Zwick, and Marc Norman;Winner;1998;123;Comedy,Drama,History;Comedy;Drama;7.1;218,538;R;John Madden (II);1998-12-25;Miramax;92.0;141.0;80.0;226989.0
+411;Elizabeth;1998;Alison Owen, Eric Fellner and Tim Bevan;Nominee;1998;124;Biography,Drama,History;Biography;Drama;7.4;95,572;R;Shekhar Kapur;1998-11-06;Gramercy;82.0;62.0;86.0;63472.0
+412;Life Is Beautiful;1998;Elda Ferri and Gianluigi Braschi;Nominee;1997;116;Comedy,Drama,Romance;Comedy;Drama;8.6;649,390;;;;;;;;
+413;Saving Private Ryan;1998;Steven Spielberg, Ian Bryce, Mark Gordon, and Gary Levinsohn;Nominee;1998;169;Drama,War;Drama;War;8.6;1,287,001;R;Steven Spielberg;1998-07-24;Dreamworks Distribution;93.0;142.0;95.0;993261.0
+414;The Thin Red Line;1998;Robert Michael Geisler, John Roberdeau, and Grant Hill;Nominee;1998;170;Drama,War;Drama;War;7.6;179,626;R;Terrence Malick;1998-12-23;20th Century Fox;80.0;102.0;80.0;148681.0
+415;American Beauty;1999;Bruce Cohen and Dan Jinks;Winner;1999;122;Drama;Drama;None;8.3;1,101,496;R;Sam Mendes;1999-10-01;Dreamworks;87.0;190.0;93.0;660578.0
+416;The Cider House Rules;1999;Richard N. Gladstein;Nominee;1999;126;Drama,Romance;Drama;Romance;7.4;95,629;PG-13;Lasse Hallstrom;1999-12-10;Miramax;71.0;112.0;77.0;53501.0
+417;The Green Mile;1999;Frank Darabont and David Valdes;Nominee;1999;189;Crime,Drama,Fantasy;Crime;Drama;8.6;1,198,434;R;Frank Darabont;1999-12-10;Warner Bros. Pictures;78.0;134.0;94.0;813775.0
+418;The Insider;1999;Pieter Jan Brugge and Michael Mann;Nominee;1999;157;Biography,Drama,Thriller;Biography;Drama;7.8;165,522;R;Michael Mann;1999-11-05;Buena Vista Pictures;96.0;137.0;90.0;59195.0
+419;The Sixth Sense;1999;Frank Marshall, Kathleen Kennedy, and Barry Mendel;Nominee;1999;107;Drama,Mystery,Thriller;Drama;Mystery;8.1;939,659;PG-13;M. Night Shyamalan;1999-08-06;Hollywood/Buena Vista;86.0;158.0;90.0;1036685.0
+420;Gladiator;2000;Douglas Wick, David Franzoni, and Branko Lustig;Winner;2000;155;Action,Adventure,Drama;Action;Adventure;8.5;1,393,352;R;Ridley Scott;2000-05-05;Dreamworks Distribution LLC;77.0;199.0;87.0;34128168.0
+421;Chocolat;2000;David Brown, Kit Golden, and Leslie Holleran;Nominee;2000;121;Drama,Romance;Drama;Romance;7.2;183,002;PG-13;Lasse Hallstrom;2000-12-15;Miramax;62.0;117.0;83.0;328939.0
+422;Crouching Tiger, Hidden Dragon;2000;William Kong, Hsu Li-kong, and Ang Lee;Nominee;2000;120;Action,Adventure,Fantasy;Action;Adventure;7.8;259,991;;;;;;;;
+423;Erin Brockovich;2000;Danny DeVito, Michael Shamberg, and Stacey Sher;Nominee;2000;131;Biography,Drama;Biography;Drama;7.4;184,808;R;Steven Soderbergh;2000-03-17;Universal Pictures;84.0;146.0;81.0;418647.0
+424;Traffic;2000;Edward Zwick, Marshall Herskovitz, and Laura Bickford;Nominee;2000;147;Crime,Drama,Thriller;Crime;Drama;7.6;201,093;R;Steven Soderbergh;2000-12-27;USA Films;93.0;161.0;85.0;190385.0
+425;A Beautiful Mind;2001;Brian Grazer and Ron Howard;Winner;2001;135;Biography,Drama;Biography;Drama;8.2;878,511;PG-13;Ron Howard;2001-12-21;Universal Pictures;74.0;213.0;93.0;490923.0
+426;Gosford Park;2001;Robert Altman, Bob Balaban, and David Levy;Nominee;2001;131;Comedy,Drama,Mystery;Comedy;Drama;7.2;83,531;R;Robert Altman;2001-12-26;USA Films;86.0;160.0;78.0;48527.0
+427;In the Bedroom;2001;Graham Leader, Ross Katz, and Todd Field;Nominee;2001;131;Crime,Drama;Crime;Drama;7.4;39,427;R;Todd Field;2001-11-23;Miramax Films;93.0;138.0;81.0;20122.0
+428;The Lord of the Rings: The Fellowship of the Ring;2001;Peter Jackson, Fran Walsh, and Barrie M. Osborne;Nominee;2001;178;Action,Adventure,Drama;Action;Adventure;8.8;1,724,755;PG-13;Peter Jackson;2001-12-19;New Line Cinema;91.0;233.0;95.0;1355751.0
+429;Moulin Rouge!;2001;Martin Brown, Baz Luhrmann, and Fred Baron;Nominee;2001;127;Drama,Musical,Romance;Drama;Musical;7.6;273,077;PG-13;Baz Luhrmann;2001-05-16;20th Century Fox;76.0;199.0;89.0;505231.0
+430;Chicago;2002;Martin Richards;Winner;2002;113;Comedy,Crime,Musical;Comedy;Crime;7.2;221,622;PG-13;Rob Marshall;2002-12-27;Miramax Films;86.0;257.0;83.0;439544.0
+431;Gangs of New York;2002;Alberto Grimaldi and Harvey Weinstein;Nominee;2002;167;Crime,Drama;Crime;Drama;7.5;418,948;R;Martin Scorsese;2002-12-20;Miramax Films;73.0;211.0;81.0;294323.0
+432;The Hours;2002;Scott Rudin and Robert Fox;Nominee;2002;110;Drama,Romance;Drama;Romance;7.5;127,773;PG-13;Stephen Daldry;2002-12-27;Miramax Films;80.0;194.0;84.0;85936.0
+433;The Lord of the Rings: The Two Towers;2002;Barrie M. Osborne, Fran Walsh, and Peter Jackson;Nominee;2002;179;Action,Adventure,Drama;Action;Adventure;8.7;1,540,135;PG-13;Peter Jackson;2002-12-12;New Line Cinema;95.0;255.0;95.0;1341428.0
+434;The Pianist;2002;Roman Polanski, Robert Benmussa, and Alain Sarde;Nominee;2002;150;Biography,Drama,Music;Biography;Drama;8.5;766,841;R;Roman Polanski;2002-12-27;Focus Features;95.0;182.0;96.0;253230.0
+435;The Lord of the Rings: The Return of the King;2003;Barrie M. Osborne, Peter Jackson, and Fran Walsh;Winner;2003;201;Action,Adventure,Drama;Action;Adventure;8.9;1,703,481;PG-13;Peter Jackson;2003-12-17;New Line Cinema;93.0;275.0;86.0;34679773.0
+436;Lost in Translation;2003;Ross Katz and Sofia Coppola;Nominee;2003;102;Comedy,Drama;Comedy;Drama;7.7;431,381;;;;;;;;
+437;Master and Commander: The Far Side of the World;2003;Samuel Goldwyn Jr., Peter Weir, and Duncan Henderson;Nominee;2003;138;Action,Adventure,Drama;Action;Adventure;7.4;210,599;PG-13;Peter Weir;2003-11-14;20th Century Fox;85.0;217.0;80.0;141077.0
+438;Mystic River;2003;Robert Lorenz, Judie G. Hoyt, and Clint Eastwood;Nominee;2003;138;Crime,Drama,Mystery;Crime;Drama;7.9;435,337;R;Clint Eastwood;2003-10-08;WB;88.0;206.0;89.0;203535.0
+439;Seabiscuit;2003;Kathleen Kennedy, Frank Marshall, and Gary Ross;Nominee;2003;140;Drama,History,Sport;Drama;History;7.3;70,147;PG-13;Gary Ross;2003-07-25;Universal Pictures;78.0;205.0;76.0;118428.0
+440;Million Dollar Baby;2004;Clint Eastwood, Albert S. Ruddy, and Tom Rosenberg;Winner;2004;132;Drama,Sport;Drama;Sport;8.1;655,679;PG-13;Clint Eastwood;2004-12-15;Warner Bros. Pictures;91.0;268.0;90.0;405053.0
+441;The Aviator;2004;Michael Mann and Graham King;Nominee;2004;170;Biography,Drama;Biography;Drama;7.5;344,901;PG-13;Martin Scorsese;2004-12-17;Miramax;86.0;224.0;79.0;207578.0
+442;Finding Neverland;2004;Richard N. Gladstein and Nellie Bellflower;Nominee;2004;106;Biography,Drama,Family;Biography;Drama;7.7;202,139;PG;Marc Forster;2004-11-12;Miramax Films;83.0;208.0;87.0;465413.0
+443;Ray;2004;Taylor Hackford, Stuart Benjamin, and Howard Baldwin;Nominee;2004;152;Biography,Drama,Music;Biography;Drama;7.7;142,545;PG-13;Taylor Hackford;2004-10-29;Universal Pictures;80.0;206.0;87.0;214558.0
+444;Sideways;2004;Michael London;Nominee;2004;127;Comedy,Drama,Romance;Comedy;Drama;7.5;184,511;R;Alexander Payne;2004-09-13;Fox Searchlight Pictures;97.0;233.0;79.0;197689.0
+445;Crash;2005;Paul Haggis and Cathy Schulman;Winner;2004;112;Crime,Drama,Thriller;Crime;Drama;7.7;426,775;R;Paul Haggis;2004-09-10;Lions Gate Films;74.0;241.0;88.0;442331.0
+446;Brokeback Mountain;2005;Diana Ossana and James Schamus;Nominee;2005;134;Drama,Romance;Drama;Romance;7.7;337,000;R;Ang Lee;2005-12-09;Focus Features;87.0;246.0;82.0;519853.0
+447;Capote;2005;Caroline Baron, William Vince, and Michael Ohoven;Nominee;2005;114;Biography,Crime,Drama;Biography;Crime;7.3;128,822;R;Bennett Miller;2005-09-30;Sony Pictures Classics;90.0;196.0;82.0;115946.0
+448;Good Night, and Good Luck;2005;Grant Heslov;Nominee;2005;93;Biography,Drama,History;Biography;Drama;7.4;95,865;;;;;;;;
+449;Munich;2005;Steven Spielberg, Kathleen Kennedy, and Barry Mendel;Nominee;2005;164;Action,Drama,History;Action;Drama;7.5;218,462;R;Steven Spielberg;2005-12-23;Universal Pictures;78.0;210.0;83.0;330206.0
+450;The Departed;2006;Graham King;Winner;2006;151;Crime,Drama,Thriller;Crime;Drama;8.5;1,235,906;R;Martin Scorsese;2006-10-06;Warner Bros. Pictures;91.0;280.0;94.0;737806.0
+451;Babel;2006;Alejandro González Iñárritu, Steve Golin, and Jon Kilik;Nominee;2006;143;Drama;Drama;None;7.4;295,061;R;Alejandro González Iñárritu;2006-10-27;Paramount Classics;69.0;200.0;77.0;377310.0
+452;Letters from Iwo Jima;2006;Clint Eastwood, Steven Spielberg, and Robert Lorenz;Nominee;2006;141;Action,Adventure,Drama;Action;Adventure;7.9;157,732;R;Clint Eastwood;2006-12-20;Warner Bros. Pictures;91.0;202.0;86.0;341085.0
+453;Little Miss Sunshine;2006;David T. Friendly, Peter Saraf, and Marc Turtletaub;Nominee;2006;101;Comedy,Drama;Comedy;Drama;7.8;453,506;R;Jonathan Dayton, Valerie Faris;2006-07-26;Fox Searchlight;91.0;218.0;91.0;427127.0
+454;The Queen;2006;Andy Harries, Christine Langan, and Tracey Seaward;Nominee;2006;103;Biography,Drama,History;Biography;Drama;7.3;107,000;PG-13;Stephen Frears;2006-10-06;Miramax Films;96.0;198.0;76.0;175607.0
+455;No Country for Old Men;2007;Scott Rudin, Joel Coen, and Ethan Coen;Winner;2007;122;Crime,Drama,Thriller;Crime;Drama;8.1;896,630;R;Joel Coen, Ethan Coen;2007-11-21;Miramax Films;93.0;287.0;86.0;399154.0
+456;Atonement;2007;Tim Bevan, Eric Fellner, and Paul Webster;Nominee;2007;123;Drama,Mystery,Romance;Drama;Mystery;7.8;261,609;R;Joe Wright;2007-09-07;Focus Features;83.0;217.0;80.0;227149.0
+457;Juno;2007;Lianne Halfon, Mason Novick, and Russell Smith;Nominee;2007;96;Comedy,Drama;Comedy;Drama;7.4;502,296;PG-13;Jason Reitman;2007-12-05;Fox Searchlight;94.0;216.0;88.0;549481.0
+458;Michael Clayton;2007;Jennifer Fox, Kerry Orent, and Sydney Pollack;Nominee;2007;119;Crime,Drama,Mystery;Crime;Drama;7.2;160,164;R;Tony Gilroy;2007-10-12;Warner Bros. Pictures;91.0;203.0;69.0;299971.0
+459;There Will Be Blood;2007;Paul Thomas Anderson, Daniel Lupi, and JoAnne Sellar;Nominee;2007;158;Drama;Drama;None;8.2;542,278;R;Paul Thomas Anderson;2007-12-26;Paramount Vantage;92.0;236.0;86.0;255192.0
+460;Slumdog Millionaire;2008;Christian Colson;Winner;2008;120;Drama,Romance;Drama;Romance;8.0;816,485;R;Danny Boyle;2008-08-30;Fox Searchlight Pictures;91.0;288.0;90.0;1155769.0
+461;The Curious Case of Benjamin Button;2008;Kathleen Kennedy, Frank Marshall, and Ceán Chaffin;Nominee;2008;166;Drama,Fantasy,Romance;Drama;Fantasy;7.8;611,518;PG-13;David Fincher;2008-12-25;Paramount;72.0;254.0;80.0;690720.0
+462;Frost/Nixon;2008;Ron Howard, Brian Grazer, and Eric Fellner;Nominee;2008;122;Biography,Drama,History;Biography;Drama;7.7;105,602;R;Ron Howard;2008-12-05;Universal Pictures;93.0;256.0;88.0;109836.0
+463;Milk;2008;Bruce Cohen and Dan Jinks;Nominee;2008;128;Biography,Drama;Biography;Drama;7.5;168,756;R;Gus Van Sant;2008-11-26;Focus Features;93.0;244.0;89.0;178019.0
+464;The Reader;2008;Anthony Minghella, Sydney Pollack, Donna Gigliotti, and Redmond Morris;Nominee;2008;124;Drama,Romance;Drama;Romance;7.6;235,605;R;Stephen Daldry;2008-12-10;The Weinstein Co./MGM;63.0;202.0;79.0;206910.0
+465;The Hurt Locker;2009;Kathryn Bigelow, Mark Boal, Nicolas Chartier, and Greg Shapiro;Winner;2008;131;Drama,Thriller,War;Drama;Thriller;7.5;433,326;;;;;;;;
+466;Avatar;2009;James Cameron and Jon Landau;Nominee;2009;162;Action,Adventure,Fantasy;Action;Adventure;7.8;1,153,124;PG-13;James Cameron;2009-12-18;20th Century Fox;82.0;317.0;82.0;1382566.0
+467;The Blind Side;2009;Gil Netter, Andrew A. Kosove, and Broderick Johnson;Nominee;2009;129;Biography,Drama,Sport;Biography;Drama;7.6;305,982;PG-13;John Lee Hancock;2009-11-20;Warner Bros. Pictures;66.0;204.0;85.0;431835.0
+468;District 9;2009;Peter Jackson and Carolynne Cunningham;Nominee;2009;112;Action,Sci-Fi,Thriller;Action;Sci-Fi;7.9;653,215;R;Neill Blomkamp;2009-08-14;Sony Pictures/Screen Gems;90.0;312.0;82.0;1178535.0
+469;An Education;2009;Finola Dwyer and Amanda Posey;Nominee;2009;100;Drama;Drama;None;7.3;131,326;PG-13;Lone Scherfig;2009-10-09;Sony Classics;94.0;195.0;80.0;54962.0
+470;Inglourious Basterds;2009;Lawrence Bender;Nominee;2009;153;Adventure,Drama,War;Adventure;Drama;8.3;1,326,791;R;Quentin Tarantino;2009-08-21;The Weinstein Company;89.0;329.0;88.0;775878.0
+471;Precious: Based on the Novel 'Push' by Sapphire;2009;Lee Daniels, Sarah Siegel-Magness, and Gary Magness;Nominee;2009;110;Drama;Drama;None;7.3;107,998;;;;;;;;
+472;A Serious Man;2009;Joel Coen and Ethan Coen;Nominee;2009;106;Comedy,Drama;Comedy;Drama;7.1;137,770;R;Roger Deakins, Joel Coen, Ethan Coen;2009-10-02;Focus Features;90.0;223.0;68.0;63118.0
+473;Up;2009;Jonas Rivera;Nominee;2009;96;Animation,Adventure,Comedy;Animation;Adventure;8.2;971,845;PG;Linn Patrick, Pete Docter, Bob Peterson, Peter Docter;2009-05-29;Walt Disney Pictures;98.0;296.0;90.0;1204027.0
+474;Up in the Air;2009;Daniel Dubiecki, Ivan Reitman, and Jason Reitman;Nominee;2009;109;Comedy,Drama,Romance;Comedy;Drama;7.4;325,743;R;Jason Reitman;2009-12-04;Paramount Pictures;91.0;285.0;79.0;228473.0
+475;The King's Speech;2010;Iain Canning, Emile Sherman, and Gareth Unwin;Winner;2010;118;Biography,Drama,History;Biography;Drama;8.0;655,187;PG-13;Tom Hooper;2010-11-26;The Weinstein Company;94.0;296.0;92.0;144575.0
+476;127 Hours;2010;Danny Boyle, John Smithson, and Christian Colson;Nominee;2010;94;Biography,Drama;Biography;Drama;7.5;359,243;R;Danny Boyle;2010-11-05;Fox Searchlight;93.0;235.0;85.0;95883.0
+477;Black Swan;2010;Scott Franklin, Mike Medavoy, and Brian Oliver;Nominee;2010;108;Drama,Thriller;Drama;Thriller;8.0;721,688;R;Darren Aronofsky;2010-12-03;Fox Searchlight;85.0;309.0;84.0;178032.0
+478;The Fighter;2010;David Hoberman, Todd Lieberman, and Mark Wahlberg;Nominee;2010;116;Biography,Drama,Sport;Biography;Drama;7.8;350,469;R;David O. Russell;2010-12-10;Paramount Pictures;90.0;250.0;89.0;121498.0
+479;Inception;2010;Christopher Nolan and Emma Thomas;Nominee;2010;148;Action,Adventure,Sci-Fi;Action;Adventure;8.8;2,160,498;PG-13;Christopher Nolan;2010-07-16;Warner Bros. Pictures;87.0;357.0;91.0;571078.0
+480;The Kids Are All Right;2010;Gary Gilbert, Jeffrey Levy-Hinte, and Celine Rattray;Nominee;2010;106;Comedy,Drama,Romance;Comedy;Drama;7.0;127,959;R;Lisa Cholodenko;2010-07-09;Focus Features;92.0;224.0;74.0;63588.0
+481;The Social Network;2010;Dana Brunetti, Ceán Chaffin, Michael De Luca, and Scott Rudin;Nominee;2010;120;Biography,Drama;Biography;Drama;7.7;651,516;PG-13;David Fincher;2010-10-01;Columbia Pictures;96.0;321.0;86.0;204126.0
+482;Toy Story 3;2010;Darla K. Anderson;Nominee;2010;103;Animation,Adventure,Comedy;Animation;Adventure;8.2;783,665;G;Lee Unkrich;2010-06-18;Walt Disney Pictures;98.0;307.0;89.0;607537.0
+483;True Grit;2010;Joel Coen, Ethan Coen, and Scott Rudin;Nominee;2010;110;Drama,Western;Drama;Western;7.6;322,030;PG-13;Joel Coen, Ethan Coen;2010-12-22;Paramount Pictures;96.0;272.0;85.0;158268.0
+484;Winter's Bone;2010;Alix Madigan and Anne Rosellini;Nominee;2010;100;Drama,Mystery;Drama;Mystery;7.2;138,998;R;Debra Granik;2010-06-11;Roadside Attractions;94.0;174.0;76.0;51756.0
+485;The Artist;2011;Thomas Langmann;Winner;2011;100;Comedy,Drama,Romance;Comedy;Drama;7.9;235,457;PG-13;Michel Hazanavicius;2011-11-25;The Weinstein Company;95.0;317.0;87.0;58629.0
+486;The Descendants;2011;Jim Burke, Alexander Payne, and Jim Taylor;Nominee;2011;115;Comedy,Drama;Comedy;Drama;7.3;236,381;R;Alexander Payne;2011-11-18;Fox Searchlight Pictures;88.0;265.0;79.0;69968.0
+487;Extremely Loud & Incredibly Close;2011;Scott Rudin;Nominee;2011;129;Adventure,Drama,Mystery;Adventure;Drama;6.9;99,514;;;;;;;;
+488;The Help;2011;Brunson Green, Chris Columbus, and Michael Barnathan;Nominee;2011;146;Drama;Drama;None;8.0;438,666;PG-13;Tate Taylor;2011-08-10;DreamWorks Studios;76.0;227.0;89.0;107868.0
+489;Hugo;2011;Graham King and Martin Scorsese;Nominee;2011;126;Drama,Family,Fantasy;Drama;Family;7.5;312,181;PG;Martin Scorsese;2011-11-23;Paramount Studios;93.0;227.0;78.0;82865.0
+490;Midnight in Paris;2011;Letty Aronson and Stephen Tenenbaum;Nominee;2011;94;Comedy,Fantasy,Romance;Comedy;Fantasy;7.7;401,524;PG-13;Woody Allen;2011-06-10;Sony Pictures Classics;93.0;224.0;83.0;82553.0
+491;Moneyball;2011;Michael De Luca, Rachael Horovitz, and Brad Pitt;Nominee;2011;133;Biography,Drama,Sport;Biography;Drama;7.6;389,329;PG-13;Bennett Miller;2011-09-23;Sony Pictures;94.0;266.0;86.0;91772.0
+492;The Tree of Life;2011;Sarah Green, Bill Pohlad, Dede Gardner, and Grant Hill;Nominee;2011;139;Drama,Fantasy;Drama;Fantasy;6.8;171,734;PG-13;Terrence Malick;2011-05-27;Fox Searchlight;85.0;286.0;60.0;60899.0
+493;War Horse;2011;Steven Spielberg and Kathleen Kennedy;Nominee;2011;146;Action,Adventure,Drama;Action;Adventure;7.2;151,533;PG-13;Steven Spielberg;2011-12-25;Walt Disney Pictures;75.0;237.0;74.0;69714.0
+494;Argo;2012;Grant Heslov, Ben Affleck, and George Clooney;Winner;2012;120;Biography,Drama,Thriller;Biography;Drama;7.7;588,984;R;Ben Affleck;2012-10-12;Warner Bros. Pictures;96.0;356.0;90.0;208711.0
+495;Amour;2012;Margaret Menegoz, Stefan Arndt, Veit Heiduschka, and Michael Katz;Nominee;2012;127;Drama;Drama;None;7.9;96,258;PG-13;Michael Haneke, Michaelhaneke;2012-12-19;Sony Pictures Classics;93.0;223.0;82.0;20897.0
+496;Beasts of the Southern Wild;2012;Dan Janvey, Josh Penn, and Michael Gottwald;Nominee;2012;93;Adventure,Drama,Fantasy;Adventure;Drama;7.3;82,051;PG-13;Benh Zeitlin;2012-06-27;Fox Searchlight;87.0;204.0;76.0;39335.0
+497;Django Unchained;2012;Stacey Sher, Reginald Hudlin, and Pilar Savone;Nominee;2012;165;Drama,Western;Drama;Western;8.4;1,420,092;R;Quentin Tarantino;2012-12-25;The Weinstein Co.;87.0;288.0;91.0;429231.0
+498;Life of Pi;2012;Gil Netter, Ang Lee, and David Womark;Nominee;2012;127;Adventure,Drama,Fantasy;Adventure;Drama;7.9;598,436;PG;Ang Lee;2012-11-21;20th Century Fox;87.0;251.0;84.0;169196.0
+499;Lincoln;2012;Steven Spielberg and Kathleen Kennedy;Nominee;2011;118;Crime,Drama,Mystery;Crime;Drama;7.3;223,752;;;;;;;;
+500;Les Misérables;2012;Tim Bevan, Eric Fellner, Debra Hayward, and Cameron Mackintosh;Nominee;2012;158;Drama,History,Musical;Drama;History;7.6;317,030;PG-13;Tom Hooper;2012-12-25;Universal Pictures;69.0;255.0;79.0;265259.0
+501;Silver Linings Playbook;2012;Donna Gigliotti, Bruce Cohen, and Jonathan Gordon;Nominee;2012;122;Comedy,Drama,Romance;Comedy;Drama;7.7;679,022;R;David O. Russell;2012-11-21;The Weinstein Company;92.0;256.0;86.0;260499.0
+502;Zero Dark Thirty;2012;Mark Boal, Kathryn Bigelow, and Megan Ellison;Nominee;2012;157;Drama,History,Thriller;Drama;History;7.4;283,119;;;;;;;;
+503;12 Years a Slave;2013;Brad Pitt, Dede Gardner, Jeremy Kleiner, Steve McQueen, and Anthony Katagas;Winner;2013;134;Biography,Drama,History;Biography;Drama;8.1;662,741;R;Steve McQueen (III);2013-10-18;Fox Searchlight;95.0;365.0;90.0;140313.0
+504;American Hustle;2013;Charles Roven, Richard Suckle, Megan Ellison, and Jonathan Gordon;Nominee;2013;138;Crime,Drama;Crime;Drama;7.2;460,918;R;David O. Russell;2013-12-20;Sony Pictures;92.0;289.0;74.0;175937.0
+505;Captain Phillips;2013;Scott Rudin, Dana Brunetti, and Michael De Luca;Nominee;2013;134;Adventure,Biography,Crime;Adventure;Biography;7.8;436,364;PG-13;Paul Greengrass;2013-10-11;Sony Pictures;93.0;274.0;89.0;152496.0
+506;Dallas Buyers Club;2013;Robbie Brenner and Rachel Winter;Nominee;2013;117;Biography,Drama;Biography;Drama;8.0;459,404;R;Jean-Marc Vallée;2013-11-01;Focus Features;93.0;257.0;91.0;92788.0
+507;Gravity;2013;Alfonso Cuarón and David Heyman;Nominee;2013;91;Drama,Sci-Fi,Thriller;Drama;Sci-Fi;7.7;789,470;PG-13;Alfonso Cuarón;2013-10-04;Warner Bros. Pictures;96.0;354.0;80.0;303162.0
+508;Her;2013;Megan Ellison, Spike Jonze, and Vincent Landay;Nominee;2013;126;Drama,Romance,Sci-Fi;Drama;Romance;8.0;565,149;R;Spike Jonze;2013-12-18;Warner Bros. Pictures;95.0;278.0;82.0;101535.0
+509;Nebraska;2013;Albert Berger and Ron Yerxa;Nominee;2013;115;Adventure,Comedy,Drama;Adventure;Drama;7.7;115,031;R;Alexander Payne;2013-11-15;Paramount Pictures;91.0;247.0;83.0;44798.0
+510;Philomena;2013;Gabrielle Tana, Steve Coogan, and Tracey Seaward;Nominee;2013;98;Biography,Comedy,Drama;Biography;Drama;7.6;96,771;PG-13;Stephen Frears;2013-11-22;The Weinstein Company;90.0;198.0;89.0;52399.0
+511;The Wolf of Wall Street;2013;Martin Scorsese, Leonardo DiCaprio, Joey McFarland, and Emma Tillinger Koskoff;Nominee;2013;180;Biography,Crime,Drama;Biography;Crime;8.2;1,257,166;R;Martin Scorsese;2013-12-25;Paramount Studios;80.0;284.0;83.0;180827.0
+512;Birdman or (The Unexpected Virtue of Ignorance);2014;Alejandro G. Iñárritu, John Lesher, and James W. Skotchdopole;Winner;2014;119;Comedy,Drama;Comedy;Drama;7.7;599,240;R;Alejandro G. Iñárritu;2015-01-16;New Regency, M Prods, Le Grisbi;91.0;360.0;78.0;50000
+513;American Sniper;2014;Clint Eastwood, Andrew Lazar, Robert Lorenz, Bradley Cooper, and Peter Morgan;Nominee;2014;133;Action,Biography,Drama;Action;Biography;7.3;455,885;R;Clint Eastwood;2015-01-16;Village Roadshow Pictures, 22nd & Indiana Pictures, Mad Chance, RatPac-Dune Entertainment;72.0;279.0;84.0;100000
+514;Boyhood;2014;Richard Linklater and Cathleen Sutherland;Nominee;2014;165;Drama;Drama;None;7.9;343,822;R;Richard Linklater;2014-07-11;IFC Films;97.0;321.0;81.0;89725.0
+515;The Grand Budapest Hotel;2014;Wes Anderson, Scott Rudin, Steven M. Rales, and Jeremy Dawson;Nominee;2014;99;Adventure,Comedy,Crime;Adventure;Comedy;8.1;741,950;R;Wes Anderson;2014-03-07;Fox Searchlight;91.0;305.0;86.0;97547.0
+516;The Imitation Game;2014;Nora Grossman, Ido Ostrowsky, and Teddy Schwarzman;Nominee;2014;114;Biography,Drama,Thriller;Biography;Drama;8.0;714,452;PG-13;Morten Tyldum;2014-11-28;The Weinstein Company;89.0;281.0;91.0;103920.0
+517;Selma;2014;Christian Colson, Oprah Winfrey, Dede Gardner, and Jeremy Kleiner;Nominee;2014;128;Biography,Drama,History;Biography;Drama;7.5;89,059;PG-13;Ava DuVernay;2014-12-25;Paramount Pictures;99.0;308.0;86.0;61482.0
+518;The Theory of Everything;2014;Tim Bevan, Eric Fellner, Lisa Bruce, and Anthony McCarten;Nominee;2014;123;Biography,Drama,Romance;Biography;Drama;7.7;421,764;PG-13;James Marsh;2014-11-07;Focus Features;80.0;270.0;84.0;75918.0
+519;Whiplash;2014;Jason Blum, Helen Estabrook, and David Lancaster;Nominee;2014;106;Drama,Music;Drama;Musical;8.5;758,911;R;Damien Chazelle;2014-10-10;Sony Pictures Classics;94.0;296.0;94.0;70212.0
+520;Spotlight;2015;Blye Pagon Faust, Steve Golin, Nicole Rocklin, and Michael Sugar;Winner;2015;129;Biography,Crime,Drama;Biography;Crime;8.1;440,413;R;Tom McCarthy;2015-11-06;Open Road Films;97.0;367.0;93.0;70385.0
+521;The Big Short;2015;Dede Gardner, Jeremy Kleiner, and Brad Pitt;Nominee;2015;130;Biography,Comedy,Drama;Biography;Drama;7.8;387,192;R;Adam McKay;2015-12-23;Paramount Pictures;88.0;322.0;88.0;69098.0
+522;Bridge of Spies;2015;Steven Spielberg, Marc Platt, and Kristie Macosko Krieger;Nominee;2015;142;Drama,History,Thriller;Drama;History;7.6;298,091;PG-13;Steven Spielberg;2015-10-16;Dreamworks Pictures;90.0;307.0;87.0;65466.0
+523;Brooklyn;2015;Finola Dwyer and Amanda Posey;Nominee;2015;117;Drama,Romance;Drama;Romance;7.5;135,972;PG-13;John Crowley;2015-11-04;Fox Searchlight Pictures;97.0;269.0;87.0;46857.0
+524;Mad Max: Fury Road;2015;Doug Mitchell and George Miller;Nominee;2015;120;Action,Adventure,Sci-Fi;Action;Adventure;8.1;922,840;R;George Miller;2015-05-15;Warner Bros.;97.0;422.0;85.0;128344.0
+525;The Martian;2015;Simon Kinberg, Ridley Scott, Michael Schaefer, and Mark Huffam;Nominee;2015;144;Adventure,Drama,Sci-Fi;Adventure;Drama;8.0;791,919;PG-13;Ridley Scott;2015-10-02;20th Century Fox;91.0;374.0;91.0;131656.0
+526;The Revenant;2015;Arnon Milchan, Steve Golin, Alejandro G. Iñárritu, Mary Parent, and Keith Redmon;Nominee;2015;156;Action,Adventure,Drama;Action;Adventure;8.0;738,208;R;Alejandro González Iñárritu, Manny Palo;2015-12-25;20th Century Fox;78.0;397.0;84.0;105270.0
+527;Room;2015;Ed Guiney;Nominee;2015;118;Drama,Thriller;Drama;Thriller;8.1;391,182;R;Lenny Abrahamson;2015-10-16;Element Pictures;93.0;312.0;93.0;49668.0
+528;Moonlight;2016;Adele Romanski, Dede Gardner, and Jeremy Kleiner;Winner;2016;111;Drama;Drama;None;7.4;287,563;R;Barry Jenkins (III);2016-10-21;A24 Films;98.0;384.0;79.0;45533.0
+529;Arrival;2016;Shawn Levy, Dan Levine, Aaron Ryder, and David Linde;Nominee;2016;116;Drama,Sci-Fi;Drama;Sci-Fi;7.9;629,568;PG-13;Denis Villeneuve;2016-11-11;21 Laps Entertainment;94.0;426.0;82.0;83315.0
+530;Fences;2016;Scott Rudin, Denzel Washington, and Todd Black;Nominee;2016;139;Drama;Drama;None;7.2;102,639;PG-13;Denzel Washington;2016-12-25;Paramount Pictures;92.0;265.0;75.0;36228.0
+531;Hacksaw Ridge;2016;Bill Mechanic and David Permut;Nominee;2016;139;Biography,Drama,History;Biography;Drama;8.1;464,504;R;Mel Gibson;2016-11-04;Summit Entertainment;84.0;277.0;91.0;55594.0
+532;Hell or High Water;2016;Carla Hacken and Julie Yorn;Nominee;2016;102;Action,Crime,Drama;Action;Crime;7.6;213,325;R;David Mackenzie;2016-08-12;Film 44;97.0;280.0;88.0;40088.0
+533;Hidden Figures;2016;Donna Gigliotti, Peter Chernin, Jenno Topping, Pharrell Williams, and Theodore Melfi;Nominee;2016;127;Biography,Drama,History;Biography;Drama;7.8;211,233;PG;Theodore Melfi;2017-01-06;Fox 2000 Pictures, Chernin Entertainment, Levantine Films;93.0;320.0;91.0;50000
+534;La La Land;2016;Fred Berger, Jordan Horowitz, and Marc Platt;Nominee;2016;128;Comedy,Drama,Music;Comedy;Drama;8.0;534,405;PG-13;Damien Chazelle;2016-12-09;Liongate Films;91.0;458.0;81.0;71314.0
+535;Lion;2016;Emile Sherman, Iain Canning, and Angie Fielder;Nominee;2016;118;Biography,Drama;Biography;Drama;8.0;223,804;PG-13;Garth Davis;2016-11-25;See-Saw Films;84.0;264.0;91.0;39787.0
+536;Manchester by the Sea;2016;Matt Damon, Kimberly Steward, Chris Moore, Lauren Beck, and Kevin J. Walsh;Nominee;2016;137;Drama;Drama;None;7.8;260,159;R;Kenneth Lonergan;2016-12-16;Roadside Attractions ;96.0;347.0;78.0;50194.0
+537;The Shape of Water;2017;Guillermo del Toro and J. Miles Dale;Winner;2017;123;Adventure,Drama,Fantasy;Adventure;Drama;7.3;391,523;R;Guillermo del Toro;2017-12-22;Fox Searchlight Pictures;92.0;448.0;72.0;25784.0
+538;Call Me by Your Name;2017;Peter Spears, Luca Guadagnino, Emilie Georges, and Marco Morabito;Nominee;2017;132;Drama,Romance;Drama;Romance;7.9;234,177;R;Luca Guadagnino;2017-11-24;Frenesy Film Company, La Cinématografica, M.Y.R.A. Entertainment, RT Features;94.0;417.0;86.0;10000
+539;Darkest Hour;2017;Tim Bevan, Eric Fellner, Lisa Bruce, Anthony McCarten, and Douglas Urbanski;Nominee;2017;125;Biography,Drama,History;Biography;Drama;7.4;184,502;PG-13;Joe Wright;2017-12-22;Focus Features;84.0;312.0;82.0;14004.0
+540;Dunkirk;2017;Emma Thomas and Christopher Nolan;Nominee;2017;106;Action,Drama,History;Action;Drama;7.8;591,901;PG-13;Christopher Nolan;2017-07-21;Warner Bros. Pictures;92.0;453.0;81.0;68676.0
+541;Get Out;2017;Sean McKittrick, Jason Blum, Edward H. Hamm Jr., and Jordan Peele;Nominee;2017;104;Horror,Mystery,Thriller;Horror;Mystery;7.7;526,587;R;Jordan Peele;2017-02-24;Universal Pictures;98.0;386.0;86.0;75461.0
+542;Lady Bird;2017;Scott Rudin, Eli Bush, and Evelyn O'Neill;Nominee;2017;94;Comedy,Drama;Comedy;Drama;7.4;258,867;R;Greta Gerwig;2017-11-03;A24;99.0;391.0;79.0;22610.0
+543;Phantom Thread;2017;JoAnne Sellar, Paul Thomas Anderson, Megan Ellison, and Daniel Lupi;Nominee;2017;130;Drama,Romance;Drama;Romance;7.5;119,413;R;Paul Thomas Anderson;2018-01-19;Annapurna Pictures, Ghoulardi Film Company;91.0;419.0;70.0;10000
+544;The Post;2017;Amy Pascal, Steven Spielberg, and Kristie Macosko Krieger;Nominee;2017;116;Drama;Drama;None;7.2;142,630;PG-13;Steven Spielberg;2017-12-22;Amblin Entertainment, Participant;88.0;451.0;72.0;10000
+545;Three Billboards Outside Ebbing, Missouri;2017;Graham Broadbent, Pete Czernin, and Martin McDonagh;Nominee;2017;115;Comedy,Crime,Drama;Comedy;Drama;8.1;463,268;R;Martin McDonagh;2017-12-01;Fox Searchlight Pictures;90.0;405.0;87.0;22869.0
+546;Green Book;2018;Jim Burke, Charles B. Wessler, Brian Currie, Peter Farrelly, and Nick Vallelonga;Winner;2018;130;Biography,Comedy,Drama;Biography;Drama;8.2;422,669;PG-13;Peter Farrelly;2018-11-21;Universal Pictures;77.0;354.0;91.0;10093.0
+547;Black Panther;2018;Kevin Feige;Nominee;2018;134;Action,Adventure,Sci-Fi;Action;Adventure;7.3;671,956;PG-13;Ryan Coogler;2018-02-16;Marvel Studios;96.0;512.0;79.0;88211.0
+548;BlacKkKlansman;2018;Sean McKittrick, Jason Blum, Raymond Mansfield, Jordan Peele, and Spike Lee;Nominee;2018;135;Biography,Comedy,Crime;Biography;Comedy;7.5;240,028;R;Spike Lee;2018-08-10;Focus Features;96.0;436.0;83.0;11251.0
+549;Bohemian Rhapsody;2018;Graham King;Nominee;2018;134;Biography,Drama,Music;Biography;Drama;7.9;482,597;PG-13;Bryan Singer;2018-11-02;20th Century Fox;60.0;403.0;85.0;23296.0
+550;The Favourite;2018;Ceci Dempsey, Ed Guiney, Lee Magiday, and Yorgos Lanthimos;Nominee;2018;119;Biography,Comedy,Drama;Biography;Drama;7.5;183,744;R;Yorgos Lanthimos;2018-11-23;Fox Searchlight Pictures, Film4 and Waypoint;93.0;405.0;69.0;7189.0
+551;Roma;2018;Gabriela Rodríguez and Alfonso Cuarón;Nominee;2018;135;Drama;Drama;None;7.7;147,705;R;Alfonso Cuarón;2018-11-21;Netflix;96.0;387.0;72.0;5521.0
+552;A Star Is Born;2018;Bill Gerber, Bradley Cooper, and Lynette Howell Taylor;Nominee;2018;136;Drama,Music,Romance;Drama;Musical;7.6;354,157;R;Bradley Cooper;2018-10-05;Warner Bros. Pictures;90.0;517.0;79.0;20442.0
+553;Vice;2018;Dede Gardner, Jeremy Kleiner, Adam McKay, and Kevin Messick;Nominee;2018;132;Biography,Comdey,Drama;Biography;Comdey;7.2;132,014;R;Adam McKay;2018-12-25;Annapurna Pictures;65.0;359.0;60.0;5061.0
+554;Parasite;2019;Kwak Sin-ae and Bong Joon-ho;Winner;2019;132;Comedy,Drama,Thriller;Comedy;Drama;8.6;651,517;R;Bong Joon Ho;2019-10-11;Barunson E&A;99.0;485.0;90.0;5000.0
+555;1917;2019;Sam Mendes, Pippa Harris, Jayne-Ann Tenggren, and Callum McDougall;Nominee;2019;119;Action,Drama,War;Action;War;8.3;485,648;R;Sam Mendes;2020-01-10;DreamWorks Pictures, Neal Street Productions;88.0;475.0;88.0;25000.0
+556;Ford v Ferrari;2019;Peter Chernin, Jenno Topping, and James Mangold;Nominee;2019;152;Action,Biography,Drama;Action;Biography;8.1;331,665;PG-13;James Mangold;2019-11-15;20th Century Fox, Chernin Entertainment;92.0;364.0;98.0;10000.0
+557;The Irishman;2019;Martin Scorsese, Robert De Niro, Jane Rosenthal, and Emma Tillinger Koskoff;Nominee;2019;209;Biography,Crime,Drama;Biography;Crime;7.8;349,303;R;Martin Scorsese;2019-11-01;Netflix;95.0;468.0;86.0;1000.0
+558;Jojo Rabbit;2019;Carthew Neal, Taika Waititi, and Chelsea Winstanley;Nominee;2019;108;Comedy,Drama,War;Comedy;Drama;7.9;335,856;PG-13;Taika Waititi;2019-11-08;Unison Films;81.0;431.0;94.0;5000.0
+559;Joker;2019;Todd Phillips, Bradley Cooper, and Emma Tillinger Koskoff;Nominee;2019;122;Crime,Drama,Thriller;Crime;Drama;8.4;1,056,051;R;Todd Phillips;2019-10-04;Warner Bros. Pictures;68.0;598.0;89.0;50000.0
+560;Little Women;2019;Amy Pascal;Nominee;2019;135;Drama,Romance;Drama;Romance;7.8;163,410;PG;Greta Gerwig;2019-12-25;Columbia Pictures, Pascal Pictures, New Regency Pictures;95.0;441.0;92.0;10000.0
+561;Marriage Story;2019;Noah Baumbach and David Heyman;Nominee;2019;137;Comedy,Drama,Romance;Comedy;Drama;7.9;270,304;R;Noah Baumbach;2019-11-06;Netflix;95.0;408.0;85.0;100.0
+562;Once Upon a Time in Hollywood;2019;David Heyman, Shannon McIntosh, and Quentin Tarantino;Nominee;2019;161;Comedy,Drama;Comedy;Drama;7.6;628,233;R;Quentin Tarantino;2019-07-26;Heyday Films, Bona Film Group, Columbia Pictures;86.0;581.0;70.0;25000.0
+563;Nomadland;2020;Frances McDormand, Peter Spears, Mollye Asher, Dan Janvey, and Chloé Zhao;Winner;2020;107;Drama;Drama;None;7.4;123,041;R;Chloé Zhao;2021-02-19;Highwayman Films, Cor Cordium Productions, Hear/Say Productions;93.0;440.0;82.0;500.0
+564;The Father;2020;David Parfitt, Jean-Louis Livi, and Philippe Carcassonne;Nominee;2020;97;Drama;Drama;None;8.3;89,693;PG-13;Florian Zeller;2021-02-26;Cine@, Film4, F Comme Film, Trademark Films, Les films du cru;98.0;299.0;88.0;250.0
+565;Judas and the Black Messiah;2020;Shaka King, Charles D. King, and Ryan Coogler;Nominee;2021;126;Biography,Drama,History;Biography;Drama;7.5;58,996;R;Shaka King;2021-02-12;Participant Media, MACRO, BRON Studios;96.0;358.0;95.0;500.0
+566;Mank;2020;Ceán Chaffin, Eric Roth, and Douglas Urbanski;Nominee;2020;131;Biography,Comedy,Drama;Biography;Drama;6.9;65,380;R;David Fincher;2020-11-13;Netflix;83.0;355.0;63.0;1000.0
+567;Minari;2020;Christina Oh;Nominee;2020;115;Drama;Drama;None;7.5;57,976;PG-13;Lee Isaac Chung;2021-02-12;Plan B Entertainment;98.0;325.0;92.0;250.0
+568;Promising Young Woman;2020;Ben Browning, Ashley Fox, Emerald Fennell, and Josey McNamara;Nominee;2020;113;Crime,Drama,Thriller;Crime;Drama;7.5;122,269;R;Emerald Fennell;2020-12-25;LuckyChap Entertainment, FilmNation Entertainment;90.0;429.0;87.0;500.0
+569;Sound of Metal;2020;Bert Hamelinck and Sacha Ben Harroche;Nominee;2019;120;Drama,Music;Drama;Musical;7.8;102,807;R;Darius Marder;2020-11-20;Caviar;97.0;287.0;90.0;2500.0
+570;The Trial of the Chicago 7;2020;Marc Platt and Stuart M. Besser;Nominee;2020;129;Drama,History,Thriller;Drama;History;7.8;156,283;R;Aaron Sorkin;2020-09-25;Cross Creek Pictures, DreamWorks Pictures;89.0;344.0;90.0;2500.0
