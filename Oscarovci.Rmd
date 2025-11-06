@@ -1,0 +1,60 @@
+---
+title: "Oscarovci"
+author: "Tim #1"
+date: "2025-11-06"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    fig_height: 3.5
+  html_document:
+    toc: true
+    toc_depth: '2'
+    df_print: paged
+  word_document:
+    toc: true
+    toc_depth: '2'
+geometry: margin=2.5cm
+documentclass: article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage
+
+# Opis skupa podataka
+
+Skup podataka koji analiziramo u projektu sadrži 571 odgovor/redak.
+
+```{r}
+#Prikaz varijabli u skupu podataka i njihovog podatkovnog tipa
+
+data = read.csv("oscars_dataset.csv")
+var_types <- sapply(data, class)
+cat(paste(names(var_types), ": ", var_types, sep = "", collapse = "\n"))
+```
+Unnamed..0: integer
+Film: character
+Oscar.Year: character
+Film.Studio.Producer.s.: character
+Award: character
+Year.of.Release: integer
+Movie.Time: integer
+Movie.Genre: character
+Main.Genre: character
+Subgenre: character
+IMDB.Rating: numeric
+IMDB.Votes: character
+Content.Rating: character
+Directors: character
+Original.Release.Date: character
+Production.Company: character
+Tomatometer.Rating: numeric
+Tomatometer.Count: numeric
+Audience.Rating: numeric
+Audience.Count: numeric
+
