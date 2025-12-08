@@ -58,3 +58,5 @@ Tomatometer.Count: numeric
 Audience.Rating: numeric
 Audience.Count: numeric
 
+# Analiza žanrova kod pobjednika
+
