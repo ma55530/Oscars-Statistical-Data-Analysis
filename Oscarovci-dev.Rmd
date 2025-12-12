@@ -1,0 +1,25 @@
+---
+title: "Oscarovci - dev"
+author: "36557629 Damjan Crnković"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(readr)
+library(stringr)
+library(hflights)
+library(tidyr)
+library(lubridate)
+library(tidyverse)
+library(tinytex)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+
+```
+
+

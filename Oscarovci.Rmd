@@ -21,6 +21,14 @@ documentclass: article
 ---
 
 ```{r setup, include=FALSE}
+library(dplyr)
+library(readr)
+library(stringr)
+library(hflights)
+library(tidyr)
+library(lubridate)
+library(tidyverse)
+library(tinytex)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -33,30 +41,12 @@ Skup podataka koji analiziramo u projektu sadrži 571 odgovor/redak.
 ```{r}
 #Prikaz varijabli u skupu podataka i njihovog podatkovnog tipa
 
-data = read.csv("oscars_dataset.csv")
+data = read_csv2("oscars_dataset.csv")
+glimpse(data)
 var_types <- sapply(data, class)
 cat(paste(names(var_types), ": ", var_types, sep = "", collapse = "\n"))
 ```
-Unnamed..0: integer
-Film: character
-Oscar.Year: character
-Film.Studio.Producer.s.: character
-Award: character
-Year.of.Release: integer
-Movie.Time: integer
-Movie.Genre: character
-Main.Genre: character
-Subgenre: character
-IMDB.Rating: numeric
-IMDB.Votes: character
-Content.Rating: character
-Directors: character
-Original.Release.Date: character
-Production.Company: character
-Tomatometer.Rating: numeric
-Tomatometer.Count: numeric
-Audience.Rating: numeric
-Audience.Count: numeric
+
 
 # Analiza žanrova kod pobjednika
 
