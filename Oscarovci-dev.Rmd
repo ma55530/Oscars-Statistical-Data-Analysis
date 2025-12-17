@@ -19,7 +19,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
+data = read_csv2("oscars_dataset.csv")
+# glimpse(data)
+types <- sapply(data, class)
+cat(paste(names(types), ": ", var_types, sep = "", collapse = "\n"))
 
 ```
+# Analiza žanrova kod pobjednika
+```{r}
+
+```
+
+
+# Analiza ...
+```{r}
+
+```
+
+
+# Analiza ocjene filmova obzirom na njihovu starost  (Damjan)
+```{r}
+data = read_csv2("oscars_dataset.csv")
+data
+```
+
 
 
