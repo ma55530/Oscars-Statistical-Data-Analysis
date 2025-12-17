@@ -48,9 +48,20 @@ chisq$stdres
 # Fisher Exact Test (za provjeru)
 fisher.test(contingency, simulate.p.value = TRUE, B = 1e6)
 
-df_melt <- melt(df[, c("Genre", "Winners", "NotWinner")], id.vars = "Genre")
-colnames(df_melt) <- c("Genre", "Outcome", "Count")
+# ---------------------------------------------------------
+# Priprema podataka za ggplot (pivot_longer umjesto melt)
+# ---------------------------------------------------------
+library(tidyr)
+library(dplyr)
+library(ggplot2)
 
+df_melt <- df %>%
+  select(Genre, Winners, NotWinner) %>%
+  pivot_longer(cols = c(Winners, NotWinner),
+               names_to = "Outcome",
+               values_to = "Count")
+
+# Vizualizacija
 ggplot(df_melt, aes(x = Genre, y = Count, fill = Outcome)) +
   geom_bar(stat = "identity", position = "stack", color = "black") +
   scale_fill_manual(values = c("Winners" = "#1f78b4", "NotWinner" = "#a6cee3")) +
@@ -59,10 +70,9 @@ ggplot(df_melt, aes(x = Genre, y = Count, fill = Outcome)) +
        x = "Žanr", y = "Broj filmova", fill = "") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Pretvori kontingenciju u table
+# Mosaic plot
+library(vcd)
 cont_table <- as.table(as.matrix(contingency))
-
-# Mosaic plot sa shadingom prema standardiziranim rezidualima
 mosaic(
   cont_table,
   shade = TRUE,
@@ -71,6 +81,3 @@ mosaic(
   xlab = "Je li film pobjednik?",
   ylab = "Žanr"
 )
-
-
-
