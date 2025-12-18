@@ -1,0 +1,221 @@
+---
+title: "starost"
+author: "36557629 Damjan Crnković"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(readr)
+library(stringr)
+library(hflights)
+library(tidyr)
+library(lubridate)
+library(tidyverse)
+library(tinytex)
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Istraživačko pitanje: Ocjene filmova i njihova starost
+#### U ovom dijelu analiziramo kako se ocjene filmova mijenjaju s obzirom na godinu izlaska. Promatramo zasbeno ocjene publike (IMDb) i ocjene kritičara (Rotten Tomatoes).
+
+
+
+```{r}
+oscars <- read.csv2("oscars_dataset.csv")
+# glimpse(oscars)
+
+```
+
+#### U ovoj analizi istražujemo kako su filmovi nominirani za Oscara za najbolji film ocijenjeni s obzirom na godinu izlaska.
+  
+  
+#### Pretvorbe tipova, uređivanje dataseta
+```{r}
+oscars <- oscars %>%
+  mutate(
+    IMDB.Rating = as.numeric(IMDB.Rating),
+    IMDB.Votes = as.numeric(gsub(",", "", IMDB.Votes)),
+    Tomatometer.Rating = as.numeric(Tomatometer.Rating),
+    Audience.Rating = as.numeric(Audience.Rating),
+    Award = factor(Award, levels = c("Nominee", "Winner"))
+  )
+```
+  
+  
+Da bismo dobili uvid u to postoji li promjena u prosječnim ocjenama filmova kroz vrijeme, usporedit ćemo IMDb ocjene starijih i novijih filmova.
+  
+
+#### Side-to-side usporedba ocjena starijih i novijih filmova
+
+```{r}
+oscars <- oscars %>%
+  mutate(
+    Period = ifelse(Year.of.Release < 1990, "Stariji", "Noviji")
+  )
+
+ggplot(oscars, aes(x = Period, y = IMDB.Rating)) +
+  geom_boxplot() +
+  labs(
+    x = "Razdoblje",
+    y = "IMDb ocjena",
+    title = "IMDb ocjene starijih i novijih filmova"
+  )
+
+```
+ 
+ 
+Budući da želimo statistički provjeriti postoji li značajna razlika u IMDb ocjenama između starijih i novijih filmova, primijenit ćemo neparametarski Wilcoxonov rank-sum test.
+  
+  
+#### Wilcoxonov rank-sum test
+```{r}
+wilcox.test(
+  IMDB.Rating ~ Period,
+  data = oscars
+)
+```
+  
+Rezultati Wilcoxonovog testa pokazuju da je p-vrijednost vrlo mala (p < 0,001), što znači da postoji statistički značajna razlika u IMDb ocjenama između starijih i novijih filmova, pri čemu noviji filmovi imaju prosječno više ocjene.
+  
+  
+Pogledajmo sada kako se IMDb ocjene mijenjaju kroz godine izlaska filmova.
+  
+#### Graf: IMDb ocjena filmova kroz godine  
+
+```{r}
+ggplot(oscars, aes(x = Year.of.Release, y = IMDB.Rating)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Godina izlaska",
+    y = "IMDb ocjena",
+    title = "Odnos godine izlaska i IMDb ocjene"
+  )
+
+```
+  
+    
+S grafa je vidljivo da regresijski pravac ima blagi pozitivan nagib, što upućuje na to da IMDb ocjene filmova kroz vrijeme pokazuju tendenciju blagog porasta. Međutim, raspršenost podataka oko regresijske linije je velika, pa je vidljivo da je taj trend slab i da godina izlaska objašnjava samo mali dio varijabilnosti IMDb ocjena.  
+Kako bi provjerili je li ovaj porast ocjena s vremenom statistički značajan, izračunat ćemo Pearsonov koeficijent korelacije između godine izlaska i IMDb ocjena.
+
+#### Određivanje Pearsonovog koeficijenta korelacije (jačine i smjera linearne povezanosti)
+
+```{r}
+cor.test(
+  oscars$Year.of.Release,
+  oscars$IMDB.Rating,
+  use = "complete.obs"
+)
+
+```
+Pearsonov koeficijent korelacije između godine izlaska i IMDb ocjena iznosi 0,33, što indicira umjerenu pozitivnu linearnu povezanost. Budući da je p-vrijednost gotovo zanemariva, veza je statistički značajna. Međutim, iako trend pokazuje da noviji filmovi imaju blago više ocjene, godina izlaska objašnjava samo mali dio varijabilnosti ocjena.  
+Da bismo bolje razumjeli kako godina izlaska utječe na IMDb ocjene i mogli predviđati ocjene filmova, koristit ćemo linearnu regresiju s ocjenom kao zavisnom varijablom i godinom izlaska kao neovisnom.
+
+#### Linearna regresija - IMDb
+
+```{r}
+model <- lm(
+  IMDB.Rating ~ Year.of.Release,
+  data = oscars
+)
+
+summary(model)
+```
+  
+Linearni model pokazuje blagu pozitivnu povezanost između godine izlaska i IMDb ocjena. Svaka dodatna godina povećava očekivanu ocjenu za približno 0,006 rating bodova. Model je statistički značajan (p < 0,001), no godina izlaska objašnjava samo oko 1% varijabilnosti ocjena, što znači da iako postoji trend rasta ocjena s vremenom, on je relativno slab.   
+  
+Napravimo sada sličnu analizu gdje ćemo kao ocjenu uzeti ocjenu kritičara, odnosno Rotten Tomatoes rating.
+
+#### Rotten Tomatoes i starost filma
+```{r}
+ggplot(oscars, aes(x = Year.of.Release, y = Tomatometer.Rating)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Godina izlaska",
+    y = "Tomatometer ocjena",
+    title = "Odnos godine izlaska i RT ocjene"
+  )
+```
+
+
+Regresijski pravac u ovom slučaju ima još manji nagib, no još uvijek ima pozitivan koeficijent smjera. Raspršenost podataka ponovno je velika (ponovno slab trend), stoga izračunajmo i za ovaj set podataka Pearsonov koeficijent korelacije.
+
+```{r}
+cor.test(
+  oscars$Year.of.Release,
+  oscars$Tomatometer.Rating,
+  use = "complete.obs"
+)
+```
+  
+Pearsonov koeficijent korelacije između godine izlaska i ocjena kritičara (Tomatometer) iznosi 0,05, što ukazuje na vrlo slab trend. P-vrijednost je 0,283, što znači da veza nije statistički značajna. Drugim riječima, **ocjene kritičara ne pokazuju pouzdan trend rasta ili pada s vremenom**.
+  
+  
+#### Linearna regresija - Rotten Tomatoes
+
+```{r}
+model <- lm(Tomatometer.Rating ~ Year.of.Release, data = oscars)
+summary(model)
+```
+  
+  
+Linearni model pokazuje da postoji gotovo zanemariva pozitivna veza između godine izlaska i ocjena kritičara (nagib = 0,02), koja nije statistički značajna (p = 0,283) i objašnjava manje od 1% varijabilnosti ocjena.
+  
+  
+
+#### Broj IMDb glasova i starost filma
+
+```{r}
+ggplot(oscars, aes(x = Year.of.Release, y = IMDB.Votes)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Godina izlaska",
+    y = "broj IMDb glasova",
+    title = "Odnos godine izlaska i broja IMDb glasova"
+  )
+
+```
+
+#### Isti postupak, uz log(IMDB.Votes)
+
+```{r}
+ggplot(oscars, aes(x = Year.of.Release, y = log(IMDB.Votes))) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Godina izlaska",
+    y = "Log(broj IMDb glasova)",
+    title = "Odnos godine izlaska i broja IMDb glasova"
+  )
+```
+
+#### Korelacija glasova i godine izlaska filma
+```{r}
+cor.test(
+  oscars$Year.of.Release,
+  log(oscars$IMDB.Votes),
+  use = "complete.obs"
+)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

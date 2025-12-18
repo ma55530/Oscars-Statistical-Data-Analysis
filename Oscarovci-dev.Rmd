@@ -39,7 +39,7 @@ cat(paste(names(types), ": ", var_types, sep = "", collapse = "\n"))
 
 # Analiza ocjene filmova obzirom na njihovu starost  (Damjan)
 ```{r}
-data = read_csv2("oscars_dataset.csv")
+data <- read_csv2("oscars_dataset.csv")
 data
 ```
 
