@@ -24,12 +24,12 @@ ggplot(oscars, aes(x = votes, y = rating)) +
   scale_x_log10() + 
   labs(x = "Broj glasova na IMDb-u (log)", y = "Ocjena filma na IMDb-u")
 
-# Spearmanov test korelacije
+# Pearson test korelacije
 
 cor.test(
   oscars$rating,
   oscars$votes,
-  method = "spearman"
+  method = "pearson"
 )
 
 # p value je izrazito mali, odbacujemo hipotezu H0 (glasovi i ocjena nisu korelirane)
