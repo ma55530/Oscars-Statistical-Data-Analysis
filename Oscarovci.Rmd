@@ -33,6 +33,8 @@ library(vcd)
 
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(dev = "cairo_pdf")
+
+options(warn = -1)
 ```
 
 \newpage
@@ -56,21 +58,22 @@ cat(paste(names(var_types), ": ", var_types, sep = "", collapse = "\n"))
 
 ## Opis problema
 
-Cilj ove analize je ispitati postoji li povezanost između filmskih žanrova i vjerojatnosti osvajanja Oscara. Analizu provodimo na dva načina:
+Cilj ove analize je ispitati postoji li povezanost između filmskih žanrova i vjerojatnosti osvajanja Oscara. S obzirom na to da je teško svesti film na samo jedan žanr, analizu provodimo na dva načina:
 
-1. Single-label pristup – svakom filmu pridružujemo samo jedan glavni žanr (Main Genre).
+1. *Single-label pristup* – svakom filmu pridružujemo samo jedan glavni žanr (Main Genre).
 
-2. Multi-label pristup – film može pripadati više žanrova (Movie Genre), a svaki žanr ćemo zasebno brojati.
+2. *Multi-label pristup* – film može pripadati više žanrova (Movie Genre), a svaki žanr ćemo zasebno brojati.
 
 Na taj način možemo usporediti kako različiti modeli označavanja žanrova utječu na rezultate.
 
 
-## 1. Single-label analiza (Main Genre)
+## Single-label analiza
 
 
 ### Grupiranje žanrova i priprema podataka za analizu:
 
 Prvo nego što krenemo raditi bilo kakve statističke testove, moramo se upoznati s podacima.
+U datasetu se nalazi više stupaca koje sadrže kako su labelirani filmovi po z
 
 ```{r}
 data <- data %>%
@@ -200,7 +203,7 @@ row.names(kontigencijska) <- genre_table$Genre
 kontigencijska
 ```
 
-## 2. Multi-label analiza (Movie Genre)
+## Multi-label analiza 
 
 ### Priprema podataka 
 
@@ -298,9 +301,42 @@ ggplot(genre_table_ml, aes(x = SuccessRate, y = reorder(GenreGroup, SuccessRate)
 
 ### Grupiranje žanrova i priprema podataka za analizu:
 
-Hi-kvadrat test ima važan uvjet: očekivane frekvencije u svakoj ćeliji kontingencijske tablice trebaju biti veće od 5. Za žanrove s jako malim brojem filmova (npr. 1–2 pojave), očekivane frekvencije za te vrlo male. Kako bi statistički test bio valjan, grupirat ćemo manje zastupljene žanrove u kategoriju "Ostali" kako bismo osigurali da sve ćelije imaju dovoljne očekivane frekvencije.
+Kako bi ispitali nezavisnost dviju kategorijske varijable, odnosno kako bi ispitali jesu li žanrovi i pobjede zavisni, koristit ćemo hi-kvadrat test.
+Neka je kontigencijska tablica dimenzija \(r \times c\) sa:
 
-Prvo ćemo analizirati prvi pristup: **1. Single-label analiza**
+- \(O_{ij}\) = promatrana frekvencija u ćeliji \((i,j)\)  
+- \(E_{ij}\) = očekivana frekvencija ako su varijable neovisne  
+
+Očekivane frekvencije računamo
+\[
+E_{ij} = \frac{(\text{ukupno u redu } i) \cdot (\text{ukupno u stupcu } j)}{\text{ukupan broj promatranja}} 
+\]
+
+
+Hi-kvadrat statistika se provodi formulom: 
+\[
+\chi^2 = \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{(O_{ij} - E_{ij})^2}{E_{ij}}
+\]
+
+- Mala vrijednost \(\chi^2\) → promatrane frekvencije blizu očekivanih (neovisnost)  
+- Velika vrijednost \(\chi^2\) → značajna odstupanja (ovisnost)
+
+Stupnjevi slobode računamo: 
+\[df = (r-1)(c-1)\]
+
+Standardizirani reziduali za procjenu odstupanja pojedine ćelije, odnosno u ovome slučaju žanra:
+
+\[
+\text{StdRes}_{ij} = \frac{O_{ij} - E_{ij}}{\sqrt{E_{ij}}}
+\]
+
+- Pozitivni rezidual → više promatranih nego očekivanih  
+- Negativni rezidual → manje promatranih nego očekivanih  
+- Vrijednosti veće od ±2 obično se smatraju **statistički značajnim!**
+
+Važno je reći da hi-kvadrat test ima važan uvjet: očekivane frekvencije u svakoj ćeliji kontingencijske tablice trebaju biti veće od 5. Za žanrove s jako malim brojem filmova (npr. 1–2 pojave), očekivane frekvencije za te vrlo male. Kako bi statistički test bio valjan, grupirat ćemo manje zastupljene žanrove u kategoriju "Ostali" kako bismo osigurali da sve ćelije imaju dovoljne očekivane frekvencije.
+
+### Prvo ćemo analizirati prvi pristup: **Single-label analiza**
 
 ```{r}
 common_genres <- c("Action", "Adventure", "Biography", "Comedy", "Crime", "Drama")
@@ -344,15 +380,7 @@ Standardizirani reziduali koji pokazuju kako žanrovi odstupaju:
 chisq_single$stdres
 ```
 
-### Fisherov test:
-
-Za dodatnu potvrdu rezultata Hi-kvadrat testa, koristimo Fisherov test koji je prikladniji za manje uzorke ili kada su očekivane frekvencije niske.
-
-```{r}
-fisher.test(kontigencijska_single, simulate.p.value = TRUE, B = 1e6)
-```  
-
-Zatim pristupamo s **2. Multi-label analizom**: 
+### Zatim analiziramo **Multi-label analizu**: 
 
 ```{r}
 kontigencijska_multi <- genre_table_ml[, c("Winners", "NotWinner")]
@@ -369,15 +397,10 @@ chisq_multi$stdres
 ```
 Ovdje također vidimo da je $p-value > \alpha$, odnosno $0.1036 > 0.05$ te prihvaćamo H0.
 
-### Fisherov test 
-
-```{r}
-fisher.test(kontigencijska_multi, simulate.p.value = TRUE, B = 1e6)
-```
 
 ## Zaključak
 
-Na temelju rezultata Hi-kvadrat testa i Fisherovog testa oba pristupa, prihvaćamo H0 i možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada.
+Na temelju dobivenih rezultata Hi-kvadrat testa kod oba pristupa, prihvaćamo H0 i možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada, isto kao i pitanje zašto su neki žanrovi češće nominirani od ostalih.
 
 \newpage
 
@@ -675,3 +698,40 @@ cor.test(
 )
 
 ```
+
+# Možemo li pomoću dostupnih značajki pouzdano razlikovati pobjednike od ostalih?
+
+## Priprema podataka za logističku regresiju
+
+```{r}
+data <- read.csv("oscars_dataset.csv", sep=";")
+
+# Kreiranje binarnog ishoda (Winner = 1, Nominee = 0)
+data$IsWinner <- ifelse(data$Award == "Winner", 1, 0)
+
+# Čišćenje i pretvaranje varijabli
+data$Rating <- as.numeric(data$IMDB.Rating)
+data$Votes <- as.numeric(gsub(",", "", data$IMDB.Votes))
+data$Runtime <- as.numeric(data$Movie.Time)
+data$Year <- as.numeric(data$Year.of.Release)
+
+# Grupiranje rijetkih žanrova
+common_genres <- c("Action", "Adventure", "Biography", "Comedy", "Crime", "Drama")
+data$GenreGroup <- ifelse(data$Main.Genre %in% common_genres,
+                          data$Main.Genre,
+                          "Other")
+data$GenreGroup <- factor(data$GenreGroup, 
+                          levels = c("Drama", "Action", "Adventure", 
+                                     "Biography", "Comedy", "Crime", "Other"))
+
+# Uklanjanje redaka s nedostajućim podacima
+model_data <- data %>%
+  dplyr::select(IsWinner, Rating, Votes, Runtime, Year, GenreGroup) %>%
+  na.omit()
+
+cat("Broj filmova u analizi:", nrow(model_data), "\n")
+cat("Broj pobjednika:", sum(model_data$IsWinner), "\n")
+cat("Broj nominiranih (bez pobjede):", sum(model_data$IsWinner == 0), "\n")
+```
+
+# Eksplorativna analiza - usporedba pobjednika i nominiranih
