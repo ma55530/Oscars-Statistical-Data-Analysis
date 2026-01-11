@@ -400,7 +400,7 @@ Ovdje također vidimo da je $p-value > \alpha$, odnosno $0.1036 > 0.05$ te prihv
 
 ## Zaključak
 
-Na temelju dobivenih rezultata Hi-kvadrat testa kod oba pristupa, prihvaćamo H0 i možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada, isto kao i pitanje zašto su neki žanrovi češće nominirani od ostalih.
+Na temelju dobivenih rezultata Hi-kvadrat testa kod oba pristupa, prihvaćamo H0 i možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada, kao i pitanje zašto su neki žanrovi češće nominirani od ostalih.
 
 \newpage
 
