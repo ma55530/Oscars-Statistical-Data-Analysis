@@ -3,16 +3,16 @@ title: "Oscarovci"
 author: "Tim #1"
 date: "2025-11-06"
 output:
-  html_document:
-    toc: true
-    toc_depth: '2'
-    df_print: paged
   pdf_document:
     latex_engine: xelatex
     toc: true
     toc_depth: 2
     number_sections: true
     fig_height: 3.5
+  html_document:
+    toc: true
+    toc_depth: '2'
+    df_print: paged
   word_document:
     toc: true
     toc_depth: '2'
@@ -32,6 +32,7 @@ library(tinytex)
 library(vcd)
 
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dev = "cairo_pdf")
 ```
 
 \newpage
@@ -55,9 +56,17 @@ cat(paste(names(var_types), ": ", var_types, sep = "", collapse = "\n"))
 
 ## Opis problema
 
-Kod analize žanrova kod pobjednika, istražit ćemo postoje li značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Želimo utvrditi jesu li neki žanrovi skloniji da osvoje nagrade u usporedbi s drugim žanrovima. Pridjelit ćemo svakome filmu samo jedan žanr i iz podataka ćemo za ovu analizu koristiti stupac `Main Genre`. 
+Cilj ove analize je ispitati postoji li povezanost između filmskih žanrova i vjerojatnosti osvajanja Oscara. Analizu provodimo na dva načina:
 
-## Analiza podataka
+1. Single-label pristup – svakom filmu pridružujemo samo jedan glavni žanr (Main Genre).
+
+2. Multi-label pristup – film može pripadati više žanrova (Movie Genre), a svaki žanr ćemo zasebno brojati.
+
+Na taj način možemo usporediti kako različiti modeli označavanja žanrova utječu na rezultate.
+
+
+## 1. Single-label analiza (Main Genre)
+
 
 ### Grupiranje žanrova i priprema podataka za analizu:
 
@@ -121,14 +130,15 @@ ggplot(genre_plot_data,
 
 
 
-Zbog velike disproporcije između broja pobjeda i nominacija, koristimo i postotne prikaze te logaritamsku skalu za bolju vizualizaciju podataka.
+Zbog velike disproporcije između broja pobjeda i nominacija, koristimo i postotne prikaze te logaritamsku skalu kako bismo mogli bolje vizualizalizirati podatke.
+
 ### Postotni prikaz pobjeda vs nominacija po žanru:
 
 ```{r}
 ggplot(genre_plot_data, aes(x = reorder(Genre, -Count), y = Count, fill = Outcome)) +
   geom_bar(stat = "identity", position = "fill", color = "black") +
   scale_y_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = c("Winners" = "#1f78b4", "NotWinner" = "#a6cee3")) +
+  scale_fill_manual(values = c("Winners" = "#1f78b4", "NotWinner" = "#a6c3e3")) +
   theme_minimal(base_size = 14) +
   labs(title = "Postotak pobjeda vs nominacija po žanru",
        x = "Žanr", y = "Postotak", fill = "") +
@@ -159,11 +169,27 @@ Možemo također izračunati stopu uspješnosti (postotak pobjeda u odnosu na br
 genre_table <- genre_table %>%
   mutate(WinRate = (Winners / Nominations) * 100)
 
-ggplot(genre_table, aes(x = reorder(Genre, -WinRate), y = WinRate)) +
-  geom_col(fill = "steelblue") +
-  geom_text(aes(label = sprintf("%.1f%%", WinRate)), vjust = -0.5) +
-  labs(title = "Stopa pobjeda po žanru", x = "Žanr", y = "Postotak pobjede") +
-  theme_minimal()
+ggplot(genre_table, aes(x = reorder(Genre, WinRate), y = WinRate)) +
+  geom_col(fill = "#1f78b4", width = 0.7) +
+  geom_text(
+    aes(label = sprintf("%.1f%%", WinRate)),
+    hjust = -0.1,
+    size = 4
+  ) +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, max(genre_table$WinRate) * 1.15)) +
+  labs(
+    title = "Stopa pobjeda po žanru",
+    x = "Žanr",
+    y = "Postotak pobjede"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 11)
+  )
+
 ```
 
 ### Kontigencijska tablica nominiranih i pobjednika po žanrovima:
@@ -174,75 +200,9 @@ row.names(kontigencijska) <- genre_table$Genre
 kontigencijska
 ```
 
-## Hi-kvadrat test i Fisherov test
+## 2. Multi-label analiza (Movie Genre)
 
-### Hipoteze:
-
--   Nulta hipoteza (H0): Ne postoji značajna razlika u učestalosti pobjeda među različitim žanrovima filmova.
--   Alternativna hipoteza (H1): Postoji značajna razlika u učestalosti pobjeda među različitim žanrovima filmova.
-
-### Grupiranje žanrova i priprema podataka za analizu:
-
-Hi-kvadrat test ima važan uvjet: očekivane frekvencije u svakoj ćeliji kontingencijske tablice trebaju biti veće od 5. Za žanrove e jako malim brojem filmova (npr. 1–2 pojave), očeivane frekvencije za te vrlo male. Kako bi statistički test bio valjan, grupirat ćemo manje zastupljene žanrove u kategoriju "Ostali" kako bismo osigurali da sve ćelije imaju dovoljne očekivane frekvencije.
-
-```{r}
-common_genres <- c("Action", "Adventure", "Biography", "Comedy", "Crime", "Drama")
-data$GenreGroup <- ifelse(data$`Main Genre` %in% common_genres,
-                          data$`Main Genre`,
-                          "Other")
-winners <- subset(data, Award == "Winner")
-nominees <- subset(data, Award %in% c("Nominee", "Winner"))
-winner_counts <- as.data.frame(table(winners$GenreGroup))
-colnames(winner_counts) <- c("Genre", "Winners")
-nominee_counts <- as.data.frame(table(nominees$GenreGroup))
-colnames(nominee_counts) <- c("Genre", "Nominations")
-df <- merge(nominee_counts, winner_counts, by="Genre", all.x=TRUE
-)
-df$Winners[is.na(df$Winners)] <- 0
-df$NotWinner <- df$Nominations - df$Winners
-kontigencijska <- df[, c("Winners", "NotWinner")]
-row.names(kontigencijska) <- df$Genre
-
-kontigencijska
-```
-
-### Hi-kvadrat test: 
-Sada radimo Hi-kvadrat test kako bismo vidjeli postoje li značajne razlike u učestalosti pobjeda među različitim žanrovima
-```{r}
-# Chi-squared test
-chisq <- chisq.test(kontigencijska)
-chisq
-```
-
-
-
-Standardizirani reziduali koji pokazuju kako žanrovi odstupaju:
-```{r}
-chisq$stdres
-```
-
-### Fisherov test:
-
-Za dodatnu potvrdu rezultata Hi-kvadrat testa, koristimo Fisherov test koji je prikladniji za manje uzorke ili kada su očekivane frekvencije niske.
-
-```{r}
-fisher.test(kontigencijska, simulate.p.value = TRUE, B = 1e6)
-```  
-
-
-## Zaključak
-
-Na temelju rezultata Hi-kvadrat testa i Fisherovog testa, možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada.
-
-\newpage
-
-# Analiza multi-label žanrova kod pobjednika (Matija)
-
-## Opis problema
-
-U ovoj analizi istražit ćemo kako se različiti žanrovi filmova pojavljuju među pobjednicima Oscara kada filmovi mogu pripadati više žanrova istovremeno (multi-label), jer je nekada teško jednoznačno odrediti kojemu žanru film pripada. Tako ćemo sljedeće pokušati koristiti kolumnu `Movie Genre`, koja može sadržavati više žanrova odvojenih zarezom. Svaku pojavu žanra za neki film ćemo pribrojati tome žanru.
-
-## Analiza podataka
+### Priprema podataka 
 
 Priprema podataka za multi-label analizu žanrova:
 ```{r}
@@ -282,7 +242,7 @@ genre_counts <- data_long %>%
 
 Grupiranje rijetkih žanrova u kategoriju "Ostali" i izračun ukupnih vrijednosti po grupama žanrova:
 ```{r}
-genre_table <- genre_counts %>%
+genre_table_ml <- genre_counts %>%
   group_by(GenreGroup) %>%
   summarise(
     Winners = sum(Winner),
@@ -296,7 +256,7 @@ genre_table <- genre_counts %>%
 ### Vizualizacija rezultata multi-label analize žanrova:
 ```{r}
 
-genre_melt <- genre_table %>%
+genre_melt <- genre_table_ml %>%
   select(GenreGroup, Winners, NotWinner) %>%
   pivot_longer(
     cols = c(Winners, NotWinner),
@@ -316,7 +276,7 @@ ggplot(genre_melt, aes(x = Count, y = reorder(GenreGroup, Count), fill = Outcome
        fill = "")
 
 # Bar plot (postotak pobjeda)
-ggplot(genre_table, aes(x = SuccessRate, y = reorder(GenreGroup, SuccessRate))) +
+ggplot(genre_table_ml, aes(x = SuccessRate, y = reorder(GenreGroup, SuccessRate))) +
   geom_col(fill = "#1f78b4") +
   geom_text(aes(label = scales::percent(SuccessRate, accuracy = 0.1)), hjust = -0.1, size = 4) +
   scale_x_continuous(labels = scales::percent_format(), limits = c(0, NA)) +
@@ -328,54 +288,98 @@ ggplot(genre_table, aes(x = SuccessRate, y = reorder(GenreGroup, SuccessRate))) 
 
 ```
 
-## Hi-kvadrat test i Fisherov test
 
-
-Isto kao i kod single-label analize, provodimo Hi-kvadrat test i Fisherov test kako bismo utvrdili postoje li značajne razlike u učestalosti pobjeda među različitim žanrovima u multi-label kontekstu.
+## Statističko testiranje
 
 ### Hipoteze:
-Hipoteze se ne mijenjaju.
 
 -   Nulta hipoteza (H0): Ne postoji značajna razlika u učestalosti pobjeda među različitim žanrovima filmova.
 -   Alternativna hipoteza (H1): Postoji značajna razlika u učestalosti pobjeda među različitim žanrovima filmova.
 
+### Grupiranje žanrova i priprema podataka za analizu:
+
+Hi-kvadrat test ima važan uvjet: očekivane frekvencije u svakoj ćeliji kontingencijske tablice trebaju biti veće od 5. Za žanrove s jako malim brojem filmova (npr. 1–2 pojave), očekivane frekvencije za te vrlo male. Kako bi statistički test bio valjan, grupirat ćemo manje zastupljene žanrove u kategoriju "Ostali" kako bismo osigurali da sve ćelije imaju dovoljne očekivane frekvencije.
+
+Prvo ćemo analizirati prvi pristup: **1. Single-label analiza**
+
+```{r}
+common_genres <- c("Action", "Adventure", "Biography", "Comedy", "Crime", "Drama")
+data$GenreGroup <- ifelse(data$`Main Genre` %in% common_genres,
+                          data$`Main Genre`,
+                          "Other")
+# broj pobjeda po grupama
+winner_counts <- as.data.frame(table(subset(data, Award=="Winner")$GenreGroup))
+colnames(winner_counts) <- c("GenreGroup","Winners")
+
+# broj nominacija po grupama
+nominee_counts <- as.data.frame(table(subset(data, Award %in% c("Winner","Nominee"))$GenreGroup))
+colnames(nominee_counts) <- c("GenreGroup","Nominations")
+
+df <- merge(nominee_counts, winner_counts, by="GenreGroup", all.x=TRUE)
+df$Winners[is.na(df$Winners)] <- 0
+
+# Dodaj kolonu za ne-pobjede
+df$NotWinner <- df$Nominations - df$Winners
+
+kontigencijska_single <- as.data.frame(df[, c("Winners","NotWinner")])
+row.names(kontigencijska_single) <- df$GenreGroup
+
+
+#Prikaz kontigencijske tablice
+kontigencijska_single
+```
 
 ### Hi-kvadrat test: 
+Sada radimo Hi-kvadrat test kako bismo vidjeli postoje li značajne razlike u učestalosti pobjeda među različitim žanrovima. Za razinu značajnosti, uzet ćemo $\alpha = 0{,}05$.
 ```{r}
-chisq <- chisq.test(kontigencijska)
-chisq
+# Chi-squared test
+chisq_single <- chisq.test(kontigencijska_single)
+chisq_single
 ```
 
-Očekivnane frekvencije i standardizirani reziduali:
+S obzirom na to da je $p-value > \alpha$, odnosno $0.1805 > 0.05$, prihvaćamo H0.
+
+Standardizirani reziduali koji pokazuju kako žanrovi odstupaju:
 ```{r}
-chisq$expected    # provjera očekivanih frekvencija
-chisq$stdres      # standardizirani reziduali
-```    
+chisq_single$stdres
+```
 
 ### Fisherov test:
+
+Za dodatnu potvrdu rezultata Hi-kvadrat testa, koristimo Fisherov test koji je prikladniji za manje uzorke ili kada su očekivane frekvencije niske.
+
 ```{r}
-fisher.test(
-  kontigencijska,
-  simulate.p.value = TRUE,
-  B = 1e6
-)
+fisher.test(kontigencijska_single, simulate.p.value = TRUE, B = 1e6)
+```  
 
+Zatim pristupamo s **2. Multi-label analizom**: 
 
-
-genre_plot <- genre_table %>%
-  pivot_longer(
-    cols = c(Winners, NotWinner),
-    names_to = "Outcome",
-    values_to = "Count"
-  )
-
+```{r}
+kontigencijska_multi <- genre_table_ml[, c("Winners", "NotWinner")]
+row.names(kontigencijska_multi) <- genre_table_ml$GenreGroup
+kontigencijska_multi
 ```
 
+### Hi-kvadrat test
+
+```{r}
+chisq_multi <- chisq.test(kontigencijska_multi)
+chisq_multi
+chisq_multi$stdres
+```
+Ovdje također vidimo da je $p-value > \alpha$, odnosno $0.1036 > 0.05$ te prihvaćamo H0.
+
+### Fisherov test 
+
+```{r}
+fisher.test(kontigencijska_multi, simulate.p.value = TRUE, B = 1e6)
+```
 
 ## Zaključak
 
-Na temelju dobivenih podataka zaključujemo da nema povezanosti između 
+Na temelju rezultata Hi-kvadrat testa i Fisherovog testa oba pristupa, prihvaćamo H0 i možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada.
 
+\newpage
 
 # Analiza ocjena kroz godine (Roko)
 

@@ -15,9 +15,11 @@ cor.test(data$Movie.Time, data$IMDB.Rating, method = "pearson")
 
 data$LengthGroup <- ifelse(data$Movie.Time < 120, "Short", "Long")
 
+
 t.test(IMDB.Rating ~ LengthGroup, data = data)
 boxplot(IMDB.Rating ~ LengthGroup, data = data,
         main = "IMDB ocjena po duljini filma",
         xlab = "Duljina filma",
         ylab = "IMDB ocjena",
         col = c("#a6cee3", "#1f78b4"))
+
