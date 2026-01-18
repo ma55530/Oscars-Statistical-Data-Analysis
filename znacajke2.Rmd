@@ -1,0 +1,180 @@
+---
+title: "znacajke"
+author: "0036558540 Ivan Dražetić"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Istraživačko pitanje: Možemo li pomoću dostupnih značajki pouzdano razlikovati pobjednike od ostalih?
+
+#### U ovom dijelu analiziramo postoje li statistički značajne razlike između filmova koji su osvojili Oscara ("Winner") i onih koji su bili samo nominirani ("Nominee"). Analizu provodimo na temelju dostupnih značajki: IMDb ocjene, broja glasova, trajanja filma i žanra.
+
+```{r}
+oscars <- read.csv2("oscars_dataset.csv")
+# glimpse(oscars)
+```
+
+#### Priprema i čišćenje podataka
+
+Prije analize potrebno je urediti tipove podataka, ukloniti zareze iz numeričkih varijabli te kreirati binarnu varijablu za ishod (Pobjednik = 1, Nominirani = 0). Također, grupirat ćemo rjeđe žanrove u kategoriju "Other" radi stabilnije analize.
+
+```{r}
+oscars <- oscars %>%
+  mutate(
+    IMDB.Rating = as.numeric(IMDB.Rating),
+    IMDB.Votes = as.numeric(gsub(",", "", IMDB.Votes)),
+    Movie.Time = as.numeric(Movie.Time),
+    Year = as.numeric(Year.of.Release),
+    IsWinner = ifelse(Award == "Winner", 1, 0),
+    GenreGroup = ifelse(Main.Genre %in% c("Action", "Adventure", "Biography", "Comedy", "Crime", "Drama"),
+                        Main.Genre, "Other")
+  ) %>%
+  filter(complete.cases(IMDB.Rating, IMDB.Votes, Movie.Time, Year, GenreGroup))
+
+# Pretvorba u faktore
+oscars$GenreGroup <- factor(oscars$GenreGroup)
+oscars$Award <- factor(oscars$Award, levels = c("Nominee", "Winner"))
+```
+
+### 1. Deskriptivna analiza: IMDb ocjene
+
+Prvo ćemo ispitati razlikuju li se pobjednici od nominiranih prema IMDb ocjeni. Koristit ćemo robusne mjere (medijan i IQR) uz standardne mjere, kako bismo dobili bolji uvid u distribuciju.
+
+```{r}
+stats_rating <- oscars %>% 
+  group_by(Award) %>% 
+  summarise(
+    Mean = mean(IMDB.Rating),
+    Median = median(IMDB.Rating),
+    SD = sd(IMDB.Rating),
+    IQR = IQR(IMDB.Rating),
+    Count = n()
+  )
+
+print(stats_rating)
+```
+
+#### Vizualizacija distribucije ocjena
+
+```{r}
+ggplot(oscars, aes(x = Award, y = IMDB.Rating, fill = Award)) +
+  geom_boxplot() +
+  labs(
+    x = "Ishod",
+    y = "IMDb ocjena",
+    title = "Distribucija IMDb ocjena: Pobjednici vs. Nominirani"
+  ) +
+  theme_minimal()
+```
+
+S boxplota i izračunatih mjera vidljivo je da pobjednici imaju blago viši medijan ocjena. Prije nego što statistički testiramo tu razliku t-testom, moramo provjeriti pretpostavke: normalnost podataka i homogenost varijanci.
+
+#### Provjera normalnosti (QQ-plot)
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(oscars$IMDB.Rating[oscars$Award == "Winner"], main = "QQ Plot: Pobjednici")
+qqline(oscars$IMDB.Rating[oscars$Award == "Winner"], col = "red")
+
+qqnorm(oscars$IMDB.Rating[oscars$Award == "Nominee"], main = "QQ Plot: Nominirani")
+qqline(oscars$IMDB.Rating[oscars$Award == "Nominee"], col = "red")
+par(mfrow=c(1,1))
+```
+
+Podaci prate liniju normalne distribucije dovoljno dobro za provođenje parametrijskih testova. Sljedeći korak je provjera jednakosti varijanci F-testom.
+
+#### Test jednakosti varijanci (F-test)
+
+```{r}
+var.test(IMDB.Rating ~ Award, data = oscars)
+```
+
+P-vrijednost je veća od 0.05, što znači da ne odbacujemo nultu hipotezu o jednakosti varijanci. Stoga ćemo u t-testu koristiti parametar za jednake varijance (var.equal = TRUE).
+
+#### T-test za nezavisne uzorke
+
+```{r}
+t.test(IMDB.Rating ~ Award, data = oscars, var.equal = TRUE)
+```
+
+Rezultati t-testa (p < 0.05) pokazuju da postoji statistički značajna razlika u srednjim vrijednostima ocjena. Pobjednici u prosjeku imaju više ocjene od nominiranih.
+
+### 2. Analiza kategorijskih varijabli: Žanr
+
+Imaju li određeni žanrovi veću vjerojatnost pobjede?
+
+```{r}
+genre_table <- table(oscars$GenreGroup, oscars$Award)
+addmargins(genre_table)
+
+chisq.test(genre_table)
+```
+
+Chi-square test daje p-vrijednost veću od 0.05 (ovisno o točnom uzorku), što sugerira da žanr sam po sebi možda nije presudan faktor za razlikovanje pobjednika od nominiranih u ovom skupu podataka.
+
+### 3. Višestruka linearna regresija
+
+Kako bismo utvrdili možemo li pouzdano razlikovati pobjednike koristeći više značajki istovremeno (ocjena, glasovi, trajanje, godina), gradimo linearni regresijski model. Prije toga provjeravamo korelaciju među numeričkim prediktorima kako bismo izbjegli multikolinearnost.
+
+#### Korelacijska matrica
+
+```{r}
+cor(oscars[, c("IMDB.Rating", "IMDB.Votes", "Movie.Time", "Year")])
+```
+
+Korelacije nisu pretjerano visoke (sve su ispod 0.7), pa možemo uključiti ove varijable u model.
+
+#### Izgradnja modela
+
+Koristimo linearni vjerojatnosni model gdje je zavisna varijabla IsWinner (0 ili 1). Također koristimo logaritam broja glasova (log(IMDB.Votes)) jer ta varijabla često ima asimetričnu distribuciju.
+
+```{r}
+model_full <- lm(IsWinner ~ IMDB.Rating + log(IMDB.Votes) + Movie.Time + Year + GenreGroup, 
+                 data = oscars)
+
+summary(model_full)
+```
+
+#### Interpretacija modela
+
+Model pokazuje da su IMDb ocjena (IMDB.Rating) i trajanje filma (Movie.Time) statistički značajni prediktori (p < 0.05) s pozitivnim koeficijentima – duži filmovi i oni s višim ocjenama imaju veću vjerojatnost pobjede.
+Međutim, R-squared (koeficijent determinacije) je vrlo nizak (oko 0.07 - 0.09). To znači da naš model objašnjava manje od 10% varijabilnosti u tome tko pobjeđuje. F-statistika potvrđuje da je model kao cjelina značajan, ali njegova prediktivna moć je slaba.
+
+### 4. Dijagnostika modela
+Na kraju, provjeravamo reziduale modela kako bismo vidjeli jesu li pretpostavke linearne regresije narušene.
+
+#### Histogram reziduala
+
+```{r}
+hist(model_full$residuals, 
+     main = "Histogram reziduala", 
+     xlab = "Reziduali", 
+     col = "lightblue", 
+     breaks = 20)
+```
+
+#### QQ-plot reziduala i Reziduali vs. Predviđene vrijednosti
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(model_full$residuals)
+qqline(model_full$residuals, col = "red")
+
+plot(model_full$fitted.values, model_full$residuals,
+     main = "Reziduali vs. Fitted",
+     xlab = "Predviđene vrijednosti",
+     ylab = "Reziduali")
+abline(h = 0, col = "red")
+par(mfrow=c(1,1))
+```
+
+Dijagnostički grafovi pokazuju određena odstupanja. Histogram nije savršeno zvonolik, a QQ-plot pokazuje otklone na repovima. To je očekivano s obzirom da modeliramo binarni ishod (0/1) linearnom regresijom.
+
+### Zaključak
+Iako smo pronašli statistički značajne razlike (pobjednici su u prosjeku bolje ocijenjeni i duži), ne možemo pouzdano razlikovati pobjednike od ostalih samo na temelju ovih značajki. Nizak koeficijent determinacije (R^2) sugerira da postoje drugi, ovdje neuhvaćeni faktori (npr. kvaliteta režije, marketing, narativ) koji presudno utječu na pobjedu.
