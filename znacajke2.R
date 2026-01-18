@@ -10,7 +10,7 @@ library(ggplot2)
 data <- read.csv("oscars_dataset.csv", sep=";", na.strings = c("", "NA", "Unknown"))
 
 # ---------------------------------------------------------
-# 1. Priprema i čišćenje podataka
+# 1. Priprema i čišćenje podataka (Auditorna vježba 1)
 # ---------------------------------------------------------
 
 # Kreiranje binarnog ishoda (Winner = 1, Nominee = 0)
@@ -38,12 +38,12 @@ model_data <- data[complete.cases(data[, vars_of_interest]), vars_of_interest]
 cat("Broj filmova nakon čišćenja:", nrow(model_data), "\n")
 
 # ---------------------------------------------------------
-# 2. Deskriptivna analiza i Testiranje hipoteza
+# 2. Deskriptivna analiza i Testiranje hipoteza (Vježba 1 & 2)
 # ---------------------------------------------------------
 
 # --- A) Analiza IMDB Ocjena (Numerička varijabla) ---
 
-# Robusne mjere centralne tendencije i rasipanja
+# Robusne mjere centralne tendencije i rasipanja (Vježba 1)
 cat("\n=== Deskriptivna statistika: IMDB Rating ===\n")
 stats_rating <- model_data %>% 
   group_by(IsWinner) %>% 
@@ -55,7 +55,7 @@ stats_rating <- model_data %>%
   )
 print(stats_rating)
 
-# Vizualizacija distribucije i QQ-plot za provjeru normalnosti
+# Vizualizacija distribucije i QQ-plot za provjeru normalnosti (Vježba 2)
 # Crtamo histogram da vidimo oblik distribucije
 par(mfrow=c(1,2))
 hist(model_data$Rating[model_data$IsWinner == 1], main="Histogram: Pobjednici", xlab="Rating", col="lightblue")
@@ -70,7 +70,7 @@ qqnorm(model_data$Rating[model_data$IsWinner == 0], main = "QQ Plot: Nominirani"
 qqline(model_data$Rating[model_data$IsWinner == 0], col = "red")
 par(mfrow=c(1,1)) # Resetiranje grafičkog prikaza
 
-# Test jednakosti varijanci (F-test) - Preduvjet za t-test
+# Test jednakosti varijanci (F-test) - Preduvjet za t-test (Vježba 2)
 cat("\n=== F-test za jednakost varijanci (Rating) ===\n")
 var_test_rating <- var.test(Rating ~ IsWinner, data = model_data)
 print(var_test_rating)
@@ -91,12 +91,12 @@ ggplot(model_data, aes(x = factor(IsWinner, labels = c("Nominee", "Winner")), y 
 
 # --- B) Analiza Žanrova (Kategorijska varijabla) ---
 
-# Kontingencijska tablica
+# Kontingencijska tablica (Vježba 2)
 cat("\n=== Analiza kategorijskih varijabli (Žanr) ===\n")
 genre_table <- table(model_data$GenreGroup, model_data$IsWinner)
 print(addmargins(genre_table))
 
-# Provjera očekivanih frekvencija i Chi-square test
+# Provjera očekivanih frekvencija i Chi-square test (Vježba 2)
 chisq_genre <- chisq.test(genre_table)
 cat("\nOčekivane frekvencije (provjera uvjeta > 5):\n")
 print(chisq_genre$expected)
@@ -104,25 +104,25 @@ cat("\nRezultat Chi-square testa:\n")
 print(chisq_genre)
 
 # ---------------------------------------------------------
-# 3. Linearna regresija i dijagnostika modela
+# 3. Linearna regresija i dijagnostika modela (Vježba 3)
 # ---------------------------------------------------------
 
 cat("\n\n========================================\n")
 cat("VIŠESTRUKA LINEARNA REGRESIJA\n")
 cat("========================================\n")
 
-# Provjera multikolinearnosti (Korelacija među prediktorima)
+# Provjera multikolinearnosti (Korelacija među prediktorima) - Vježba 3
 # Prije gradnje modela provjeravamo jesu li varijable previše korelirane
 cat("\n=== Korelacijska matrica numeričkih varijabli ===\n")
 cor_matrix <- cor(model_data[, c("Rating", "Votes", "Runtime", "Year")])
 print(cor_matrix)
 
 # Izgradnja linearnog modela (Linear Probability Model)
-# Uključujemo transformaciju log(Votes) zbog asimetrične distribucije
+# Uključujemo transformaciju log(Votes) zbog asimetrične distribucije (kao u Vježbi 3)
 fit.multi <- lm(IsWinner ~ Rating + log(Votes) + Runtime + Year + GenreGroup, 
                 data = model_data)
 
-# Analiza modela
+# Analiza modela (Vježba 3: Koeficijenti, R-kvadrat, F-statistika)
 cat("\n=== Sažetak regresijskog modela (summary) ===\n")
 summary_fit <- summary(fit.multi)
 print(summary_fit)
@@ -132,7 +132,7 @@ cat("R-squared (Postotak objašnjene varijance):", summary_fit$r.squared, "\n")
 cat("F-statistic p-value (Značajnost cijelog modela):", 
     pf(summary_fit$fstatistic[1], summary_fit$fstatistic[2], summary_fit$fstatistic[3], lower.tail=FALSE), "\n")
 
-# Dijagnostika modela
+# Dijagnostika modela (Vježba 3: Analiza reziduala)
 cat("\n=== Dijagnostika reziduala ===\n")
 
 # 1. Histogram reziduala - Provjera normalnosti grešaka
