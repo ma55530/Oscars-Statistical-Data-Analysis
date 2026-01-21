@@ -1,0 +1,380 @@
+---
+title: "Zadatak 4"
+author: "0036555596 Roko Grgurić"
+date: "2026-01-21"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Istraživačko pitanje: Možemo li naslutiti kako je film ocijenjen pomoću drugih značajki?
+
+U ovoj analizi istražujemo možemo li pomoću dostupnih značajki filmova (godina izlaska, trajanje, žanr i content rating) pouzdano predvidjeti IMDb ocjenu. Cilj je izgraditi model višestruke linearne regresije koji će omogućiti razumijevanje koje karakteristike utječu na ocjenu i koliko taj utjecaj snažan.
+
+```{r}
+oscars <- read.csv("oscars_dataset.csv", sep = ";")
+```
+
+# Opis problema
+
+Jedno od pitanja koje razmatramo je možemo li naslutiti kako je film ocijenjen na temelju drugih dostupnih značajki. Cilj je izgraditi model koji će omogućiti predikciju IMDb ocjene koristeći godinu izlaska filma, trajanje, žanr i content ratinga filma kao prediktore.
+
+# Priprema podataka za analizu
+
+Najprije moramo provjeriti nedostajuće podatke i osigurati da su tipovi varijabli ispravni.
+
+```{r}
+data.frame(
+  Varijabla = c("IMDB.Rating", "Year.of.Release", "Movie.Time", "Main.Genre", "Content.Rating"),
+  Broj_vrijednosti = c(
+    sum(oscars$IMDB.Rating != ""),
+    sum(oscars$Year.of.Release != ""),
+    sum(oscars$Movie.Time != ""),
+    sum(oscars$Main.Genre != ""),
+    sum(oscars$Content.Rating != "")
+  )
+)
+
+```
+
+Primjećujemo da postoje neki nedostatci. Kako bi podaci bili spremni za daljnju analizu, potrebno je osigurati da su tipovi podataka ispravni i ukloniti redove s nedostajućim vrijednostima.
+
+```{r}
+oscars$IMDB.Rating <- as.numeric(as.character(oscars$IMDB.Rating))
+oscars$Year.of.Release <- as.numeric(as.character(oscars$Year.of.Release))
+oscars$Movie.Time <- as.numeric(as.character(oscars$Movie.Time))
+
+oscars_clean <- oscars[complete.cases(oscars[, c("IMDB.Rating", "Year.of.Release", 
+                                                   "Movie.Time", "Main.Genre", 
+                                                   "Content.Rating")]), ]
+
+```
+
+# Deskriptivna statistika
+
+Numeričke varijable
+
+```{r}
+summary(oscars_clean[, c("IMDB.Rating", "Year.of.Release", "Movie.Time")])
+```
+
+Mjere centralne tendencije i rasipanja
+
+```{r}
+data.frame(
+  Varijabla = c("IMDB.Rating", "Year.of.Release", "Movie.Time"),
+  Mean = c(
+    mean(oscars_clean$IMDB.Rating, na.rm = TRUE),
+    mean(oscars_clean$Year.of.Release, na.rm = TRUE),
+    mean(oscars_clean$Movie.Time, na.rm = TRUE)
+  ),
+  Median = c(
+    median(oscars_clean$IMDB.Rating, na.rm = TRUE),
+    median(oscars_clean$Year.of.Release, na.rm = TRUE),
+    median(oscars_clean$Movie.Time, na.rm = TRUE)
+  ),
+  SD = c(
+    sd(oscars_clean$IMDB.Rating, na.rm = TRUE),
+    sd(oscars_clean$Year.of.Release, na.rm = TRUE),
+    sd(oscars_clean$Movie.Time, na.rm = TRUE)
+  ),
+  IQR = c(
+    IQR(oscars_clean$IMDB.Rating, na.rm = TRUE),
+    IQR(oscars_clean$Year.of.Release, na.rm = TRUE),
+    IQR(oscars_clean$Movie.Time, na.rm = TRUE)
+  )
+)
+```
+
+# Korelacijska matrica
+
+Računamo korelacijsku matricu za ispitivanje linearnih odnosa između naših numeričkih varijabli.
+
+```{r}
+cor_matrix <- cor(oscars_clean[, c("IMDB.Rating", "Movie.Time", "Year.of.Release")], 
+                  use = "complete.obs")
+print(round(cor_matrix, 3))
+```
+
+Korelacijska matrica pokazuje odnose između numeričkih prediktora. Pozitivna korelacija između godine izlaska i IMDb ocjene ukazuje na to da noviji filmovi teže imati više ocjene.
+
+# Scatter plot: IMDb ocjena vs trajanje filma
+
+Grafički prikaz odnosa između trajanja filma i IMDb ocjene pomoću dijagrama raspršenja.
+
+```{r, fig.width=10, fig.height=7}
+plot(oscars_clean$Movie.Time, oscars_clean$IMDB.Rating,
+     main = "Odnos trajanja filma i IMDb ocjene",
+     xlab = "Trajanje filma (minute)",
+     ylab = "IMDb ocjena",
+     pch = 19, col = rgb(0, 0, 1, 0.4))
+
+abline(lm(IMDB.Rating ~ Movie.Time, data = oscars_clean), 
+       col = "red", lwd = 2)
+```
+
+Iz scatter plota možemo vidjeti blagu pozitivnu vezu između trajanja filma i ocjene. Crvena linija predstavlja linearnu regresiju.
+
+# Model višestruke linearne regresije
+
+Sada ćemo izgraditi model koristeći višestruku linearnu regresiju.
+
+# Priprema dummy varijabli
+
+Budući da kategorijske varijable ne mogu direktno ući u linearni regresijski model, potrebno ih je transformirati u dummy varijable.
+
+```{r}
+oscars_model <- fastDummies::dummy_cols(oscars_clean, 
+                                        select_columns = c("Main.Genre", "Content.Rating"),
+                                        remove_first_dummy = TRUE,
+                                        remove_selected_columns = FALSE)
+
+names(oscars_model) <- make.names(names(oscars_model))
+
+# Pregled dostupnih dummy varijabli
+genre_cols <- grep("^Main.Genre_", names(oscars_model), value = TRUE)
+rating_cols <- grep("^Content.Rating_", names(oscars_model), value = TRUE)
+```
+
+Dummy varijable omogućuju uključivanje kategorijskih varijabli u model tako da svaka kategorija dobiva svoju indikatorsku varijablu. Važno je izostaviti jednu dummy varijablu iz svake kategorijske varijable kako bi se izbjegla multikolinearnost.
+
+# Procjena modela
+
+```{r}
+base_predictors <- c("Year.of.Release", "Movie.Time")
+all_predictors <- c(base_predictors, genre_cols, rating_cols)
+
+cat("Broj prediktora u modelu:", length(all_predictors), "\n")
+cat("Prvih 5 dummy varijabli:\n")
+print(head(all_predictors, 10))
+
+model_formula <- reformulate(termlabels = all_predictors, 
+                              response = "IMDB.Rating")
+
+fit.multi <- lm(model_formula, data = oscars_model)
+
+summary(fit.multi)
+```
+
+Model višestruke linearne regresije procjenjuje IMDb ocjenu kao funkciju godine izlaska, trajanja filma, žanra i content ratinga. Dummy varijable predstavljaju razlike u ocjenama između pojedinih žanrova i content ratinga u odnosu na referentnu kategoriju.
+
+Iz sažetka modela možemo iščitati da su neki koeficijenti statistički značajni (p < 0.05), što znači da imaju značajan utjecaj na IMDb ocjenu. Adjusted R² pokazuje koliki postotak varijance u ocjenama model objašnjava, prilagođeno za broj parametara.
+
+# Testovi regresijskih koeficijenata i adjusted R²
+
+```{r}
+adj_r2 <- summary(fit.multi)$adj.r.squared
+f_stat <- summary(fit.multi)$fstatistic
+f_pval <- pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
+
+cat("Adjusted R²:", round(adj_r2, 4), "\n")
+
+cat("F-statistika:", round(f_stat[1], 2), "\n")
+cat(sprintf("p-vrijednost: %.4e\n\n", f_pval))
+
+coef_summary <- summary(fit.multi)$coefficients
+significant_coefs <- sum(coef_summary[, 4] < 0.05, na.rm = TRUE)
+total_coefs <- nrow(coef_summary)
+
+cat("Broj značajnih koeficijenata (p < 0.05):", significant_coefs, "od", total_coefs, "\n")
+```
+
+F-test pokazuje da je model statistički značajan i pruža bolju predikciju od nul-modela.
+
+# Predikcija srednje vrijednosti
+
+Koristimo procijenjeni model za predikciju IMDb ocjene za "prosječan" film.
+
+```{r}
+new_data <- data.frame(
+  Year.of.Release = median(oscars_clean$Year.of.Release, na.rm = TRUE),
+  Movie.Time = median(oscars_clean$Movie.Time, na.rm = TRUE)
+)
+
+# Dodavanje dummy varijabli (sve na 0 za referentne kategorije)
+for (col in c(genre_cols, rating_cols)) {
+  new_data[[col]] <- 0
+}
+
+pred_mean <- predict(fit.multi, newdata = new_data, 
+                     interval = "confidence", level = 0.95)
+
+cat("Predikcija IMDb ocjene za prosječan film:\n")
+cat("Godina izlaska:", new_data$Year.of.Release, "\n")
+cat("Trajanje:", new_data$Movie.Time, "minuta\n")
+cat("Referentni žanr i rating\n\n")
+cat("Predviđena ocjena:", round(pred_mean[1], 3), "\n")
+cat("95% interval pouzdanosti: [", 
+    round(pred_mean[2], 3), ",", round(pred_mean[3], 3), "]\n")
+```
+
+Interval pouzdanosti od 95% znači da smo 95% uvjereni da će se prava srednja vrijednost IMDb ocjene za filmove s ovim karakteristikama nalaziti unutar navedenog intervala.
+
+# Analiza reziduala
+
+Prije donošenja konačnih zaključaka o modelu, potrebno je provjeriti pretpostavke linearne regresije analizom reziduala.
+
+```{r, fig.width=14, fig.height=12}
+par(mfrow = c(2, 2))
+
+plot(fit.multi$fitted.values, fit.multi$residuals,
+     main = "Fitted vs Residuals",
+     xlab = "Fitted vrijednosti (predviđene ocjene)",
+     ylab = "Reziduali",
+     pch = 19, col = rgb(0, 0, 1, 0.5))
+abline(h = 0, col = "red", lwd = 2, lty = 2)
+
+# 2. Histogram reziduala
+hist(rstandard(fit.multi), breaks = 25,
+     main = "Histogram standardiziranih reziduala",
+     xlab = "Standardizirani reziduali",
+     ylab = "Frekvencija",
+     col = "lightblue")
+
+# 3. Q-Q plot
+qqnorm(rstandard(fit.multi),
+       main = "Q-Q dijagram standardiziranih reziduala",
+       xlab = "Teorijski kvantili",
+       ylab = "Standardizirani reziduali")
+qqline(rstandard(fit.multi), col = "red", lwd = 2)
+
+# 4. Scale-Location
+plot(fit.multi$fitted.values, sqrt(abs(rstandard(fit.multi))),
+     main = "Scale-Location",
+     xlab = "Fitted vrijednosti",
+     ylab = "√|Standardizirani reziduali|",
+     pch = 19, col = rgb(0, 0, 1, 0.5))
+
+par(mfrow = c(1, 1))
+```
+
+Q-Q plot pokazuje da reziduali uglavnom prate dijagonalnu liniju, s blagim odstupanjima na krajevima, što sugerira da pretpostavka normalnosti nije značajno narušena.
+
+# Test normalnosti reziduala
+
+Provjerimo sada normalnost reziduala Lillieforsovom inačicom Kolmogorov-Smirnovljevog testa na razini značajnosti od 5% uz sljedeće hipoteze:
+
+H0: Reziduali su normalno distribuirani
+H1: Reziduali nisu normalno distribuirani.
+
+```{r}
+nortest::lillie.test(rstandard(fit.multi))
+```
+
+Testna statistika pokazuje p-vrijednost. Ako je p-vrijednost veća od 0.05, test nije statistički značajan te nemamo dovoljno dokaza za odbacivanje nul-hipoteze. Reziduali se mogu smatrati normalno distribuiranima.
+
+# Bootstrap analiza
+
+Bootstrap se koristi radi **robusnosti procjena**. Omogućuje procjenu intervala pouzdanosti bez striktnih pretpostavki o distribuciji podataka, što je posebno korisno kada pretpostavke normalnosti mogu biti narušene.
+
+```{r}
+set.seed(42)
+
+formula_string <- paste("IMDB.Rating ~", paste(all_predictors, collapse = " + "))
+
+bootstrap_lm <- function(data, indices) {
+  d <- data[indices, ]
+  fit <- lm(as.formula(formula_string), data = d)
+  return(coef(fit))
+}
+
+# Bootstrap s 1000 iteracija
+
+boot_results <- boot::boot(data = oscars_model, 
+                           statistic = bootstrap_lm,
+                           R = 1000)
+```
+
+# Bootstrap intervali pouzdanosti
+
+Bootstrap intervali pouzdanosti za sve koeficijente modela:
+
+```{r}
+coef_names <- names(coef(fit.multi))
+bootstrap_intervals <- data.frame(
+  Koeficijent = coef_names,
+  Procjena = round(coef(fit.multi), 4),
+  OLS_SE = round(summary(fit.multi)$coefficients[, "Std. Error"], 4),
+  Boot_SE = round(apply(boot_results$t, 2, sd, na.rm = TRUE), 4),
+  Boot_Lower = numeric(length(coef_names)),
+  Boot_Upper = numeric(length(coef_names)),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:length(coef_names)) {
+  tryCatch({
+    boot_ci <- boot::boot.ci(boot_results, type = "perc", index = i)
+    if (!is.null(boot_ci$percent)) {
+      bootstrap_intervals$Boot_Lower[i] <- round(boot_ci$percent[4], 4)
+      bootstrap_intervals$Boot_Upper[i] <- round(boot_ci$percent[5], 4)
+    }
+  }, error = function(e) {
+    bootstrap_intervals$Boot_Lower[i] <- NA
+    bootstrap_intervals$Boot_Upper[i] <- NA
+  })
+}
+
+print(bootstrap_intervals)
+```
+
+Bootstrap standardne pogreške (Boot_SE) omogućuju usporedbu s klasičnim OLS standardnim pogreškama. Sličnost ovih vrijednosti potvrđuje robusnost procjena.
+
+# Vizualizacija Bootstrap distribucija
+
+```{r, fig.width=14, fig.height=12}
+par(mfrow = c(2, 2))
+
+# Bootstrap za Year.of.Release
+if (ncol(boot_results$t) >= 2) {
+  hist(boot_results$t[, 2], breaks = 30,
+       main = "Bootstrap: Year.of.Release",
+       xlab = "Koeficijent",
+       col = "lightblue",
+       border = "white")
+  abline(v = coef(fit.multi)[2], col = "red", lwd = 2)
+  abline(v = quantile(boot_results$t[, 2], c(0.025, 0.975), na.rm = TRUE), 
+         col = "darkred", lwd = 2, lty = 2)
+}
+
+# Bootstrap za Movie.Time
+if (ncol(boot_results$t) >= 3) {
+  hist(boot_results$t[, 3], breaks = 30,
+       main = "Bootstrap: Movie.Time",
+       xlab = "Koeficijent",
+       col = "lightgreen",
+       border = "white")
+  abline(v = coef(fit.multi)[3], col = "red", lwd = 2)
+  abline(v = quantile(boot_results$t[, 3], c(0.025, 0.975), na.rm = TRUE), 
+         col = "darkred", lwd = 2, lty = 2)
+}
+
+# Bootstrap za Intercept
+hist(boot_results$t[, 1], breaks = 30,
+     main = "Bootstrap: Intercept",
+     xlab = "Koeficijent",
+     col = "lightyellow",
+     border = "white")
+abline(v = coef(fit.multi)[1], col = "red", lwd = 2)
+abline(v = quantile(boot_results$t[, 1], c(0.025, 0.975), na.rm = TRUE), 
+       col = "darkred", lwd = 2, lty = 2)
+
+par(mfrow = c(1, 1))
+```
+
+Crvena linija označava procjenu koeficijenta iz originalnog modela, dok isprekidane linije označavaju 95% bootstrap interval pouzdanosti.
+
+# Zaključak
+
+Model višestruke linearne regresije koristi godinu izlaska filma, trajanje filma, žanr i content rating za predikciju IMDb ocjene nominiranih filmova za Oscara.
+
+Adjusted R² iznosi `r round(adj_r2, 4)`, što znači da model objašnjava `r round(adj_r2 * 100, 2)`% varijance u IMDb ocjenama. F-test pokazuje da je model statistički značajan (p < 0.001), što znači da korištene značajke imaju prediktivnu moć.
+
+`r significant_coefs` od `r total_coefs` koeficijenata su statistički značajni na razini značajnosti od 5%, što ukazuje na to da većina varijabli uključenih u model ima značajan doprinos predikciji ocjene.
+
+Bootstrap analiza korištena je radi robusnosti procjena. Bootstrap intervali pouzdanosti potvrđuju stabilnost procjena koeficijenata i omogućuju zaključivanje bez striktnih pretpostavki o normalnosti podataka.
+
+Iako model objašnjava značajan dio varijabilnosti, preostala neobjašnjena varijanca ukazuje na to da postoje i drugi faktori (kvaliteta režije, gluma, priča) koji utječu na ocjene, a nisu uključeni u ovaj model.
