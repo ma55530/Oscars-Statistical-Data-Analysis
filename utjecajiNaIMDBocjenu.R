@@ -24,6 +24,7 @@ ggplot(oscars, aes(x = votes, y = rating)) +
   scale_x_log10() + 
   labs(x = "Broj glasova na IMDb-u (log)", y = "Ocjena filma na IMDb-u")
 
+
 # Pearson test korelacije
 
 cor.test(
