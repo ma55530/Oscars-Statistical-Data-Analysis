@@ -1,0 +1,142 @@
+---
+title: "trece_pitanje"
+author: "36557629 Damjan Crnković"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(readr)
+library(stringr)
+library(hflights)
+library(tidyr)
+library(lubridate)
+library(tidyverse)
+library(tinytex)
+library(ggplot2)
+library(nortest)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Istraživanje povezanosti između starosti filma i njegove ocjene
+
+```{r}
+oscars <- read.csv2("oscars_dataset.csv")
+```
+
+
+## Opis problema
+Jedno od pitanja koje razmatramo jest kako su filmovi ocijenjeni s obzirom na svoju starost, odnosno kako godina izlaska filma utječe na njegovu ocjenu. Cilj je dobiti uvid u trend promjene ocjena kroz godine i provjeriti jesu li godina izlaska i ocjena međusobno značajno korelirani.
+
+
+## Priprema podataka za analizu
+Najprije moramo odabrati koje ocjene ćemo koristiti za analizu. Pogledajmo kojih podataka ima najviše odnosno nedostaju li neki podaci:
+```{r}
+data.frame(Ocjena = c("IMDb", "Rotten Tomatoes", "Audience"), 
+                     Broj_vrijednosti = c(sum(oscars$IMDB.Rating != ""), 
+                                          sum(oscars$Tomatometer.Rating != ""), 
+                                          sum(oscars$Audience.Rating != "")))
+```
+Primjećujemo da postoje neki nedostatci, stoga ćemo za daljnja promatranja koirstiti podatke o IMDb ocjenama.
+
+Kako bi podaci bili spremni za daljnu analizu, potrebno je osigurati da je njihov tip numeric.
+```{r}
+oscars$IMDB.Rating <- as.numeric(as.character(oscars$IMDB.Rating))
+oscars$Year.of.Release <- as.numeric(as.character(oscars$Year.of.Release))
+```
+
+## Vizualizacija podataka
+
+Analizirajmo sada povezanost između godine izlaska filma i njegove ocjene. Budući da promatramo utjecaj jedne numeričke varijable (godina izlaska) na drugu numeričku varijablu (ocjena), osnovni uvid u njihov odnos dobiva se grafičkim prikazom pomoću scatter plota. Takav prikaz omogućuje uočavanje općeg trenda i eventualne nelinearnosti.
+
+```{r}
+plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
+     main = "Odnos godine izlaska filma i IMDb ocjene", 
+     xlab = "Godina izlaska filma", 
+     ylab = "IMDb ocjena")
+```
+
+Scatter plot ne pokazuje jasno povećanje ocjena s godinama izlaska zbog raspršenosti podataka i prisutnosti outliera. Kako bismo bolje sagledali trend, možemo grupirati filmove po desetljećima i prikazati ocjene pomoću box plota, što omogućuje uočavanje promjena u medijanu i rasponu ocjena kroz vrijeme.
+```{r}
+oscars$desetljece <- floor(oscars$Year.of.Release / 10) * 10
+boxplot(IMDB.Rating ~ desetljece, data = oscars, 
+        main = "Distribucija IMDb ocjena po desetljećima", 
+        xlab = "Desetljeće izlaska filma", 
+        ylab = "IMDb ocjena")
+```
+Iz scatter plota i box plota može se naslutiti da postoji određena povezanost između godine izlaska filma i njegove ocjene, no ona se ne čini velikom. 
+
+## Linearna regresija
+
+Kako bismo procjenili jačinu promatranog odnosa, izrađujemo jednostavnu linearnu regresiju s ocjenom filma kao zavisnom varijablom i godinom izlaska kao nezavisnom varijablom.
+
+```{r}
+fit.year <- lm(IMDB.Rating ~ Year.of.Release, data = oscars)
+plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
+     main = "Linearna regresija IMDb ocjene ~ godina izlaska",
+     xlab = "Godina izlaska filma",
+     ylab = "IMDb ocjena")
+lines(oscars$Year.of.Release, fit.year$fitted.values, col = "blue")
+```
+
+Dobiveni regresijski model pokazuje mali pozitivan nagib, što znači da noviji filmovi u prosjeku imaju nešto više ocjene, no efekt je slab. Kako bismo potvrdili valjanost ovakvog zaključka, potrebno je provjeriti temeljne pretpostavke linearne regresije, prvenstveno normalnost distribucije reziduala (i homogenost njihove varijance).
+
+## Analiza reziduala
+
+Za vizualnu provjeru pretpostavke normalnosti reziduala koristimo histogram, koji omogućuje uvid u raspodjelu pogrešaka. Potpunu potvrdu normalnosti provjerit ćemo kasnije odgovarajućim statističkim testovima.
+```{r}
+selected.model <- fit.year
+hist(selected.model$residuals, breaks = 15, 
+     main = "Histogram reziduala linearnog regresijskog modela",
+     xlab = "Reziduali modela",
+     ylab = "Frekvencija")
+```
+
+## Q-Q graf
+
+Normalnost reziduala egzaktnije možemo provjeriti Q-Q plotom kako bismo utvrdili da pogreške modela približno slijede normalnu distribuciju, što je pretpostavka za valjanost statističkih testova koeficijenata i intervala pouzdanosti.
+```{r}
+qqnorm(rstandard(selected.model), 
+       main = "Q–Q dijagram standardiziranih reziduala",
+       xlab = "Teorijski kvantili normalne razdiobe",
+       ylab = "Standardizirani reziduali")
+qqline(rstandard(selected.model))
+```
+Q-Q graf pokazuje da reziduali uglavnom prate dijagonalnu liniju, s blagim odstupanjima na krajevima, što sugerira da pretpostavka normalnosti nije značajno narušena.
+
+## Testiranje Lillieforsovom inačicom
+
+Provjerimo sada normalnost reziduala Lillieforsovom inačicom Kolmogorov-Smirnovljeva testa na razini značajnosti od 5% uz sljedeće hipoteze:  
+H0: Reziduali su normalno distribuirani  
+H1: Reziduali nisu normalno distribuirani.
+
+```{r}
+lillie.test(rstandard(fit.year))
+```
+Testna statistika pokazuje vrlo visoku p-vrijednost. Budući da je ona veća od 0.05, test nije statistički značajan te nemamo dovoljno dokaza za odbacivanje nul-hipoteze. Reziduali se mogu smatrati normalno distribuiranima.
+
+## Pearsonov koeficijent korelacije
+
+Kao završni korak analize, računamo Pearsonov koeficijent korelacije i provodimo test kako bismo statistički evaluirali odnos između godine nastanka filma i njegove IMDb ocjene.
+Test provodimo na razini značajnosti od 5% uz hipoteze:  
+H0: Ne postoji linearna povezanost između godine izlaska filma i IMDb ocjene.  
+H1: Postoji linearna povezanost između godine izlaska filma i IMDb ocjene.
+```{r}
+cor.test(oscars$Year.of.Release,oscars$IMDB.Rating)
+```
+Koeficijent korelacije r iznosi 0,33 što ukazuje na umjerenu pozitivnu korelaciju dviju varijabli. P-vrijednost je vrlo mala, manja od 0,05. S obzirom na to, odbacujemo hipotezu H0 te je pozitivna povezanost statistički značajna. 95-postotni interval pouzdanosti je cijelim dijelom pozitivan što je još jedan indikator da pozitivna povezanost postoji.  
+Na temelju početnih deskriptivnih statistika opravdano bi bilo zaključiti i da stvarna korelacija između varijabli ne postoji te da je uočeni pozitivan trend posljedica šuma. Međutim, provedena statistička analiza i testovi pokazuju da je povezanost statistički značajna, a zbog velikog uzorka takav je zaključak opravdan.
+
+
+
+
+
+
+
+
+
+
+
+
+
