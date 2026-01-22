@@ -48,7 +48,9 @@ Skup podataka koji analiziramo u projektu sadrži 571 odgovor/redak.
 ```{r}
 #Prikaz varijabli u skupu podataka i njihovog podatkovnog tipa
 
-data = read_csv2("oscars_dataset.csv", locale = locale(decimal_mark = ",", grouping_mark = ".") ,show_col_types = FALSE)
+data = read_csv2("oscars_dataset.csv", 
+                 locale = locale(decimal_mark = ",", grouping_mark = "."),
+                 show_col_types = FALSE)
 var_types <- sapply(data, class)
 cat(paste(names(var_types), ": ", var_types, sep = "", collapse = "\n"))
 ```
@@ -74,7 +76,7 @@ Na taj način možemo usporediti kako različiti modeli označavanja žanrova ut
 ### Grupiranje žanrova i priprema podataka za analizu:
 
 Prvo nego što krenemo raditi bilo kakve statističke testove, moramo se upoznati s podacima.
-U datasetu se nalazi više stupaca koje sadrže kako su labelirani filmovi po z
+U datasetu se nalazi više stupaca koje sadrže kako su labelirani filmovi po žanrovima.
 
 ```{r}
 data <- data %>%
@@ -128,26 +130,15 @@ ggplot(genre_plot_data,
     x = "Broj filmova",
     y = "Žanr",
     fill = ""
-  )
+  ) +
+  coord_flip() + 
+  theme(
+  axis.text.x = element_text(angle = 90, hjust = 1)
+)
 
 ```
 
-
-
-Zbog velike disproporcije između broja pobjeda i nominacija, koristimo i postotne prikaze te logaritamsku skalu kako bismo mogli bolje vizualizalizirati podatke.
-
-### Postotni prikaz pobjeda vs nominacija po žanru:
-
-```{r}
-ggplot(genre_plot_data, aes(x = reorder(Genre, -Count), y = Count, fill = Outcome)) +
-  geom_bar(stat = "identity", position = "fill", color = "black") +
-  scale_y_continuous(labels = scales::percent_format()) +
-  scale_fill_manual(values = c("Winners" = "#1f78b4", "NotWinner" = "#a6c3e3")) +
-  theme_minimal(base_size = 14) +
-  labs(title = "Postotak pobjeda vs nominacija po žanru",
-       x = "Žanr", y = "Postotak", fill = "") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
+Zbog velike disproporcije između broja pobjeda i nominacija, koristimo i logaritamsku skalu kako bismo mogli bolje vizualizalizirati podatke.
 
 ### Logaritamska skala za broj pobjeda vs nominacija po žanru:
 
@@ -164,44 +155,12 @@ ggplot(genre_plot_data, aes(x = reorder(Genre, Count), y = Count, fill = Outcome
 
 ```
 
-### Stopa uspješnosti po žanru:
-
-Možemo također izračunati stopu uspješnosti (postotak pobjeda u odnosu na broj nominacija) za svaki žanr kako bismo dodatno ilustrirali razlike među žanrovima.
-
-```{r}
-
-genre_table <- genre_table %>%
-  mutate(WinRate = (Winners / Nominations) * 100)
-
-ggplot(genre_table, aes(x = reorder(Genre, WinRate), y = WinRate)) +
-  geom_col(fill = "#1f78b4", width = 0.7) +
-  geom_text(
-    aes(label = sprintf("%.1f%%", WinRate)),
-    hjust = -0.1,
-    size = 4
-  ) +
-  coord_flip() +
-  scale_y_continuous(limits = c(0, max(genre_table$WinRate) * 1.15)) +
-  labs(
-    title = "Stopa pobjeda po žanru",
-    x = "Žanr",
-    y = "Postotak pobjede"
-  ) +
-  theme_minimal(base_size = 14) +
-  theme(
-    plot.title = element_text(face = "bold", size = 16),
-    axis.text.y = element_text(size = 12),
-    axis.text.x = element_text(size = 11)
-  )
-
-```
 
 ### Kontigencijska tablica nominiranih i pobjednika po žanrovima:
 
 ```{r}
 kontigencijska <- genre_table[, c("Winners", "NotWinner")]
 row.names(kontigencijska) <- genre_table$Genre
-kontigencijska
 ```
 
 ## Multi-label analiza 
@@ -266,30 +225,46 @@ genre_melt <- genre_table_ml %>%
     cols = c(Winners, NotWinner),
     names_to = "Outcome",
     values_to = "Count"
+  ) %>%
+  arrange(desc(Count))  
+
+ggplot(genre_melt,
+       aes(x = Count,
+           y = reorder(GenreGroup, Count),
+           fill = Outcome)) +
+  geom_bar(stat = "identity", position = "stack", color = "black") +
+  geom_text(aes(label = Count),
+            position = position_stack(vjust = 0.5),
+            size = 3) +
+  scale_fill_manual(values = c(
+    "Winners" = "#1f78b4",
+    "NotWinner" = "#a6cee3"
+  )) +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "Multi-label analiza žanrova (broj pojavljivanja)",
+    x = "Broj pojavljivanja",
+    y = "Žanr",
+    fill = ""
+  ) +
+  coord_flip() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1)
   )
 
-# Bar plot (broj pojavljivanja)
-ggplot(genre_melt, aes(x = Count, y = reorder(GenreGroup, Count), fill = Outcome)) +
-  geom_bar(stat = "identity", color = "black") +
-  geom_text(aes(label = Count), position = position_stack(vjust = 0.5), size = 3) +
+
+ggplot(genre_melt, aes(x = reorder(GenreGroup, Count), y = Count + 1, fill = Outcome)) + 
+  geom_bar(stat = "identity", position = "stack", color = "black") +
+  scale_y_log10() +
   scale_fill_manual(values = c("Winners" = "#1f78b4", "NotWinner" = "#a6cee3")) +
   theme_minimal(base_size = 14) +
-  labs(title = "Multi-label analiza žanrova (grupirani rijetki žanrovi)",
-       x = "Broj pojavljivanja",
-       y = "Žanr",
-       fill = "")
-
-# Bar plot (postotak pobjeda)
-ggplot(genre_table_ml, aes(x = SuccessRate, y = reorder(GenreGroup, SuccessRate))) +
-  geom_col(fill = "#1f78b4") +
-  geom_text(aes(label = scales::percent(SuccessRate, accuracy = 0.1)), hjust = -0.1, size = 4) +
-  scale_x_continuous(labels = scales::percent_format(), limits = c(0, NA)) +
-  theme_minimal(base_size = 14) +
-  labs(title = "Postotak uspješnosti po žanru (multi-label)",
-       x = "Udio pobjeda",
-       y = "Žanr")
-
-
+  labs(
+    title = "Multi-label analiza žanrova (log skala)",
+    x = "Žanr",
+    y = "Broj pojavljivanja (log10)",
+    fill = ""
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 
@@ -303,21 +278,18 @@ ggplot(genre_table_ml, aes(x = SuccessRate, y = reorder(GenreGroup, SuccessRate)
 ### Grupiranje žanrova i priprema podataka za analizu:
 
 Kako bi ispitali nezavisnost dviju kategorijske varijable, odnosno kako bi ispitali jesu li žanrovi i pobjede zavisni, koristit ćemo hi-kvadrat test.
-Neka je kontigencijska tablica dimenzija \(r \times c\) sa:
-
-- \(O_{ij}\) = promatrana frekvencija u ćeliji \((i,j)\)  
-- \(E_{ij}\) = očekivana frekvencija ako su varijable neovisne  
-
-Očekivane frekvencije računamo
-\[
-E_{ij} = \frac{(\text{ukupno u redu } i) \cdot (\text{ukupno u stupcu } j)}{\text{ukupan broj promatranja}} 
-\]
-
 
 Hi-kvadrat statistika se provodi formulom: 
 \[
 \chi^2 = \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{(O_{ij} - E_{ij})^2}{E_{ij}}
 \]
+
+gdje je:
+
+- \(O_{ij}\) = promatrana frekvencija u ćeliji \((i,j)\)  
+- \(E_{ij}\) = očekivana frekvencija ako su varijable neovisne  
+
+i
 
 - Mala vrijednost \(\chi^2\) → promatrane frekvencije blizu očekivanih (neovisnost)  
 - Velika vrijednost \(\chi^2\) → značajna odstupanja (ovisnost)
@@ -355,21 +327,17 @@ colnames(nominee_counts) <- c("GenreGroup","Nominations")
 df <- merge(nominee_counts, winner_counts, by="GenreGroup", all.x=TRUE)
 df$Winners[is.na(df$Winners)] <- 0
 
-# Dodaj kolonu za ne-pobjede
 df$NotWinner <- df$Nominations - df$Winners
 
 kontigencijska_single <- as.data.frame(df[, c("Winners","NotWinner")])
 row.names(kontigencijska_single) <- df$GenreGroup
 
-
-#Prikaz kontigencijske tablice
 kontigencijska_single
 ```
 
 ### Hi-kvadrat test: 
 Sada radimo Hi-kvadrat test kako bismo vidjeli postoje li značajne razlike u učestalosti pobjeda među različitim žanrovima. Za razinu značajnosti, uzet ćemo $\alpha = 0{,}05$.
 ```{r}
-# Chi-squared test
 chisq_single <- chisq.test(kontigencijska_single)
 chisq_single
 ```
@@ -404,7 +372,7 @@ Ovdje također vidimo da je $p-value > \alpha$, odnosno $0.1036 > 0.05$ te prihv
 Na temelju dobivenih rezultata Hi-kvadrat testa kod oba pristupa, prihvaćamo H0 i možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada, kao i pitanje zašto su neki žanrovi češće nominirani od ostalih.
 
 \newpage
-# Istraživačko pitanje: Možemo li naslutiti kako je film ocijenjen pomoću drugih značajki?
+# Možemo li naslutiti kako je film ocijenjen pomoću drugih značajki?
 
 U ovoj analizi istražujemo možemo li pomoću dostupnih značajki filmova (godina izlaska, trajanje, žanr i content rating) pouzdano predvidjeti IMDb ocjenu. Cilj je izgraditi model višestruke linearne regresije koji će omogućiti razumijevanje koje karakteristike utječu na ocjenu i koliko taj utjecaj snažan.
 
@@ -422,7 +390,8 @@ Najprije moramo provjeriti nedostajuće podatke i osigurati da su tipovi varijab
 
 ```{r}
 data.frame(
-  Varijabla = c("IMDB.Rating", "Year.of.Release", "Movie.Time", "Main.Genre", "Content.Rating"),
+  Varijabla = c("IMDB.Rating", "Year.of.Release", "Movie.Time", "Main.Genre", 
+                "Content.Rating"),
   Broj_vrijednosti = c(
     sum(oscars$IMDB.Rating != ""),
     sum(oscars$Year.of.Release != ""),
@@ -483,7 +452,7 @@ data.frame(
 )
 ```
 
-## Korelacijska matrica
+### Korelacijska matrica
 
 Računamo korelacijsku matricu za ispitivanje linearnih odnosa između naših numeričkih varijabli.
 
@@ -495,7 +464,7 @@ print(round(cor_matrix, 3))
 
 Korelacijska matrica pokazuje odnose između numeričkih prediktora. Pozitivna korelacija između godine izlaska i IMDb ocjene ukazuje na to da noviji filmovi teže imati više ocjene.
 
-## Scatter plot: IMDb ocjena vs trajanje filma
+### Scatter plot: IMDb ocjena vs trajanje filma
 
 Grafički prikaz odnosa između trajanja filma i IMDb ocjene pomoću dijagrama raspršenja.
 
@@ -516,7 +485,7 @@ Iz scatter plota možemo vidjeti blagu pozitivnu vezu između trajanja filma i o
 
 Sada ćemo izgraditi model koristeći višestruku linearnu regresiju.
 
-## Priprema dummy varijabli
+### Priprema dummy varijabli
 
 Budući da kategorijske varijable ne mogu direktno ući u linearni regresijski model, potrebno ih je transformirati u dummy varijable.
 
@@ -535,7 +504,7 @@ rating_cols <- grep("^Content.Rating_", names(oscars_model), value = TRUE)
 
 Dummy varijable omogućuju uključivanje kategorijskih varijabli u model tako da svaka kategorija dobiva svoju indikatorsku varijablu. Važno je izostaviti jednu dummy varijablu iz svake kategorijske varijable kako bi se izbjegla multikolinearnost.
 
-## Procjena modela
+### Procjena modela
 
 ```{r}
 base_predictors <- c("Year.of.Release", "Movie.Time")
@@ -557,7 +526,7 @@ Model višestruke linearne regresije procjenjuje IMDb ocjenu kao funkciju godine
 
 Iz sažetka modela možemo iščitati da su neki koeficijenti statistički značajni (p < 0.05), što znači da imaju značajan utjecaj na IMDb ocjenu. Adjusted R² pokazuje koliki postotak varijance u ocjenama model objašnjava, prilagođeno za broj parametara.
 
-## Testovi regresijskih koeficijenata i adjusted R²
+### Testovi regresijskih koeficijenata i adjusted R²
 
 ```{r}
 adj_r2 <- summary(fit.multi)$adj.r.squared
@@ -578,7 +547,7 @@ cat("Broj značajnih koeficijenata (p < 0.05):", significant_coefs, "od", total_
 
 F-test pokazuje da je model statistički značajan i pruža bolju predikciju od nul-modela.
 
-## Predikcija srednje vrijednosti
+### Predikcija srednje vrijednosti
 
 Koristimo procijenjeni model za predikciju IMDb ocjene za "prosječan" film.
 
@@ -607,7 +576,7 @@ cat("95% interval pouzdanosti: [",
 
 Interval pouzdanosti od 95% znači da smo 95% uvjereni da će se prava srednja vrijednost IMDb ocjene za filmove s ovim karakteristikama nalaziti unutar navedenog intervala.
 
-## Analiza reziduala
+### Analiza reziduala
 
 Prije donošenja konačnih zaključaka o modelu, potrebno je provjeriti pretpostavke linearne regresije analizom reziduala.
 
@@ -682,7 +651,7 @@ boot_results <- boot::boot(data = oscars_model,
                            R = 1000)
 ```
 
-## Bootstrap intervali pouzdanosti
+### Bootstrap intervali pouzdanosti
 
 Bootstrap intervali pouzdanosti za sve koeficijente modela:
 
@@ -716,7 +685,7 @@ print(bootstrap_intervals)
 
 Bootstrap standardne pogreške (Boot_SE) omogućuju usporedbu s klasičnim OLS standardnim pogreškama. Sličnost ovih vrijednosti potvrđuje robusnost procjena.
 
-## Vizualizacija Bootstrap distribucija
+### Vizualizacija Bootstrap distribucija
 
 ```{r, fig.width=14, fig.height=12}
 par(mfrow = c(2, 2))
