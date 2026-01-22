@@ -31,6 +31,7 @@ library(tidyverse)
 library(tinytex)
 library(vcd)
 library(scales)
+library(nortest)
 
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(dev = "cairo_pdf")
@@ -47,8 +48,7 @@ Skup podataka koji analiziramo u projektu sadrži 571 odgovor/redak.
 ```{r}
 #Prikaz varijabli u skupu podataka i njihovog podatkovnog tipa
 
-data = read_csv2("oscars_dataset.csv")
-glimpse(data)
+data = read_csv2("oscars_dataset.csv", locale = locale(decimal_mark = ",", grouping_mark = ".") ,show_col_types = FALSE)
 var_types <- sapply(data, class)
 cat(paste(names(var_types), ": ", var_types, sep = "", collapse = "\n"))
 ```
@@ -404,302 +404,483 @@ Ovdje također vidimo da je $p-value > \alpha$, odnosno $0.1036 > 0.05$ te prihv
 Na temelju dobivenih rezultata Hi-kvadrat testa kod oba pristupa, prihvaćamo H0 i možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada, kao i pitanje zašto su neki žanrovi češće nominirani od ostalih.
 
 \newpage
+# Istraživačko pitanje: Možemo li naslutiti kako je film ocijenjen pomoću drugih značajki?
 
-# Analiza ocjena kroz godine (Roko)
-
+U ovoj analizi istražujemo možemo li pomoću dostupnih značajki filmova (godina izlaska, trajanje, žanr i content rating) pouzdano predvidjeti IMDb ocjenu. Cilj je izgraditi model višestruke linearne regresije koji će omogućiti razumijevanje koje karakteristike utječu na ocjenu i koliko taj utjecaj snažan.
 
 ```{r}
-library(ggplot2)
-
-oscars <- read.csv("oscars_dataset.csv", sep = ";") 
-oscars$win <- ifelse(oscars$Award == "Winner", 1, 0)
-oscars$votes <- as.numeric(gsub(",", "", oscars$IMDB.Votes))
-summary(oscars$votes)
-
-model <- glm(
-  win ~ votes,
-  data = oscars,
-  family = binomial
-)
-
-summary(model)
-# za inkrementalan glas publike log odds za dobivanje nagrade
-# ce biti veci za 1.155e-06
-
-# za inkrementalnig 100 tis glasova
-oscars$votes100k <- oscars$votes / 100000
-
-model100k <- glm(win ~ votes100k, family = binomial, data = oscars)
-summary(model100k)
-# z je 4.186, dovoljno velika za odbacivanje hipoteze
-# vjerojatnost da će film osvojiti Oscar raste s vecim brojem glasova
-
-# vizualizacija
-newframe <- data.frame(
-  votes100k = seq(
-    min(oscars$votes100k),
-    max(oscars$votes100k),
-    length.out = 100
-  )
-)
-newframe$prob <- predict(model100k, newframe, type = "response") # vjerojatnosti
-ggplot(newframe, aes(x = votes100k, y = prob)) +
-  geom_line() +
-  labs(x = "IMDb votes (log scale)", y = "Predicted probability of winning", 
-       title = "Audience votes and Oscar-winning probability"
-  )
+oscars <- read.csv("oscars_dataset.csv", sep = ";")
 ```
 
-\newpage
-# Možemo li naslutiti ocjenu na IMDb pomoću nekih parametara? (Roko)
+## Opis problema
+
+Jedno od pitanja koje razmatramo je možemo li naslutiti kako je film ocijenjen na temelju drugih dostupnih značajki. Cilj je izgraditi model koji će omogućiti predikciju IMDb ocjene koristeći godinu izlaska filma, trajanje, žanr i content ratinga filma kao prediktore.
+
+## Priprema podataka za analizu
+
+Najprije moramo provjeriti nedostajuće podatke i osigurati da su tipovi varijabli ispravni.
 
 ```{r}
-library(ggplot2)
-library(dplyr)
-
-oscars <- read.csv("oscars_dataset.csv", sep=";")
-oscars$rating <- as.numeric(oscars$IMDB.Rating) #IMDb rating
-oscars$votes <- as.numeric(gsub(",", "", oscars$IMDB.Votes)) #broj glasova na IMDb
-oscars$runtime <- as.numeric(oscars$Movie.Time) # trajanje filma
-oscars$year <- as.numeric(oscars$Year.of.Release) # godina izlaska filma
-oscars$genre <- oscars$Main.Genre # žanr filma
-
-oscars <- oscars %>%
-  select(rating, votes, runtime, year, genre) %>%
-  na.omit()
-
-summary(oscars)
-
-#analiza parametara
-
-#1. Možemo li sa brojem glasova na IMDb-u predvidjeti ocjenu?
-#   H0: ne možemo, H1: možemo
-
-ggplot(oscars, aes(x = votes, y = rating)) +
-  geom_point(alpha = 0.4) +
-  scale_x_log10() + 
-  labs(x = "Broj glasova na IMDb-u (log)", y = "Ocjena filma na IMDb-u")
-
-# Spearmanov test korelacije
-
-cor.test(
-  oscars$rating,
-  oscars$votes,
-  method = "spearman"
+data.frame(
+  Varijabla = c("IMDB.Rating", "Year.of.Release", "Movie.Time", "Main.Genre", "Content.Rating"),
+  Broj_vrijednosti = c(
+    sum(oscars$IMDB.Rating != ""),
+    sum(oscars$Year.of.Release != ""),
+    sum(oscars$Movie.Time != ""),
+    sum(oscars$Main.Genre != ""),
+    sum(oscars$Content.Rating != "")
+  )
 )
-
-# p value je izrazito mali, odbacujemo hipotezu H0 (glasovi i ocjena nisu korelirane)
-
-#2. Možemo li s obzirom na žanr predvidjeti kako je ocijenjen film?
-# H0: ne, H1: da
-
-ggplot(oscars, aes(x = genre, y = rating)) +
-  geom_boxplot() +
-  coord_flip()
-
-
-# linearni model kada uzmemo logaritam broja glasova
-m1 <- lm(rating ~ log10(votes), data = oscars)
-summary(m1)
-
-
-
-m2 <- lm(
-  rating ~ log10(votes) + runtime + year + genre,
-  data = oscars
-)
-
-summary(m2)
 
 ```
 
+Primjećujemo da postoje neki nedostatci. Kako bi podaci bili spremni za daljnju analizu, potrebno je osigurati da su tipovi podataka ispravni i ukloniti redove s nedostajućim vrijednostima.
 
-# Istraživačko pitanje: Ocjene filmova i njihova starost (Damjan)
-#### U ovom dijelu analiziramo kako se ocjene filmova mijenjaju s obzirom na godinu izlaska. Promatramo zasbeno ocjene publike (IMDb) i ocjene kritičara (Rotten Tomatoes).
+```{r}
+oscars$IMDB.Rating <- as.numeric(as.character(oscars$IMDB.Rating))
+oscars$Year.of.Release <- as.numeric(as.character(oscars$Year.of.Release))
+oscars$Movie.Time <- as.numeric(as.character(oscars$Movie.Time))
+
+oscars_clean <- oscars[complete.cases(oscars[, c("IMDB.Rating", "Year.of.Release", 
+                                                   "Movie.Time", "Main.Genre", 
+                                                   "Content.Rating")]), ]
+
+```
+
+## Deskriptivna statistika
+
+Numeričke varijable
+
+```{r}
+summary(oscars_clean[, c("IMDB.Rating", "Year.of.Release", "Movie.Time")])
+```
+
+Mjere centralne tendencije i rasipanja
+
+```{r}
+data.frame(
+  Varijabla = c("IMDB.Rating", "Year.of.Release", "Movie.Time"),
+  Mean = c(
+    mean(oscars_clean$IMDB.Rating, na.rm = TRUE),
+    mean(oscars_clean$Year.of.Release, na.rm = TRUE),
+    mean(oscars_clean$Movie.Time, na.rm = TRUE)
+  ),
+  Median = c(
+    median(oscars_clean$IMDB.Rating, na.rm = TRUE),
+    median(oscars_clean$Year.of.Release, na.rm = TRUE),
+    median(oscars_clean$Movie.Time, na.rm = TRUE)
+  ),
+  SD = c(
+    sd(oscars_clean$IMDB.Rating, na.rm = TRUE),
+    sd(oscars_clean$Year.of.Release, na.rm = TRUE),
+    sd(oscars_clean$Movie.Time, na.rm = TRUE)
+  ),
+  IQR = c(
+    IQR(oscars_clean$IMDB.Rating, na.rm = TRUE),
+    IQR(oscars_clean$Year.of.Release, na.rm = TRUE),
+    IQR(oscars_clean$Movie.Time, na.rm = TRUE)
+  )
+)
+```
+
+## Korelacijska matrica
+
+Računamo korelacijsku matricu za ispitivanje linearnih odnosa između naših numeričkih varijabli.
+
+```{r}
+cor_matrix <- cor(oscars_clean[, c("IMDB.Rating", "Movie.Time", "Year.of.Release")], 
+                  use = "complete.obs")
+print(round(cor_matrix, 3))
+```
+
+Korelacijska matrica pokazuje odnose između numeričkih prediktora. Pozitivna korelacija između godine izlaska i IMDb ocjene ukazuje na to da noviji filmovi teže imati više ocjene.
+
+## Scatter plot: IMDb ocjena vs trajanje filma
+
+Grafički prikaz odnosa između trajanja filma i IMDb ocjene pomoću dijagrama raspršenja.
+
+```{r, fig.width=10, fig.height=7}
+plot(oscars_clean$Movie.Time, oscars_clean$IMDB.Rating,
+     main = "Odnos trajanja filma i IMDb ocjene",
+     xlab = "Trajanje filma (minute)",
+     ylab = "IMDb ocjena",
+     pch = 19, col = rgb(0, 0, 1, 0.4))
+
+abline(lm(IMDB.Rating ~ Movie.Time, data = oscars_clean), 
+       col = "red", lwd = 2)
+```
+
+Iz scatter plota možemo vidjeti blagu pozitivnu vezu između trajanja filma i ocjene. Crvena linija predstavlja linearnu regresiju.
+
+## Model višestruke linearne regresije
+
+Sada ćemo izgraditi model koristeći višestruku linearnu regresiju.
+
+## Priprema dummy varijabli
+
+Budući da kategorijske varijable ne mogu direktno ući u linearni regresijski model, potrebno ih je transformirati u dummy varijable.
+
+```{r}
+oscars_model <- fastDummies::dummy_cols(oscars_clean, 
+                                        select_columns = c("Main.Genre", "Content.Rating"),
+                                        remove_first_dummy = TRUE,
+                                        remove_selected_columns = FALSE)
+
+names(oscars_model) <- make.names(names(oscars_model))
+
+# Pregled dostupnih dummy varijabli
+genre_cols <- grep("^Main.Genre_", names(oscars_model), value = TRUE)
+rating_cols <- grep("^Content.Rating_", names(oscars_model), value = TRUE)
+```
+
+Dummy varijable omogućuju uključivanje kategorijskih varijabli u model tako da svaka kategorija dobiva svoju indikatorsku varijablu. Važno je izostaviti jednu dummy varijablu iz svake kategorijske varijable kako bi se izbjegla multikolinearnost.
+
+## Procjena modela
+
+```{r}
+base_predictors <- c("Year.of.Release", "Movie.Time")
+all_predictors <- c(base_predictors, genre_cols, rating_cols)
+
+cat("Broj prediktora u modelu:", length(all_predictors), "\n")
+cat("Prvih 5 dummy varijabli:\n")
+print(head(all_predictors, 10))
+
+model_formula <- reformulate(termlabels = all_predictors, 
+                              response = "IMDB.Rating")
+
+fit.multi <- lm(model_formula, data = oscars_model)
+
+summary(fit.multi)
+```
+
+Model višestruke linearne regresije procjenjuje IMDb ocjenu kao funkciju godine izlaska, trajanja filma, žanra i content ratinga. Dummy varijable predstavljaju razlike u ocjenama između pojedinih žanrova i content ratinga u odnosu na referentnu kategoriju.
+
+Iz sažetka modela možemo iščitati da su neki koeficijenti statistički značajni (p < 0.05), što znači da imaju značajan utjecaj na IMDb ocjenu. Adjusted R² pokazuje koliki postotak varijance u ocjenama model objašnjava, prilagođeno za broj parametara.
+
+## Testovi regresijskih koeficijenata i adjusted R²
+
+```{r}
+adj_r2 <- summary(fit.multi)$adj.r.squared
+f_stat <- summary(fit.multi)$fstatistic
+f_pval <- pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
+
+cat("Adjusted R²:", round(adj_r2, 4), "\n")
+
+cat("F-statistika:", round(f_stat[1], 2), "\n")
+cat(sprintf("p-vrijednost: %.4e\n\n", f_pval))
+
+coef_summary <- summary(fit.multi)$coefficients
+significant_coefs <- sum(coef_summary[, 4] < 0.05, na.rm = TRUE)
+total_coefs <- nrow(coef_summary)
+
+cat("Broj značajnih koeficijenata (p < 0.05):", significant_coefs, "od", total_coefs, "\n")
+```
+
+F-test pokazuje da je model statistički značajan i pruža bolju predikciju od nul-modela.
+
+## Predikcija srednje vrijednosti
+
+Koristimo procijenjeni model za predikciju IMDb ocjene za "prosječan" film.
+
+```{r}
+new_data <- data.frame(
+  Year.of.Release = median(oscars_clean$Year.of.Release, na.rm = TRUE),
+  Movie.Time = median(oscars_clean$Movie.Time, na.rm = TRUE)
+)
+
+# Dodavanje dummy varijabli (sve na 0 za referentne kategorije)
+for (col in c(genre_cols, rating_cols)) {
+  new_data[[col]] <- 0
+}
+
+pred_mean <- predict(fit.multi, newdata = new_data, 
+                     interval = "confidence", level = 0.95)
+
+cat("Predikcija IMDb ocjene za prosječan film:\n")
+cat("Godina izlaska:", new_data$Year.of.Release, "\n")
+cat("Trajanje:", new_data$Movie.Time, "minuta\n")
+cat("Referentni žanr i rating\n\n")
+cat("Predviđena ocjena:", round(pred_mean[1], 3), "\n")
+cat("95% interval pouzdanosti: [", 
+    round(pred_mean[2], 3), ",", round(pred_mean[3], 3), "]\n")
+```
+
+Interval pouzdanosti od 95% znači da smo 95% uvjereni da će se prava srednja vrijednost IMDb ocjene za filmove s ovim karakteristikama nalaziti unutar navedenog intervala.
+
+## Analiza reziduala
+
+Prije donošenja konačnih zaključaka o modelu, potrebno je provjeriti pretpostavke linearne regresije analizom reziduala.
+
+```{r, fig.width=14, fig.height=12}
+par(mfrow = c(2, 2))
+
+plot(fit.multi$fitted.values, fit.multi$residuals,
+     main = "Fitted vs Residuals",
+     xlab = "Fitted vrijednosti (predviđene ocjene)",
+     ylab = "Reziduali",
+     pch = 19, col = rgb(0, 0, 1, 0.5))
+abline(h = 0, col = "red", lwd = 2, lty = 2)
+
+# 2. Histogram reziduala
+hist(rstandard(fit.multi), breaks = 25,
+     main = "Histogram standardiziranih reziduala",
+     xlab = "Standardizirani reziduali",
+     ylab = "Frekvencija",
+     col = "lightblue")
+
+# 3. Q-Q plot
+qqnorm(rstandard(fit.multi),
+       main = "Q-Q dijagram standardiziranih reziduala",
+       xlab = "Teorijski kvantili",
+       ylab = "Standardizirani reziduali")
+qqline(rstandard(fit.multi), col = "red", lwd = 2)
+
+# 4. Scale-Location
+plot(fit.multi$fitted.values, sqrt(abs(rstandard(fit.multi))),
+     main = "Scale-Location",
+     xlab = "Fitted vrijednosti",
+     ylab = "√|Standardizirani reziduali|",
+     pch = 19, col = rgb(0, 0, 1, 0.5))
+
+par(mfrow = c(1, 1))
+```
+
+Q-Q plot pokazuje da reziduali uglavnom prate dijagonalnu liniju, s blagim odstupanjima na krajevima, što sugerira da pretpostavka normalnosti nije značajno narušena.
+
+## Test normalnosti reziduala
+
+Provjerimo sada normalnost reziduala Lillieforsovom inačicom Kolmogorov-Smirnovljevog testa na razini značajnosti od 5% uz sljedeće hipoteze:
+
+H0: Reziduali su normalno distribuirani
+H1: Reziduali nisu normalno distribuirani.
+
+```{r}
+nortest::lillie.test(rstandard(fit.multi))
+```
+
+Testna statistika pokazuje p-vrijednost. Ako je p-vrijednost veća od 0.05, test nije statistički značajan te nemamo dovoljno dokaza za odbacivanje nul-hipoteze. Reziduali se mogu smatrati normalno distribuiranima.
+
+## Bootstrap analiza
+
+Bootstrap se koristi radi **robusnosti procjena**. Omogućuje procjenu intervala pouzdanosti bez striktnih pretpostavki o distribuciji podataka, što je posebno korisno kada pretpostavke normalnosti mogu biti narušene.
+
+```{r}
+set.seed(42)
+
+formula_string <- paste("IMDB.Rating ~", paste(all_predictors, collapse = " + "))
+
+bootstrap_lm <- function(data, indices) {
+  d <- data[indices, ]
+  fit <- lm(as.formula(formula_string), data = d)
+  return(coef(fit))
+}
+
+# Bootstrap s 1000 iteracija
+
+boot_results <- boot::boot(data = oscars_model, 
+                           statistic = bootstrap_lm,
+                           R = 1000)
+```
+
+## Bootstrap intervali pouzdanosti
+
+Bootstrap intervali pouzdanosti za sve koeficijente modela:
+
+```{r}
+coef_names <- names(coef(fit.multi))
+bootstrap_intervals <- data.frame(
+  Koeficijent = coef_names,
+  Procjena = round(coef(fit.multi), 4),
+  OLS_SE = round(summary(fit.multi)$coefficients[, "Std. Error"], 4),
+  Boot_SE = round(apply(boot_results$t, 2, sd, na.rm = TRUE), 4),
+  Boot_Lower = numeric(length(coef_names)),
+  Boot_Upper = numeric(length(coef_names)),
+  stringsAsFactors = FALSE
+)
+
+for (i in 1:length(coef_names)) {
+  tryCatch({
+    boot_ci <- boot::boot.ci(boot_results, type = "perc", index = i)
+    if (!is.null(boot_ci$percent)) {
+      bootstrap_intervals$Boot_Lower[i] <- round(boot_ci$percent[4], 4)
+      bootstrap_intervals$Boot_Upper[i] <- round(boot_ci$percent[5], 4)
+    }
+  }, error = function(e) {
+    bootstrap_intervals$Boot_Lower[i] <- NA
+    bootstrap_intervals$Boot_Upper[i] <- NA
+  })
+}
+
+print(bootstrap_intervals)
+```
+
+Bootstrap standardne pogreške (Boot_SE) omogućuju usporedbu s klasičnim OLS standardnim pogreškama. Sličnost ovih vrijednosti potvrđuje robusnost procjena.
+
+## Vizualizacija Bootstrap distribucija
+
+```{r, fig.width=14, fig.height=12}
+par(mfrow = c(2, 2))
+
+# Bootstrap za Year.of.Release
+if (ncol(boot_results$t) >= 2) {
+  hist(boot_results$t[, 2], breaks = 30,
+       main = "Bootstrap: Year.of.Release",
+       xlab = "Koeficijent",
+       col = "lightblue",
+       border = "white")
+  abline(v = coef(fit.multi)[2], col = "red", lwd = 2)
+  abline(v = quantile(boot_results$t[, 2], c(0.025, 0.975), na.rm = TRUE), 
+         col = "darkred", lwd = 2, lty = 2)
+}
+
+# Bootstrap za Movie.Time
+if (ncol(boot_results$t) >= 3) {
+  hist(boot_results$t[, 3], breaks = 30,
+       main = "Bootstrap: Movie.Time",
+       xlab = "Koeficijent",
+       col = "lightgreen",
+       border = "white")
+  abline(v = coef(fit.multi)[3], col = "red", lwd = 2)
+  abline(v = quantile(boot_results$t[, 3], c(0.025, 0.975), na.rm = TRUE), 
+         col = "darkred", lwd = 2, lty = 2)
+}
+
+# Bootstrap za Intercept
+hist(boot_results$t[, 1], breaks = 30,
+     main = "Bootstrap: Intercept",
+     xlab = "Koeficijent",
+     col = "lightyellow",
+     border = "white")
+abline(v = coef(fit.multi)[1], col = "red", lwd = 2)
+abline(v = quantile(boot_results$t[, 1], c(0.025, 0.975), na.rm = TRUE), 
+       col = "darkred", lwd = 2, lty = 2)
+
+par(mfrow = c(1, 1))
+```
+
+Crvena linija označava procjenu koeficijenta iz originalnog modela, dok isprekidane linije označavaju 95% bootstrap interval pouzdanosti.
+
+## Zaključak
+
+Model višestruke linearne regresije koristi godinu izlaska filma, trajanje filma, žanr i content rating za predikciju IMDb ocjene nominiranih filmova za Oscara.
+
+Adjusted R² iznosi `r round(adj_r2, 4)`, što znači da model objašnjava `r round(adj_r2 * 100, 2)`% varijance u IMDb ocjenama. F-test pokazuje da je model statistički značajan (p < 0.001), što znači da korištene značajke imaju prediktivnu moć.
+
+`r significant_coefs` od `r total_coefs` koeficijenata su statistički značajni na razini značajnosti od 5%, što ukazuje na to da većina varijabli uključenih u model ima značajan doprinos predikciji ocjene.
+
+Bootstrap analiza korištena je radi robusnosti procjena. Bootstrap intervali pouzdanosti potvrđuju stabilnost procjena koeficijenata i omogućuju zaključivanje bez striktnih pretpostavki o normalnosti podataka.
+
+Iako model objašnjava značajan dio varijabilnosti, preostala neobjašnjena varijanca ukazuje na to da postoje i drugi faktori (kvaliteta režije, gluma, priča) koji utječu na ocjene, a nisu uključeni u ovaj model.
 
 
+# Istraživanje povezanosti između starosti filma i njegove ocjene
 
 ```{r}
 oscars <- read.csv2("oscars_dataset.csv")
-# glimpse(oscars)
-
 ```
 
-#### U ovoj analizi istražujemo kako su filmovi nominirani za Oscara za najbolji film ocijenjeni s obzirom na godinu izlaska.
-  
-  
-#### Pretvorbe tipova, uređivanje dataseta
+
+## Opis problema
+Jedno od pitanja koje razmatramo jest kako su filmovi ocijenjeni s obzirom na svoju starost, odnosno kako godina izlaska filma utječe na njegovu ocjenu. Cilj je dobiti uvid u trend promjene ocjena kroz godine i provjeriti jesu li godina izlaska i ocjena međusobno značajno korelirani.
+
+
+## Priprema podataka za analizu
+Najprije moramo odabrati koje ocjene ćemo koristiti za analizu. Pogledajmo kojih podataka ima najviše odnosno nedostaju li neki podaci:
 ```{r}
-oscars <- oscars %>%
-  mutate(
-    IMDB.Rating = as.numeric(IMDB.Rating),
-    IMDB.Votes = as.numeric(gsub(",", "", IMDB.Votes)),
-    Tomatometer.Rating = as.numeric(Tomatometer.Rating),
-    Audience.Rating = as.numeric(Audience.Rating),
-    Award = factor(Award, levels = c("Nominee", "Winner"))
-  )
+data.frame(Ocjena = c("IMDb", "Rotten Tomatoes", "Audience"), 
+                     Broj_vrijednosti = c(sum(oscars$IMDB.Rating != ""), 
+                                          sum(oscars$Tomatometer.Rating != ""), 
+                                          sum(oscars$Audience.Rating != "")))
 ```
-  
-  
-Da bismo dobili uvid u to postoji li promjena u prosječnim ocjenama filmova kroz vrijeme, usporedit ćemo IMDb ocjene starijih i novijih filmova.
-  
+Primjećujemo da postoje neki nedostatci, stoga ćemo za daljnja promatranja koirstiti podatke o IMDb ocjenama.
 
-#### Side-to-side usporedba ocjena starijih i novijih filmova
-
+Kako bi podaci bili spremni za daljnu analizu, potrebno je osigurati da je njihov tip numeric.
 ```{r}
-oscars <- oscars %>%
-  mutate(
-    Period = ifelse(Year.of.Release < 1990, "Stariji", "Noviji")
-  )
-
-ggplot(oscars, aes(x = Period, y = IMDB.Rating)) +
-  geom_boxplot() +
-  labs(
-    x = "Razdoblje",
-    y = "IMDb ocjena",
-    title = "IMDb ocjene starijih i novijih filmova"
-  )
-
+oscars$IMDB.Rating <- as.numeric(as.character(oscars$IMDB.Rating))
+oscars$Year.of.Release <- as.numeric(as.character(oscars$Year.of.Release))
 ```
- 
- 
-Budući da želimo statistički provjeriti postoji li značajna razlika u IMDb ocjenama između starijih i novijih filmova, primijenit ćemo neparametarski Wilcoxonov rank-sum test.
-  
-  
-#### Wilcoxonov rank-sum test
-```{r}
-wilcox.test(
-  IMDB.Rating ~ Period,
-  data = oscars
-)
-```
-  
-Rezultati Wilcoxonovog testa pokazuju da je p-vrijednost vrlo mala (p < 0,001), što znači da postoji statistički značajna razlika u IMDb ocjenama između starijih i novijih filmova, pri čemu noviji filmovi imaju prosječno više ocjene.
-  
-  
-Pogledajmo sada kako se IMDb ocjene mijenjaju kroz godine izlaska filmova.
-  
-#### Graf: IMDb ocjena filmova kroz godine  
+
+## Vizualizacija podataka
+
+Analizirajmo sada povezanost između godine izlaska filma i njegove ocjene. Budući da promatramo utjecaj jedne numeričke varijable (godina izlaska) na drugu numeričku varijablu (ocjena), osnovni uvid u njihov odnos dobiva se grafičkim prikazom pomoću scatter plota. Takav prikaz omogućuje uočavanje općeg trenda i eventualne nelinearnosti.
 
 ```{r}
-ggplot(oscars, aes(x = Year.of.Release, y = IMDB.Rating)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(
-    x = "Godina izlaska",
-    y = "IMDb ocjena",
-    title = "Odnos godine izlaska i IMDb ocjene"
-  )
-
+plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
+     main = "Odnos godine izlaska filma i IMDb ocjene", 
+     xlab = "Godina izlaska filma", 
+     ylab = "IMDb ocjena")
 ```
-  
-    
-S grafa je vidljivo da regresijski pravac ima blagi pozitivan nagib, što upućuje na to da IMDb ocjene filmova kroz vrijeme pokazuju tendenciju blagog porasta. Međutim, raspršenost podataka oko regresijske linije je velika, pa je vidljivo da je taj trend slab i da godina izlaska objašnjava samo mali dio varijabilnosti IMDb ocjena.  
-Kako bi provjerili je li ovaj porast ocjena s vremenom statistički značajan, izračunat ćemo Pearsonov koeficijent korelacije između godine izlaska i IMDb ocjena.
 
-#### Određivanje Pearsonovog koeficijenta korelacije (jačine i smjera linearne povezanosti)
+Scatter plot ne pokazuje jasno povećanje ocjena s godinama izlaska zbog raspršenosti podataka i prisutnosti outliera. Kako bismo bolje sagledali trend, možemo grupirati filmove po desetljećima i prikazati ocjene pomoću box plota, što omogućuje uočavanje promjena u medijanu i rasponu ocjena kroz vrijeme.
+```{r}
+oscars$desetljece <- floor(oscars$Year.of.Release / 10) * 10
+boxplot(IMDB.Rating ~ desetljece, data = oscars, 
+        main = "Distribucija IMDb ocjena po desetljećima", 
+        xlab = "Desetljeće izlaska filma", 
+        ylab = "IMDb ocjena")
+```
+Iz scatter plota i box plota može se naslutiti da postoji određena povezanost između godine izlaska filma i njegove ocjene, no ona se ne čini velikom. 
+
+## Linearna regresija
+
+Kako bismo procjenili jačinu promatranog odnosa, izrađujemo jednostavnu linearnu regresiju s ocjenom filma kao zavisnom varijablom i godinom izlaska kao nezavisnom varijablom.
 
 ```{r}
-cor.test(
-  oscars$Year.of.Release,
-  oscars$IMDB.Rating,
-  use = "complete.obs"
-)
-
+fit.year <- lm(IMDB.Rating ~ Year.of.Release, data = oscars)
+plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
+     main = "Linearna regresija IMDb ocjene ~ godina izlaska",
+     xlab = "Godina izlaska filma",
+     ylab = "IMDb ocjena")
+lines(oscars$Year.of.Release, fit.year$fitted.values, col = "blue")
 ```
-Pearsonov koeficijent korelacije između godine izlaska i IMDb ocjena iznosi 0,33, što indicira umjerenu pozitivnu linearnu povezanost. Budući da je p-vrijednost gotovo zanemariva, veza je statistički značajna. Međutim, iako trend pokazuje da noviji filmovi imaju blago više ocjene, godina izlaska objašnjava samo mali dio varijabilnosti ocjena.  
-Da bismo bolje razumjeli kako godina izlaska utječe na IMDb ocjene i mogli predviđati ocjene filmova, koristit ćemo linearnu regresiju s ocjenom kao zavisnom varijablom i godinom izlaska kao neovisnom.
 
-#### Linearna regresija - IMDb
+Dobiveni regresijski model pokazuje mali pozitivan nagib, što znači da noviji filmovi u prosjeku imaju nešto više ocjene, no efekt je slab. Kako bismo potvrdili valjanost ovakvog zaključka, potrebno je provjeriti temeljne pretpostavke linearne regresije, prvenstveno normalnost distribucije reziduala (i homogenost njihove varijance).
+
+## Analiza reziduala
+
+Za vizualnu provjeru pretpostavke normalnosti reziduala koristimo histogram, koji omogućuje uvid u raspodjelu pogrešaka. Potpunu potvrdu normalnosti provjerit ćemo kasnije odgovarajućim statističkim testovima.
+```{r}
+selected.model <- fit.year
+hist(selected.model$residuals, breaks = 15, 
+     main = "Histogram reziduala linearnog regresijskog modela",
+     xlab = "Reziduali modela",
+     ylab = "Frekvencija")
+```
+
+## Q-Q graf
+
+Normalnost reziduala egzaktnije možemo provjeriti Q-Q plotom kako bismo utvrdili da pogreške modela približno slijede normalnu distribuciju, što je pretpostavka za valjanost statističkih testova koeficijenata i intervala pouzdanosti.
+```{r}
+qqnorm(rstandard(selected.model), 
+       main = "Q–Q dijagram standardiziranih reziduala",
+       xlab = "Teorijski kvantili normalne razdiobe",
+       ylab = "Standardizirani reziduali")
+qqline(rstandard(selected.model))
+```
+Q-Q graf pokazuje da reziduali uglavnom prate dijagonalnu liniju, s blagim odstupanjima na krajevima, što sugerira da pretpostavka normalnosti nije značajno narušena.
+
+## Testiranje Lillieforsovom inačicom
+
+Provjerimo sada normalnost reziduala Lillieforsovom inačicom Kolmogorov-Smirnovljeva testa na razini značajnosti od 5% uz sljedeće hipoteze:  
+H0: Reziduali su normalno distribuirani  
+H1: Reziduali nisu normalno distribuirani.
 
 ```{r}
-model <- lm(
-  IMDB.Rating ~ Year.of.Release,
-  data = oscars
-)
-
-summary(model)
+lillie.test(rstandard(fit.year))
 ```
-  
-Linearni model pokazuje blagu pozitivnu povezanost između godine izlaska i IMDb ocjena. Svaka dodatna godina povećava očekivanu ocjenu za približno 0,006 rating bodova. Model je statistički značajan (p < 0,001), no godina izlaska objašnjava samo oko 1% varijabilnosti ocjena, što znači da iako postoji trend rasta ocjena s vremenom, on je relativno slab.   
-  
-Napravimo sada sličnu analizu gdje ćemo kao ocjenu uzeti ocjenu kritičara, odnosno Rotten Tomatoes rating.
+Testna statistika pokazuje vrlo visoku p-vrijednost. Budući da je ona veća od 0.05, test nije statistički značajan te nemamo dovoljno dokaza za odbacivanje nul-hipoteze. Reziduali se mogu smatrati normalno distribuiranima.
 
-#### Rotten Tomatoes i starost filma
+## Pearsonov koeficijent korelacije
+
+Kao završni korak analize, računamo Pearsonov koeficijent korelacije i provodimo test kako bismo statistički evaluirali odnos između godine nastanka filma i njegove IMDb ocjene.
+Test provodimo na razini značajnosti od 5% uz hipoteze:  
+H0: Ne postoji linearna povezanost između godine izlaska filma i IMDb ocjene.  
+H1: Postoji linearna povezanost između godine izlaska filma i IMDb ocjene.
 ```{r}
-ggplot(oscars, aes(x = Year.of.Release, y = Tomatometer.Rating)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(
-    x = "Godina izlaska",
-    y = "Tomatometer ocjena",
-    title = "Odnos godine izlaska i RT ocjene"
-  )
+cor.test(oscars$Year.of.Release,oscars$IMDB.Rating)
 ```
-
-
-Regresijski pravac u ovom slučaju ima još manji nagib, no još uvijek ima pozitivan koeficijent smjera. Raspršenost podataka ponovno je velika (ponovno slab trend), stoga izračunajmo i za ovaj set podataka Pearsonov koeficijent korelacije.
-
-```{r}
-cor.test(
-  oscars$Year.of.Release,
-  oscars$Tomatometer.Rating,
-  use = "complete.obs"
-)
-```
-  
-Pearsonov koeficijent korelacije između godine izlaska i ocjena kritičara (Tomatometer) iznosi 0,05, što ukazuje na vrlo slab trend. P-vrijednost je 0,283, što znači da veza nije statistički značajna. Drugim riječima, **ocjene kritičara ne pokazuju pouzdan trend rasta ili pada s vremenom**.
-  
-  
-#### Linearna regresija - Rotten Tomatoes
-
-```{r}
-model <- lm(Tomatometer.Rating ~ Year.of.Release, data = oscars)
-summary(model)
-```
-  
-  
-Linearni model pokazuje da postoji gotovo zanemariva pozitivna veza između godine izlaska i ocjena kritičara (nagib = 0,02), koja nije statistički značajna (p = 0,283) i objašnjava manje od 1% varijabilnosti ocjena.
-  
-  
-
-#### Broj IMDb glasova i starost filma
-
-```{r}
-ggplot(oscars, aes(x = Year.of.Release, y = IMDB.Votes)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(
-    x = "Godina izlaska",
-    y = "broj IMDb glasova",
-    title = "Odnos godine izlaska i broja IMDb glasova"
-  )
-
-```
-
-#### Isti postupak, uz log(IMDB.Votes)
-
-```{r}
-ggplot(oscars, aes(x = Year.of.Release, y = log(IMDB.Votes))) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(
-    x = "Godina izlaska",
-    y = "Log(broj IMDb glasova)",
-    title = "Odnos godine izlaska i broja IMDb glasova"
-  )
-```
-
-#### Korelacija glasova i godine izlaska filma
-```{r}
-cor.test(
-  oscars$Year.of.Release,
-  log(oscars$IMDB.Votes),
-  use = "complete.obs"
-)
-
-```
-
+Koeficijent korelacije r iznosi 0,33 što ukazuje na umjerenu pozitivnu korelaciju dviju varijabli. P-vrijednost je vrlo mala, manja od 0,05. S obzirom na to, odbacujemo hipotezu H0 te je pozitivna povezanost statistički značajna. 95-postotni interval pouzdanosti je cijelim dijelom pozitivan što je još jedan indikator da pozitivna povezanost postoji.  
+Na temelju početnih deskriptivnih statistika opravdano bi bilo zaključiti i da stvarna korelacija između varijabli ne postoji te da je uočeni pozitivan trend posljedica šuma. Međutim, provedena statistička analiza i testovi pokazuju da je povezanost statistički značajna, a zbog velikog uzorka takav je zaključak opravdan.
 
 \newpage
 
