@@ -9,22 +9,12 @@ output:
     toc_depth: 2
     number_sections: true
     fig_height: 3.5
-  html_document:
-    toc: true
-    toc_depth: '2'
-    df_print: paged
-  word_document:
-    toc: true
-    toc_depth: '2'
-geometry: margin=2.5cm
-documentclass: article
 ---
 
 ```{r setup, include=FALSE}
 library(dplyr)
 library(readr)
 library(stringr)
-library(hflights)
 library(tidyr)
 library(lubridate)
 library(tidyverse)
@@ -32,11 +22,13 @@ library(tinytex)
 library(vcd)
 library(scales)
 library(nortest)
+library(boot)
+library(fastDummies)
+library(pROC)
+library(knitr)
+library(ggplot2)
 
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(dev = "cairo_pdf")
-
-options(warn = -1)
 ```
 
 \newpage
@@ -46,29 +38,56 @@ options(warn = -1)
 Skup podataka koji analiziramo u projektu sadrži 571 odgovor/redak.
 
 ```{r}
-#Prikaz varijabli u skupu podataka i njihovog podatkovnog tipa
-
-data = read_csv2("oscars_dataset.csv", 
+oscars = read_csv2("oscars_dataset.csv", 
                  locale = locale(decimal_mark = ",", grouping_mark = "."),
                  show_col_types = FALSE)
-var_types <- sapply(data, class)
+var_types <- sapply(oscars, class)
+names(oscars) <- make.names(names(oscars))
 cat(paste(names(var_types), ": ", var_types, sep = "", collapse = "\n"))
 ```
 
+# Priprema podataka za analizu
+
+```{r}
+oscars$Award <- factor(oscars$Award,
+                       levels = c("Nominee", "Winner"))
+
+oscars$Main.Genre <- factor(oscars$Main.Genre)
+oscars$Subgenre <- factor(oscars$Subgenre)
+oscars$Content.Rating <- factor(oscars$Content.Rating)
+oscars$Movie.Genre <- factor(oscars$Movie.Genre)
+
+oscars$Year.of.Release <- as.numeric(oscars$Year.of.Release)
+oscars$Movie.Time <- as.numeric(oscars$Movie.Time)
+
+oscars$IMDB.Rating <- as.numeric(oscars$IMDB.Rating)
+oscars$IMDB.Votes <- as.numeric(gsub(",", "", oscars$IMDB.Votes))
+
+oscars$Tomatometer.Rating <- as.numeric(oscars$Tomatometer.Rating)
+oscars$Tomatometer.Count <- as.numeric(oscars$Tomatometer.Count)
+
+oscars$Audience.Rating <- as.numeric(oscars$Audience.Rating)
+oscars$Audience.Count <- as.numeric(oscars$Audience.Count)
+
+oscars$Original.Release.Date <- as.Date(oscars$Original.Release.Date)
+
+oscars <- oscars[complete.cases(oscars[, c("IMDB.Rating",
+                                                 "Year.of.Release",
+                                                 "Movie.Time",
+                                                 "Main.Genre",
+                                                 "Content.Rating")]), ]
+```
+
+
 \newpage
 
-# Analiza žanrova kod pobjednika (Matija)
+# Analiza žanrova kod pobjednika
 
 ## Opis problema
 
-Cilj ove analize je ispitati postoji li povezanost između filmskih žanrova i vjerojatnosti osvajanja Oscara. S obzirom na to da je teško svesti film na samo jedan žanr, analizu provodimo na dva načina:
+Cilj ove analize je ispitati postoji li povezanost između žanra filma i vjerojatnosti osvajanja Oscara. Analizu provodimo na dva načina zbog višestrukosti žanrova.
 
-1. *Single-label pristup* – svakom filmu pridružujemo samo jedan glavni žanr (Main Genre).
-
-2. *Multi-label pristup* – film može pripadati više žanrova (Movie Genre), a svaki žanr ćemo zasebno brojati.
-
-Na taj način možemo usporediti kako različiti modeli označavanja žanrova utječu na rezultate.
-
+U single-label pristupu svakom filmu pridružujemo jedan glavni žanr. U multi-label pristupu film može pripadati više žanrova koji se zasebno broje. Time uspoređujemo kako različite metode označavanja utječu na zaključke.
 
 ## Single-label analiza
 
@@ -79,25 +98,22 @@ Prvo nego što krenemo raditi bilo kakve statističke testove, moramo se upoznat
 U datasetu se nalazi više stupaca koje sadrže kako su labelirani filmovi po žanrovima.
 
 ```{r}
-data <- data %>%
-  mutate(`Main Genre` = as.character(`Main Genre`))
-
-winners <- data %>% filter(Award == "Winner")
-nominees <- data %>% filter(Award %in% c("Nominee", "Winner"))
+winners <- oscars %>% filter(Award == "Winner")
+nominees <- oscars %>% filter(Award %in% c("Nominee", "Winner"))
 
 winner_counts <- winners %>%
-  count(`Main Genre`, name = "Winners")
+  count(Main.Genre, name = "Winners")
 
 nominee_counts <- nominees %>%
-  count(`Main Genre`, name = "Nominations")
+  count(Main.Genre, name = "Nominations")
 
 genre_table <- nominee_counts %>%
-  left_join(winner_counts, by = "Main Genre") %>%
+  left_join(winner_counts, by = "Main.Genre") %>%
   mutate(
     Winners = replace_na(Winners, 0),
     NotWinner = Nominations - Winners
   ) %>%
-  rename(Genre = `Main Genre`)
+  rename(Genre = Main.Genre)
 ```
 
 
@@ -143,7 +159,7 @@ Zbog velike disproporcije između broja pobjeda i nominacija, koristimo i logari
 ### Logaritamska skala za broj pobjeda vs nominacija po žanru:
 
 ```{r}
-ggplot(genre_plot_data, aes(x = reorder(Genre, Count), y = Count, fill = Outcome)) +
+ggplot(genre_plot_data, aes(x = reorder(Genre, Count), y = Count + 1, fill = Outcome)) +
   geom_bar(stat = "identity", position = "stack", color = "black") +
   scale_y_log10() +
   scale_fill_manual(values = c("Winners" = "#1f78b4", "NotWinner" = "#a6cee3")) +
@@ -159,7 +175,7 @@ ggplot(genre_plot_data, aes(x = reorder(Genre, Count), y = Count, fill = Outcome
 ### Kontigencijska tablica nominiranih i pobjednika po žanrovima:
 
 ```{r}
-kontigencijska <- genre_table[, c("Winners", "NotWinner")]
+kontigencijska <- as.data.frame(genre_table[, c("Winners", "NotWinner")])
 row.names(kontigencijska) <- genre_table$Genre
 ```
 
@@ -169,27 +185,28 @@ row.names(kontigencijska) <- genre_table$Genre
 
 Priprema podataka za multi-label analizu žanrova:
 ```{r}
-data <- data %>%
-  mutate(`Movie Genre` = as.character(`Movie Genre`))
+oscars_long <- oscars %>%
+  separate_rows(Movie.Genre, sep = ",") %>%
+  mutate(Movie.Genre = trimws(Movie.Genre))
 ```
 
 Mutiramo podatke kako bismo razdvojili višestruke žanrove u zasebne retke.
 ```{r}
-data_long <- data %>%
-  separate_rows(`Movie Genre`, sep = ",") %>%
-  mutate(`Movie Genre` = trimws(`Movie Genre`))
+oscars_long <- oscars %>%
+  separate_rows(Movie.Genre, sep = ",") %>%
+  mutate(Movie.Genre = trimws(Movie.Genre))
 
 ```
 
 
 Izračun broja pobjeda i ne-pobjeda po žanru:
-```{r}
 
-genre_counts <- data_long %>%
+```{r}
+genre_counts <- oscars_long %>%
   mutate(
     Outcome = ifelse(Award == "Winner", "Winner", "NotWinner")
   ) %>%
-  count(`Movie Genre`, Outcome) %>%
+  count(Movie.Genre, Outcome) %>%
   pivot_wider(
     names_from = Outcome,
     values_from = n,
@@ -197,13 +214,14 @@ genre_counts <- data_long %>%
   ) %>%
   mutate(
     Total = Winner + NotWinner,
-    GenreGroup = ifelse(Total < 5, "Other", `Movie Genre`),
+    GenreGroup = ifelse(Total < 5, "Other", Movie.Genre),
     SuccessRate = Winner / Total
   )
 ```
 
 
 Grupiranje rijetkih žanrova u kategoriju "Ostali" i izračun ukupnih vrijednosti po grupama žanrova:
+
 ```{r}
 genre_table_ml <- genre_counts %>%
   group_by(GenreGroup) %>%
@@ -313,15 +331,14 @@ Važno je reći da hi-kvadrat test ima važan uvjet: očekivane frekvencije u sv
 
 ```{r}
 common_genres <- c("Action", "Adventure", "Biography", "Comedy", "Crime", "Drama")
-data$GenreGroup <- ifelse(data$`Main Genre` %in% common_genres,
-                          data$`Main Genre`,
+oscars$GenreGroup <- ifelse(oscars$Main.Genre %in% common_genres,
+                          oscars$Main.Genre,
                           "Other")
-# broj pobjeda po grupama
-winner_counts <- as.data.frame(table(subset(data, Award=="Winner")$GenreGroup))
+
+winner_counts <- as.data.frame(table(subset(oscars, Award=="Winner")$GenreGroup))
 colnames(winner_counts) <- c("GenreGroup","Winners")
 
-# broj nominacija po grupama
-nominee_counts <- as.data.frame(table(subset(data, Award %in% c("Winner","Nominee"))$GenreGroup))
+nominee_counts <- as.data.frame(table(subset(oscars, Award %in% c("Winner","Nominee"))$GenreGroup))
 colnames(nominee_counts) <- c("GenreGroup","Nominations")
 
 df <- merge(nominee_counts, winner_counts, by="GenreGroup", all.x=TRUE)
@@ -372,82 +389,216 @@ Ovdje također vidimo da je $p-value > \alpha$, odnosno $0.1036 > 0.05$ te prihv
 Na temelju dobivenih rezultata Hi-kvadrat testa kod oba pristupa, prihvaćamo H0 i možemo zaključiti da ne postoje značajne razlike u učestalosti pobjeda među različitim žanrovima filmova nominiranih za Oscara. Standardizirani reziduali ukazuju na to koji žanrovi značajno odstupaju od očekivanih vrijednosti, što može biti korisno za daljnje istraživanje i razumijevanje trendova u dodjeli nagrada, kao i pitanje zašto su neki žanrovi češće nominirani od ostalih.
 
 \newpage
-# Možemo li naslutiti kako je film ocijenjen pomoću drugih značajki?
+# Analiza razlika u prosječnom trajanju filmova među žanrovima
 
-U ovoj analizi istražujemo možemo li pomoću dostupnih značajki filmova (godina izlaska, trajanje, žanr i content rating) pouzdano predvidjeti IMDb ocjenu. Cilj je izgraditi model višestruke linearne regresije koji će omogućiti razumijevanje koje karakteristike utječu na ocjenu i koliko taj utjecaj snažan.
+## Opis problema  
+Glavno pitanje iduće analize je utvrditi postoje li statistički značajne razlike u prosječnom trajanju filmova različitih žanrova. Kako bismo to ispitali, provjerit ćemo razdiobu trajanja filmova po glavnim žanrovima (Main.Genre) te primijeniti odgovarajuće statističke testove. Najprije pregledajmo koliko filmova pripada svakom žanru u našim podacima.  
+
+## Priprema podataka  
+```{r}
+count <- table(oscars$Main.Genre)
+count_df <- as.data.frame(count)
+colnames(count_df) <- c("Glavni žanr", "Broj filmova")
+kable(count_df, caption = "Broj filmova po glavnom žanru")
+```
+Zbog malog broja filmova nekih žanrova, svrstat ćemo te filmove u rang 'Other' kako bi analiza bila pouzdana i rezultati jasni za tumačenje.
 
 ```{r}
-oscars <- read.csv("oscars_dataset.csv", sep = ";")
+oscars$Main.Genre2 <- as.character(oscars$Main.Genre)
+small_genres <- c("Animation","Family","Film-Noir","Horror",
+                  "Music","Musical","Romance","Western")
+oscars$Main.Genre2[oscars$Main.Genre2 %in% small_genres] <- "Other"
+oscars$Main.Genre2 <- factor(oscars$Main.Genre2)
+paste0("Broj filmova sa žanrom 'Other': ", sum(oscars$Main.Genre2=="Other"))
 ```
+Do kraja ove analize kao žanr koristit ćemo kolonu Main.Genre2.  
+
+## Pretpostavke ANOVA-e
+Najbolje ćemo utvrditi postoje li razlike u prosječnom trajanju filmova među žanrovima primjenom jednofaktorske ANOVA-e ili njezine neparemetarske alternative, Kruskal-Wallis testa. Prikladni test odabiremo ovisno o tome jesu li zadovoljene iduće pretpostavke:    
+1 - Normalnost raziobe podataka o trajanju filmova  
+2 - Homogenost varijanci podataka o trajanju filmova   
+(3 - Nezavisnost opažanja)    
+
+Provjerimo sada normalnost podataka po žanrovima pomoću Lillieforsova testa na razini značajnosti alfa=0.05. Hipoteze su:  
+H0: Podaci unutar žanra slijede normalnu distribuciju  
+H1: Podaci unutar žanra ne slijede normalnu distribuciju.
+```{r}
+razliciti_genres <- levels(oscars$Main.Genre2)
+normality_results <- data.frame(Genre = character(), 
+                                P_value = numeric(), 
+                                stringsAsFactors = FALSE)
+for (genre in razliciti_genres) {
+  genre_data <- oscars$Movie.Time[oscars$Main.Genre2 == genre]
+  genre_test <- lillie.test(genre_data)
+
+  normality_results <- rbind(normality_results, 
+                             data.frame(Genre = genre, 
+                                        P_value = genre_test$p.value))
+}
+
+kable(normality_results, 
+      col.names = c("Žanr", "P-vrijednost"), 
+      caption = "Lillieforsov test normalnosti trajanja filmova po žanru")
+```
+Budući da većina distribucija trajanja filmova po žanrovima nije normalna (p-vrijednost < 0.05), nećemo primjeniti Barlettov test niti jednofaktorsku ANOVA-u, već koristimo (manje statistički značajan) Kruskal-Wallis test.
+
+## Kruskal-Wallis test
+Provedimo sada test na razini značajnosti alfa=0.05 sa sljedećim hipotezama:  
+H0: Medijani svih uzoraka su jednaki  
+H1: Barem dva medijana nisu jednaka.   
+Uvjet za primjenjivost testa je zadovoljen, odnosno veličina svakog uzorka je barem 5.
+
+
+```{r}
+kruskal.test(Movie.Time ~ Main.Genre2, data = oscars)
+```
+Rezultati Kruskal-Wallis testa pokazuju vrlo malu p-vrijednost, što znači da odbacujemo nul-hipotezu u korist alternativne hipoteze. Barem jedna distribucija trajanja se značajno razlikuje od ostalih, odnosno postoji razlika u medijanima populacija.   
+
+## Vizualna i deskriptivna analiza
+Ostaje nam da vizualno očitamo koje žanrove karakterizira dulje ili kraće trajanje filmova, što možemo prikazati pomoću box-plota po žanrovima.
+```{r}
+boxplot(Movie.Time ~ Main.Genre2,
+        data = oscars,
+        main = "Trajanje filmova po glavnom žanru",
+        xlab = "",
+        ylab = "Trajanje (minute)",
+        las = 2)
+```
+Pogledajmo i srednje vrijednosti:  
+```{r}
+mean_table <- oscars %>%
+  group_by(Main.Genre2) %>%
+  summarise(Mean_Duration = mean(Movie.Time, na.rm = TRUE),
+            Count = n()) %>%
+  arrange(desc(Mean_Duration))
+colnames(mean_table) <- c("Glavni žanr", "Srednje trajanje filma", "Broj filmova")
+kable(mean_table, caption = "Prosječno trajanje filmova po glavnom žanru")
+```
+Ističu se filmovi žanra "Adventure" kao najduži u prosjeku.
+\newpage
+
+# Istraživanje povezanosti između starosti filma i njegove ocjene
+
+## Opis problema
+Jedno od pitanja koje razmatramo jest kako su filmovi ocijenjeni s obzirom na svoju starost, odnosno kako godina izlaska filma utječe na njegovu ocjenu. Cilj je dobiti uvid u trend promjene ocjena kroz godine i provjeriti jesu li godina izlaska i ocjena međusobno značajno korelirani.
+
+
+## Vizualizacija podataka
+
+Analizirajmo sada povezanost između godine izlaska filma i njegove ocjene. Budući da promatramo utjecaj jedne numeričke varijable (godina izlaska) na drugu numeričku varijablu (ocjena), osnovni uvid u njihov odnos dobiva se grafičkim prikazom pomoću scatter plota. Takav prikaz omogućuje uočavanje općeg trenda i eventualne nelinearnosti.
+
+```{r}
+plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
+     main = "Odnos godine izlaska filma i IMDb ocjene", 
+     xlab = "Godina izlaska filma", 
+     ylab = "IMDb ocjena")
+```
+
+Scatter plot ne pokazuje jasno povećanje ocjena s godinama izlaska zbog raspršenosti podataka i prisutnosti outliera. Kako bismo bolje sagledali trend, možemo grupirati filmove po desetljećima i prikazati ocjene pomoću box plota, što omogućuje uočavanje promjena u medijanu i rasponu ocjena kroz vrijeme.
+```{r}
+oscars$desetljece <- floor(oscars$Year.of.Release / 10) * 10
+boxplot(IMDB.Rating ~ desetljece, data = oscars, 
+        main = "Distribucija IMDb ocjena po desetljećima", 
+        xlab = "Desetljeće izlaska filma", 
+        ylab = "IMDb ocjena")
+```
+Iz scatter plota i box plota može se naslutiti da postoji određena povezanost između godine izlaska filma i njegove ocjene, no ona se ne čini velikom. 
+
+## Linearna regresija
+
+Kako bismo procjenili jačinu promatranog odnosa, izrađujemo jednostavnu linearnu regresiju s ocjenom filma kao zavisnom varijablom i godinom izlaska kao nezavisnom varijablom.
+
+```{r}
+fit.year <- lm(IMDB.Rating ~ Year.of.Release, data = oscars)
+plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
+     main = "Linearna regresija IMDb ocjene ~ godina izlaska",
+     xlab = "Godina izlaska filma",
+     ylab = "IMDb ocjena")
+lines(oscars$Year.of.Release, fit.year$fitted.values, col = "blue")
+```
+
+Dobiveni regresijski model pokazuje mali pozitivan nagib, što znači da noviji filmovi u prosjeku imaju nešto više ocjene, no efekt je slab. Kako bismo potvrdili valjanost ovakvog zaključka, potrebno je provjeriti temeljne pretpostavke linearne regresije, prvenstveno normalnost distribucije reziduala (i homogenost njihove varijance).
+
+## Analiza reziduala
+
+Za vizualnu provjeru pretpostavke normalnosti reziduala koristimo histogram, koji omogućuje uvid u raspodjelu pogrešaka. Potpunu potvrdu normalnosti provjerit ćemo kasnije odgovarajućim statističkim testovima.
+```{r}
+selected.model <- fit.year
+hist(selected.model$residuals, breaks = 15, 
+     main = "Histogram reziduala linearnog regresijskog modela",
+     xlab = "Reziduali modela",
+     ylab = "Frekvencija")
+```
+
+## Q-Q graf
+
+Normalnost reziduala egzaktnije možemo provjeriti Q-Q plotom kako bismo utvrdili da pogreške modela približno slijede normalnu distribuciju, što je pretpostavka za valjanost statističkih testova koeficijenata i intervala pouzdanosti.
+
+```{r}
+qqnorm(rstandard(selected.model), 
+       main = "Q–Q dijagram standardiziranih reziduala",
+       xlab = "Teorijski kvantili normalne razdiobe",
+       ylab = "Standardizirani reziduali")
+qqline(rstandard(selected.model))
+```
+Q-Q graf pokazuje da reziduali uglavnom prate dijagonalnu liniju, s blagim odstupanjima na krajevima, što sugerira da pretpostavka normalnosti nije značajno narušena.
+
+## Testiranje Lillieforsovom inačicom
+
+Provjerimo sada normalnost reziduala Lillieforsovom inačicom Kolmogorov-Smirnovljeva testa na razini značajnosti od 5% uz sljedeće hipoteze:  
+H0: Reziduali su normalno distribuirani  
+H1: Reziduali nisu normalno distribuirani.
+
+```{r}
+lillie.test(rstandard(fit.year))
+```
+Testna statistika pokazuje vrlo visoku p-vrijednost. Budući da je ona veća od 0.05, test nije statistički značajan te nemamo dovoljno dokaza za odbacivanje nul-hipoteze. Reziduali se mogu smatrati normalno distribuiranima.
+
+## Pearsonov koeficijent korelacije
+
+Kao završni korak analize, računamo Pearsonov koeficijent korelacije i provodimo test kako bismo statistički evaluirali odnos između godine nastanka filma i njegove IMDb ocjene.
+Test provodimo na razini značajnosti od 5% uz hipoteze:  
+H0: Ne postoji linearna povezanost između godine izlaska filma i IMDb ocjene.  
+H1: Postoji linearna povezanost između godine izlaska filma i IMDb ocjene.
+
+```{r}
+cor.test(oscars$Year.of.Release,oscars$IMDB.Rating)
+```
+Koeficijent korelacije r iznosi 0,33 što ukazuje na umjerenu pozitivnu korelaciju dviju varijabli. P-vrijednost je vrlo mala, manja od 0,05. S obzirom na to, odbacujemo hipotezu H0 te je pozitivna povezanost statistički značajna. 95-postotni interval pouzdanosti je cijelim dijelom pozitivan što je još jedan indikator da pozitivna povezanost postoji.  
+Na temelju početnih deskriptivnih statistika opravdano bi bilo zaključiti i da stvarna korelacija između varijabli ne postoji te da je uočeni pozitivan trend posljedica šuma. Međutim, provedena statistička analiza i testovi pokazuju da je povezanost statistički značajna, a zbog velikog uzorka takav je zaključak opravdan.
+
+\newpage
+
+# Možemo li naslutiti kako je film ocijenjen pomoću drugih značajki?
 
 ## Opis problema
 
-Jedno od pitanja koje razmatramo je možemo li naslutiti kako je film ocijenjen na temelju drugih dostupnih značajki. Cilj je izgraditi model koji će omogućiti predikciju IMDb ocjene koristeći godinu izlaska filma, trajanje, žanr i content ratinga filma kao prediktore.
-
-## Priprema podataka za analizu
-
-Najprije moramo provjeriti nedostajuće podatke i osigurati da su tipovi varijabli ispravni.
-
-```{r}
-data.frame(
-  Varijabla = c("IMDB.Rating", "Year.of.Release", "Movie.Time", "Main.Genre", 
-                "Content.Rating"),
-  Broj_vrijednosti = c(
-    sum(oscars$IMDB.Rating != ""),
-    sum(oscars$Year.of.Release != ""),
-    sum(oscars$Movie.Time != ""),
-    sum(oscars$Main.Genre != ""),
-    sum(oscars$Content.Rating != "")
-  )
-)
-
-```
-
-Primjećujemo da postoje neki nedostatci. Kako bi podaci bili spremni za daljnju analizu, potrebno je osigurati da su tipovi podataka ispravni i ukloniti redove s nedostajućim vrijednostima.
-
-```{r}
-oscars$IMDB.Rating <- as.numeric(as.character(oscars$IMDB.Rating))
-oscars$Year.of.Release <- as.numeric(as.character(oscars$Year.of.Release))
-oscars$Movie.Time <- as.numeric(as.character(oscars$Movie.Time))
-
-oscars_clean <- oscars[complete.cases(oscars[, c("IMDB.Rating", "Year.of.Release", 
-                                                   "Movie.Time", "Main.Genre", 
-                                                   "Content.Rating")]), ]
-
-```
+U ovoj analizi istražujemo možemo li pomoću dostupnih značajki filmova (godina izlaska, trajanje, žanr i content rating) pouzdano predvidjeti IMDb ocjenu. Cilj je izgraditi model višestruke linearne regresije koji će omogućiti razumijevanje koje karakteristike utječu na ocjenu i koliko taj utjecaj snažan.
 
 ## Deskriptivna statistika
-
-Numeričke varijable
-
-```{r}
-summary(oscars_clean[, c("IMDB.Rating", "Year.of.Release", "Movie.Time")])
-```
-
-Mjere centralne tendencije i rasipanja
 
 ```{r}
 data.frame(
   Varijabla = c("IMDB.Rating", "Year.of.Release", "Movie.Time"),
   Mean = c(
-    mean(oscars_clean$IMDB.Rating, na.rm = TRUE),
-    mean(oscars_clean$Year.of.Release, na.rm = TRUE),
-    mean(oscars_clean$Movie.Time, na.rm = TRUE)
+    mean(oscars$IMDB.Rating, na.rm = TRUE),
+    mean(oscars$Year.of.Release, na.rm = TRUE),
+    mean(oscars$Movie.Time, na.rm = TRUE)
   ),
   Median = c(
-    median(oscars_clean$IMDB.Rating, na.rm = TRUE),
-    median(oscars_clean$Year.of.Release, na.rm = TRUE),
-    median(oscars_clean$Movie.Time, na.rm = TRUE)
+    median(oscars$IMDB.Rating, na.rm = TRUE),
+    median(oscars$Year.of.Release, na.rm = TRUE),
+    median(oscars$Movie.Time, na.rm = TRUE)
   ),
   SD = c(
-    sd(oscars_clean$IMDB.Rating, na.rm = TRUE),
-    sd(oscars_clean$Year.of.Release, na.rm = TRUE),
-    sd(oscars_clean$Movie.Time, na.rm = TRUE)
+    sd(oscars$IMDB.Rating, na.rm = TRUE),
+    sd(oscars$Year.of.Release, na.rm = TRUE),
+    sd(oscars$Movie.Time, na.rm = TRUE)
   ),
   IQR = c(
-    IQR(oscars_clean$IMDB.Rating, na.rm = TRUE),
-    IQR(oscars_clean$Year.of.Release, na.rm = TRUE),
-    IQR(oscars_clean$Movie.Time, na.rm = TRUE)
+    IQR(oscars$IMDB.Rating, na.rm = TRUE),
+    IQR(oscars$Year.of.Release, na.rm = TRUE),
+    IQR(oscars$Movie.Time, na.rm = TRUE)
   )
 )
 ```
@@ -457,7 +608,7 @@ data.frame(
 Računamo korelacijsku matricu za ispitivanje linearnih odnosa između naših numeričkih varijabli.
 
 ```{r}
-cor_matrix <- cor(oscars_clean[, c("IMDB.Rating", "Movie.Time", "Year.of.Release")], 
+cor_matrix <- cor(oscars[, c("IMDB.Rating", "Movie.Time", "Year.of.Release")], 
                   use = "complete.obs")
 print(round(cor_matrix, 3))
 ```
@@ -469,13 +620,13 @@ Korelacijska matrica pokazuje odnose između numeričkih prediktora. Pozitivna k
 Grafički prikaz odnosa između trajanja filma i IMDb ocjene pomoću dijagrama raspršenja.
 
 ```{r, fig.width=10, fig.height=7}
-plot(oscars_clean$Movie.Time, oscars_clean$IMDB.Rating,
+plot(oscars$Movie.Time, oscars$IMDB.Rating,
      main = "Odnos trajanja filma i IMDb ocjene",
      xlab = "Trajanje filma (minute)",
      ylab = "IMDb ocjena",
      pch = 19, col = rgb(0, 0, 1, 0.4))
 
-abline(lm(IMDB.Rating ~ Movie.Time, data = oscars_clean), 
+abline(lm(IMDB.Rating ~ Movie.Time, data = oscars), 
        col = "red", lwd = 2)
 ```
 
@@ -483,21 +634,18 @@ Iz scatter plota možemo vidjeti blagu pozitivnu vezu između trajanja filma i o
 
 ## Model višestruke linearne regresije
 
-Sada ćemo izgraditi model koristeći višestruku linearnu regresiju.
-
 ### Priprema dummy varijabli
 
 Budući da kategorijske varijable ne mogu direktno ući u linearni regresijski model, potrebno ih je transformirati u dummy varijable.
 
 ```{r}
-oscars_model <- fastDummies::dummy_cols(oscars_clean, 
+oscars_model <- fastDummies::dummy_cols(oscars, 
                                         select_columns = c("Main.Genre", "Content.Rating"),
                                         remove_first_dummy = TRUE,
                                         remove_selected_columns = FALSE)
 
 names(oscars_model) <- make.names(names(oscars_model))
 
-# Pregled dostupnih dummy varijabli
 genre_cols <- grep("^Main.Genre_", names(oscars_model), value = TRUE)
 rating_cols <- grep("^Content.Rating_", names(oscars_model), value = TRUE)
 ```
@@ -553,11 +701,10 @@ Koristimo procijenjeni model za predikciju IMDb ocjene za "prosječan" film.
 
 ```{r}
 new_data <- data.frame(
-  Year.of.Release = median(oscars_clean$Year.of.Release, na.rm = TRUE),
-  Movie.Time = median(oscars_clean$Movie.Time, na.rm = TRUE)
+  Year.of.Release = median(oscars$Year.of.Release, na.rm = TRUE),
+  Movie.Time = median(oscars$Movie.Time, na.rm = TRUE)
 )
 
-# Dodavanje dummy varijabli (sve na 0 za referentne kategorije)
 for (col in c(genre_cols, rating_cols)) {
   new_data[[col]] <- 0
 }
@@ -590,21 +737,18 @@ plot(fit.multi$fitted.values, fit.multi$residuals,
      pch = 19, col = rgb(0, 0, 1, 0.5))
 abline(h = 0, col = "red", lwd = 2, lty = 2)
 
-# 2. Histogram reziduala
 hist(rstandard(fit.multi), breaks = 25,
      main = "Histogram standardiziranih reziduala",
      xlab = "Standardizirani reziduali",
      ylab = "Frekvencija",
      col = "lightblue")
 
-# 3. Q-Q plot
 qqnorm(rstandard(fit.multi),
        main = "Q-Q dijagram standardiziranih reziduala",
        xlab = "Teorijski kvantili",
        ylab = "Standardizirani reziduali")
 qqline(rstandard(fit.multi), col = "red", lwd = 2)
 
-# 4. Scale-Location
 plot(fit.multi$fitted.values, sqrt(abs(rstandard(fit.multi))),
      main = "Scale-Location",
      xlab = "Fitted vrijednosti",
@@ -644,11 +788,10 @@ bootstrap_lm <- function(data, indices) {
   return(coef(fit))
 }
 
-# Bootstrap s 1000 iteracija
-
 boot_results <- boot::boot(data = oscars_model, 
                            statistic = bootstrap_lm,
                            R = 1000)
+
 ```
 
 ### Bootstrap intervali pouzdanosti
@@ -656,31 +799,32 @@ boot_results <- boot::boot(data = oscars_model,
 Bootstrap intervali pouzdanosti za sve koeficijente modela:
 
 ```{r}
-coef_names <- names(coef(fit.multi))
-bootstrap_intervals <- data.frame(
-  Koeficijent = coef_names,
-  Procjena = round(coef(fit.multi), 4),
-  OLS_SE = round(summary(fit.multi)$coefficients[, "Std. Error"], 4),
-  Boot_SE = round(apply(boot_results$t, 2, sd, na.rm = TRUE), 4),
-  Boot_Lower = numeric(length(coef_names)),
-  Boot_Upper = numeric(length(coef_names)),
-  stringsAsFactors = FALSE
-)
+set.seed(42)
 
-for (i in 1:length(coef_names)) {
+formula_string <- paste("IMDB.Rating ~", paste(all_predictors, collapse = " + "))
+
+n_expected_coefs <- length(all_predictors) + 1
+
+bootstrap_lm <- function(data, indices) {
+  d <- data[indices, ]
   tryCatch({
-    boot_ci <- boot::boot.ci(boot_results, type = "perc", index = i)
-    if (!is.null(boot_ci$percent)) {
-      bootstrap_intervals$Boot_Lower[i] <- round(boot_ci$percent[4], 4)
-      bootstrap_intervals$Boot_Upper[i] <- round(boot_ci$percent[5], 4)
+    fit <- lm(as.formula(formula_string), data = d)
+    coefs <- coef(fit)
+    if (length(coefs) == n_expected_coefs) {
+      return(coefs)
+    } else {
+      return(rep(NA, n_expected_coefs))
     }
   }, error = function(e) {
-    bootstrap_intervals$Boot_Lower[i] <- NA
-    bootstrap_intervals$Boot_Upper[i] <- NA
+    return(rep(NA, n_expected_coefs))
   })
 }
 
-print(bootstrap_intervals)
+# Bootstrap s 1000 iteracija
+boot_results <- boot::boot(data = oscars_model, 
+                           statistic = bootstrap_lm,
+                           R = 1000)
+
 ```
 
 Bootstrap standardne pogreške (Boot_SE) omogućuju usporedbu s klasičnim OLS standardnim pogreškama. Sličnost ovih vrijednosti potvrđuje robusnost procjena.
@@ -742,492 +886,140 @@ Bootstrap analiza korištena je radi robusnosti procjena. Bootstrap intervali po
 Iako model objašnjava značajan dio varijabilnosti, preostala neobjašnjena varijanca ukazuje na to da postoje i drugi faktori (kvaliteta režije, gluma, priča) koji utječu na ocjene, a nisu uključeni u ovaj model.
 
 
-# Istraživanje povezanosti između starosti filma i njegove ocjene
+
+
+# Analiza predviđanja pobjednika
+
+U ovoj analizi istražujemo postoje li statistički značajne razlike između filmova koji su osvojili Oscara ("Winner") i onih koji su bili samo nominirani ("Nominee"). Analizu provodimo na temelju dostupnih značajki: IMDb ocjene, žanra, godine izlaska i trajanja filma.
 
 ```{r}
-oscars <- read.csv2("oscars_dataset.csv")
+oscars <- read.csv("oscars_dataset.csv", sep = ";", na.strings = c("", "NA", "Unknown"), encoding = "UTF-8")
 ```
 
+#### Priprema podataka
 
-## Opis problema
-Jedno od pitanja koje razmatramo jest kako su filmovi ocijenjeni s obzirom na svoju starost, odnosno kako godina izlaska filma utječe na njegovu ocjenu. Cilj je dobiti uvid u trend promjene ocjena kroz godine i provjeriti jesu li godina izlaska i ocjena međusobno značajno korelirani.
-
-
-## Priprema podataka za analizu
-Najprije moramo odabrati koje ocjene ćemo koristiti za analizu. Pogledajmo kojih podataka ima najviše odnosno nedostaju li neki podaci:
-```{r}
-data.frame(Ocjena = c("IMDb", "Rotten Tomatoes", "Audience"), 
-                     Broj_vrijednosti = c(sum(oscars$IMDB.Rating != ""), 
-                                          sum(oscars$Tomatometer.Rating != ""), 
-                                          sum(oscars$Audience.Rating != "")))
-```
-Primjećujemo da postoje neki nedostatci, stoga ćemo za daljnja promatranja koirstiti podatke o IMDb ocjenama.
-
-Kako bi podaci bili spremni za daljnu analizu, potrebno je osigurati da je njihov tip numeric.
-```{r}
-oscars$IMDB.Rating <- as.numeric(as.character(oscars$IMDB.Rating))
-oscars$Year.of.Release <- as.numeric(as.character(oscars$Year.of.Release))
-```
-
-## Vizualizacija podataka
-
-Analizirajmo sada povezanost između godine izlaska filma i njegove ocjene. Budući da promatramo utjecaj jedne numeričke varijable (godina izlaska) na drugu numeričku varijablu (ocjena), osnovni uvid u njihov odnos dobiva se grafičkim prikazom pomoću scatter plota. Takav prikaz omogućuje uočavanje općeg trenda i eventualne nelinearnosti.
+Prije analize, uređujemo dataset: pretvaramo numeričke varijable u ispravan format, kreiramo binarnu varijablu za pobjedu te grupiramo rjeđe žanrove kako bismo osigurali stabilnost modela.
 
 ```{r}
-plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
-     main = "Odnos godine izlaska filma i IMDb ocjene", 
-     xlab = "Godina izlaska filma", 
-     ylab = "IMDb ocjena")
+# Pretvorbe tipova, uređivanje dataseta
+oscars <- oscars %>%
+  mutate(
+    IMDB.Rating = as.numeric(IMDB.Rating),
+    Year.of.Release = as.numeric(Year.of.Release),
+    Movie.Time = as.numeric(Movie.Time),
+    # Kreiranje binarne varijable (1 = Winner, 0 = Nominee)
+    IsWinner = ifelse(Award == "Winner", 1, 0),
+    # Grupiranje žanrova radi stabilnosti modela
+    Main.Genre = ifelse(Main.Genre %in% c("Drama", "Comedy", "Biography", "Adventure", "Action", "Crime"), 
+                        Main.Genre, "Other"),
+    Main.Genre = factor(Main.Genre),
+    Award = factor(Award, levels = c("Nominee", "Winner"))
+  ) %>%
+  filter(complete.cases(IMDB.Rating, Main.Genre, Year.of.Release, Movie.Time, IsWinner))
 ```
 
-Scatter plot ne pokazuje jasno povećanje ocjena s godinama izlaska zbog raspršenosti podataka i prisutnosti outliera. Kako bismo bolje sagledali trend, možemo grupirati filmove po desetljećima i prikazati ocjene pomoću box plota, što omogućuje uočavanje promjena u medijanu i rasponu ocjena kroz vrijeme.
-```{r}
-oscars$desetljece <- floor(oscars$Year.of.Release / 10) * 10
-boxplot(IMDB.Rating ~ desetljece, data = oscars, 
-        main = "Distribucija IMDb ocjena po desetljećima", 
-        xlab = "Desetljeće izlaska filma", 
-        ylab = "IMDb ocjena")
-```
-Iz scatter plota i box plota može se naslutiti da postoji određena povezanost između godine izlaska filma i njegove ocjene, no ona se ne čini velikom. 
+Da bismo dobili uvid u razlike u ocjenama, vizualizirat ćemo distribucije ocjena za pobjednike i nominirane.
 
-## Linearna regresija
-
-Kako bismo procjenili jačinu promatranog odnosa, izrađujemo jednostavnu linearnu regresiju s ocjenom filma kao zavisnom varijablom i godinom izlaska kao nezavisnom varijablom.
-
-```{r}
-fit.year <- lm(IMDB.Rating ~ Year.of.Release, data = oscars)
-plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
-     main = "Linearna regresija IMDb ocjene ~ godina izlaska",
-     xlab = "Godina izlaska filma",
-     ylab = "IMDb ocjena")
-lines(oscars$Year.of.Release, fit.year$fitted.values, col = "blue")
-```
-
-Dobiveni regresijski model pokazuje mali pozitivan nagib, što znači da noviji filmovi u prosjeku imaju nešto više ocjene, no efekt je slab. Kako bismo potvrdili valjanost ovakvog zaključka, potrebno je provjeriti temeljne pretpostavke linearne regresije, prvenstveno normalnost distribucije reziduala (i homogenost njihove varijance).
-
-## Analiza reziduala
-
-Za vizualnu provjeru pretpostavke normalnosti reziduala koristimo histogram, koji omogućuje uvid u raspodjelu pogrešaka. Potpunu potvrdu normalnosti provjerit ćemo kasnije odgovarajućim statističkim testovima.
-```{r}
-selected.model <- fit.year
-hist(selected.model$residuals, breaks = 15, 
-     main = "Histogram reziduala linearnog regresijskog modela",
-     xlab = "Reziduali modela",
-     ylab = "Frekvencija")
-```
-
-## Q-Q graf
-
-Normalnost reziduala egzaktnije možemo provjeriti Q-Q plotom kako bismo utvrdili da pogreške modela približno slijede normalnu distribuciju, što je pretpostavka za valjanost statističkih testova koeficijenata i intervala pouzdanosti.
-```{r}
-qqnorm(rstandard(selected.model), 
-       main = "Q–Q dijagram standardiziranih reziduala",
-       xlab = "Teorijski kvantili normalne razdiobe",
-       ylab = "Standardizirani reziduali")
-qqline(rstandard(selected.model))
-```
-Q-Q graf pokazuje da reziduali uglavnom prate dijagonalnu liniju, s blagim odstupanjima na krajevima, što sugerira da pretpostavka normalnosti nije značajno narušena.
-
-## Testiranje Lillieforsovom inačicom
-
-Provjerimo sada normalnost reziduala Lillieforsovom inačicom Kolmogorov-Smirnovljeva testa na razini značajnosti od 5% uz sljedeće hipoteze:  
-H0: Reziduali su normalno distribuirani  
-H1: Reziduali nisu normalno distribuirani.
+#### Box plot: Distribucija IMDb ocjena s obzirom na pobjedu
 
 ```{r}
-lillie.test(rstandard(fit.year))
+ggplot(oscars, aes(x = Award, y = IMDB.Rating, fill = Award)) +
+  geom_boxplot() +
+  labs(
+    x = "Ishod",
+    y = "IMDb ocjena",
+    title = "Distribucija IMDb ocjena s obzirom na pobjedu"
+  )
 ```
-Testna statistika pokazuje vrlo visoku p-vrijednost. Budući da je ona veća od 0.05, test nije statistički značajan te nemamo dovoljno dokaza za odbacivanje nul-hipoteze. Reziduali se mogu smatrati normalno distribuiranima.
 
-## Pearsonov koeficijent korelacije
-
-Kao završni korak analize, računamo Pearsonov koeficijent korelacije i provodimo test kako bismo statistički evaluirali odnos između godine nastanka filma i njegove IMDb ocjene.
-Test provodimo na razini značajnosti od 5% uz hipoteze:  
-H0: Ne postoji linearna povezanost između godine izlaska filma i IMDb ocjene.  
-H1: Postoji linearna povezanost između godine izlaska filma i IMDb ocjene.
-```{r}
-cor.test(oscars$Year.of.Release,oscars$IMDB.Rating)
-```
-Koeficijent korelacije r iznosi 0,33 što ukazuje na umjerenu pozitivnu korelaciju dviju varijabli. P-vrijednost je vrlo mala, manja od 0,05. S obzirom na to, odbacujemo hipotezu H0 te je pozitivna povezanost statistički značajna. 95-postotni interval pouzdanosti je cijelim dijelom pozitivan što je još jedan indikator da pozitivna povezanost postoji.  
-Na temelju početnih deskriptivnih statistika opravdano bi bilo zaključiti i da stvarna korelacija između varijabli ne postoji te da je uočeni pozitivan trend posljedica šuma. Međutim, provedena statistička analiza i testovi pokazuju da je povezanost statistički značajna, a zbog velikog uzorka takav je zaključak opravdan.
-
-\newpage
-
-# Analiza predviđanja pobjednika (Ivan)
-
-## Opis problema
-
-U ovoj analizi istražit ćemo **Možemo li pomoću dostupnih značajki pouzdano razlikovati pobjednike od ostalih?** na temelju dostupnih značajki. Za razliku od prethodnih analiza koje su se fokusirale na razlike između grupa, ova analiza koristi **logističku regresiju** kako bi modelirala vjerojatnost pobjede filma.
-
-Cilj je utvrditi:
-
-1. Koje značajke predviđaju pobjedu na Oscarima?
-2. Koliko dobro možemo klasificirati pobjednike pomoću tih značajki?
-3. Postoji li kombinacija varijabli koja omogućava pouzdanu predikciju?
-
-Za analizu koristimo sljedeće prediktore:
-
--   **IMDB Rating** - ocjena na IMDB platformi
--   **IMDB Votes** - broj glasova korisnika (log transformacija)
--   **Runtime** - trajanje filma u minutama
--   **Year** - godina izlaska filma
--   **Genre** - žanr filma (grupirani rijetki žanrovi)
-
-## Analiza podataka
-
-### Priprema podataka za logističku regresiju
-
-Prvo učitavamo podatke i kreiramo potrebne varijable.
+#### Histogram: Pobjednici vs Nominirani
 
 ```{r}
-data <- read.csv("oscars_dataset.csv", sep=";")
-
-# Kreiranje binarne varijable ishoda
-# IsWinner = 1 (pobjednik), IsWinner = 0 (nominiran bez pobjede)
-data$IsWinner <- ifelse(data$Award == "Winner", 1, 0)
-
-# Čišćenje i pretvaranje varijabli
-data$Rating <- as.numeric(data$IMDB.Rating)
-data$Votes <- as.numeric(gsub(",", "", data$IMDB.Votes))
-data$Runtime <- as.numeric(data$Movie.Time)
-data$Year <- as.numeric(data$Year.of.Release)
-
-# Grupiranje rijetkih žanrova
-common_genres <- c("Action", "Adventure", "Biography", 
-                   "Comedy", "Crime", "Drama")
-data$GenreGroup <- ifelse(data$Main.Genre %in% common_genres,
-                          data$Main.Genre, "Other")
-data$GenreGroup <- factor(data$GenreGroup, 
-                          levels = c("Drama", "Action", "Adventure", 
-                                     "Biography", "Comedy", "Crime", "Other"))
+ggplot(oscars, aes(x = IMDB.Rating, fill = Award)) +
+  geom_histogram(position = "identity", alpha = 0.6, bins = 20) +
+  labs(
+    x = "IMDb ocjena",
+    y = "Frekvencija",
+    title = "Histogram ocjena: Pobjednici vs Nominirani"
+  )
 ```
 
-### Finalni dataset za modeliranje
+Također nas zanima imaju li određeni žanrovi veći udio pobjednika.
+
+#### Stupčasti dijagram udjela pobjednika po žanru
 
 ```{r}
-model_data <- data %>%
-  dplyr::select(IsWinner, Rating, Votes, Runtime, Year, GenreGroup) %>%
-  na.omit()
+genre_prop <- oscars %>%
+  group_by(Main.Genre) %>%
+  summarise(
+    Total = n(),
+    Winners = sum(IsWinner),
+    PropWinner = Winners / Total
+  )
 
-cat("Broj filmova u analizi:", nrow(model_data), "\n")
-cat("Broj pobjednika:", sum(model_data$IsWinner), "\n")
-cat("Broj nominiranih (bez pobjede):", sum(model_data$IsWinner == 0), "\n")
+ggplot(genre_prop, aes(x = Main.Genre, y = PropWinner)) +
+  geom_col(fill = "steelblue") +
+  labs(
+    x = "Žanr",
+    y = "Udio pobjednika",
+    title = "Udio pobjednika po žanru"
+  )
 ```
 
-Nakon čišćenja podataka imamo **`r nrow(model_data)` filmova**, od kojih je **`r sum(model_data$IsWinner)` (`r round(100*mean(model_data$IsWinner), 1)`%)** pobjednika. Omjer pobjednika i nominiranih je približno **1:5**, što predstavlja klasičan problem **neuravnoteženih klasa**.
+Kako bismo statistički provjerili postoji li razlika u IMDb ocjenama između pobjednika i ostalih, provest ćemo t-test.
 
-### Eksplorativna analiza
-
-#### Usporedba IMDB ocjena
-
-Testiramo razlikuju li se pobjednici i nominirani po IMDB ocjeni koristeći **t-test**
+#### t-test (IMDb ocjena: Pobjednici vs Ostali)
 
 ```{r}
-cat("Pobjednici - Mean:", 
-    mean(model_data$Rating[model_data$IsWinner == 1]), "\n")
-cat("Nominirani - Mean:", 
-    mean(model_data$Rating[model_data$IsWinner == 0]), "\n")
-
-t_rating <- t.test(Rating ~ IsWinner, data = model_data)
-print(t_rating)
+t.test(IMDB.Rating ~ Award, data = oscars)
 ```
 
-```{r fig.width=8, fig.height=5}
-ggplot(model_data, aes(x = factor(IsWinner, labels = c("Nominee", "Winner")), 
-                       y = Rating, fill = factor(IsWinner))) +
-  geom_boxplot(alpha = 0.7) +
-  scale_fill_manual(values = c("0" = "#a6cee3", "1" = "#1f78b4")) +
-  theme_minimal(base_size = 14) +
-  labs(title = "IMDB ocjena: Pobjednici vs Nominirani",
-       x = "", y = "IMDB Rating") +
-  theme(legend.position = "none")
-```
+Rezultati t-testa pokazuju statistički značajnu razliku u srednjim vrijednostima ocjena (p = 0.0005091 < 0.05). To znači da pobjednici u prosjeku imaju više ocjene od nominiranih.
 
-#### Usporedba broja glasova
+Sada ćemo izgraditi prediktivni model koristeći logističku regresiju kako bismo procijenili vjerojatnost pobjede na temelju više značajki istovremeno.
 
-Zbog jako skewed distribucije koristimo **Wilcoxonov test**
+#### Logistička regresija
 
 ```{r}
-cat("Pobjednici - Median votes:", 
-    median(model_data$Votes[model_data$IsWinner == 1]), "\n")
-cat("Nominirani - Median votes:", 
-    median(model_data$Votes[model_data$IsWinner == 0]), "\n")
-
-wilcox_votes <- wilcox.test(Votes ~ IsWinner, data = model_data)
-print(wilcox_votes)
-```
-
-```{r fig.width=8, fig.height=5}
-ggplot(model_data, aes(x = factor(IsWinner, labels = c("Nominee", "Winner")), 
-                       y = Votes, fill = factor(IsWinner))) +
-  geom_boxplot(alpha = 0.7) +
-  scale_y_log10(labels = comma) +
-  scale_fill_manual(values = c("0" = "#a6cee3", "1" = "#1f78b4")) +
-  theme_minimal(base_size = 14) +
-  labs(title = "Broj glasova (log skala): Pobjednici vs Nominirani",
-       x = "", y = "IMDB Votes (log10)") +
-  theme(legend.position = "none")
-```
-
-#### Usporedba duljine filma
-
-```{r}
-cat("Pobjednici - Mean runtime:", 
-    mean(model_data$Runtime[model_data$IsWinner == 1]), "\n")
-cat("Nominirani - Mean runtime:", 
-    mean(model_data$Runtime[model_data$IsWinner == 0]), "\n")
-
-t_runtime <- t.test(Runtime ~ IsWinner, data = model_data)
-print(t_runtime)
-```
-
-#### Distribucija po žanrovima
-
-Koristimo **Chi-squared test nezavisnosti**
-
-```{r}
-genre_winner_table <- table(model_data$GenreGroup, model_data$IsWinner)
-addmargins(genre_winner_table)
-
-chisq_genre <- chisq.test(genre_winner_table)
-print(chisq_genre)
-```
-
-Vizualizacija distribucije po žanrovima:
-
-```{r fig.width=10, fig.height=6}
-genre_plot_data <- model_data %>%
-  group_by(GenreGroup, IsWinner) %>%
-  summarise(Count = n(), .groups = "drop") %>%
-  mutate(Outcome = ifelse(IsWinner == 1, "Winner", "Nominee"))
-
-ggplot(genre_plot_data, aes(x = GenreGroup, y = Count, fill = Outcome)) +
-  geom_bar(stat = "identity", position = "dodge", color = "black") +
-  scale_fill_manual(values = c("Winner" = "#1f78b4", "Nominee" = "#a6cee3")) +
-  theme_minimal(base_size = 14) +
-  labs(title = "Distribucija pobjednika i nominiranih po žanrovima",
-       x = "Žanr", y = "Broj filmova", fill = "") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-## Logistička regresija
-
-Koristimo logističku regresiju za modeliranje binarne zavisne varijable (IsWinner)
-
-### Model 1: Samo IMDB Rating
-
-```{r}
-model1 <- glm(IsWinner ~ Rating, 
-              data = model_data, 
-              family = binomial(link = "logit"))
-
-summary(model1)
-```
-
-#### McFadden's Pseudo R²
-
-```{r}
-null_model <- glm(IsWinner ~ 1, data = model_data, family = binomial)
-ll_null <- logLik(null_model)
-ll_model1 <- logLik(model1)
-mcfadden_r2_m1 <- 1 - (ll_model1 / ll_null)
-
-cat("McFadden's Pseudo R²:", round(as.numeric(mcfadden_r2_m1), 4), "\n")
-```
-
-### Model 2: Svi prediktori
-
-```{r}
-model2 <- glm(IsWinner ~ Rating + log10(Votes) + Runtime + Year + GenreGroup, 
-              data = model_data, 
-              family = binomial(link = "logit"))
-
-summary(model2)
-```
-
-#### McFadden's Pseudo R²
-
-```{r}
-ll_model2 <- logLik(model2)
-mcfadden_r2_m2 <- 1 - (ll_model2 / ll_null)
-
-cat("McFadden's Pseudo R²:", round(as.numeric(mcfadden_r2_m2), 4), "\n")
-```
-
-## Test omjera vjerodostojnosti (LR test)
-
-Koristimo LR test za usporedbu modela
-
-### LR test: Model 2 vs Null model
-
-```{r}
-LR_full <- -2 * (as.numeric(ll_null) - as.numeric(ll_model2))
-df_full <- length(coef(model2)) - 1
-p_value_full <- pchisq(LR_full, df = df_full, lower.tail = FALSE)
-
-cat("H0: Svi regresori su redundantni\n")
-cat("H1: Barem jedan regresor nije redundantan\n\n")
-cat("LR statistika:", round(LR_full, 2), "\n")
-cat("Stupnjevi slobode:", df_full, "\n")
-cat("p-vrijednost:", format.pval(p_value_full, digits = 3), "\n")
-```
-
-### LR test: Model 2 vs Model 1
-
-```{r}
-LR_comparison <- -2 * (as.numeric(ll_model1) - as.numeric(ll_model2))
-df_comparison <- length(coef(model2)) - length(coef(model1))
-p_value_comparison <- pchisq(LR_comparison, df = df_comparison, lower.tail = FALSE)
-
-cat("LR statistika:", round(LR_comparison, 2), "\n")
-cat("Stupnjevi slobode:", df_comparison, "\n")
-cat("p-vrijednost:", format.pval(p_value_comparison, digits = 3), "\n")
-```
-
-## Odds Ratios - Tumačenje koeficijenata
-
-Interpretiramo koeficijente kroz Odds Ratios
-
-```{r}
-odds_ratios <- exp(coef(model2))
-conf_int <- exp(confint(model2, quiet = TRUE))
-
-odds_table <- data.frame(
-  Predictor = names(odds_ratios),
-  OddsRatio = odds_ratios,
-  CI_Lower = conf_int[, 1],
-  CI_Upper = conf_int[, 2]
-)
-rownames(odds_table) <- NULL
-
-print(odds_table, digits = 3)
-```
-
-**Interpretacija Odds Ratios:**
-
--   **OR > 1:** Povećanje regresora povećava šanse za pobjedu
--   **OR < 1:** Povećanje regresora smanjuje šanse za pobjedu
--   **OR = 1:** Regresor nema utjecaj
-
-```{r fig.width=10, fig.height=6}
-odds_plot_data <- odds_table[-1, ]
-
-ggplot(odds_plot_data, aes(x = OddsRatio, y = reorder(Predictor, OddsRatio))) +
-  geom_point(size = 4, color = "#1f78b4") +
-  geom_errorbarh(aes(xmin = CI_Lower, xmax = CI_Upper), height = 0.2) +
-  geom_vline(xintercept = 1, linetype = "dashed", color = "red") +
-  theme_minimal(base_size = 14) +
-  labs(title = "Odds Ratios za Model 2",
-       subtitle = "Crvena linija = neutralan efekt (OR = 1)",
-       x = "Odds Ratio (log skala)", 
-       y = "Prediktor") +
-  scale_x_log10()
-```
-
-## Predikcija i Confusion Matrix
-
-### Izračun predikcija
-
-```{r}
-predicted_probs <- predict(model2, type = "response")
-
-# Threshold postavljen na proporciju pobjednika u uzorku
-threshold <- sum(model_data$IsWinner) / nrow(model_data)
-cat("Odabrani threshold:", round(threshold, 3), "\n")
-
-predicted_class <- ifelse(predicted_probs >= threshold, 1, 0)
-
-conf_matrix <- table(Predicted = predicted_class, Actual = model_data$IsWinner)
-print(conf_matrix)
-```
-
-### Metrike performansi
-
-```{r}
-TP <- conf_matrix[2, 2]  # True Positive
-TN <- conf_matrix[1, 1]  # True Negative
-FP <- conf_matrix[2, 1]  # False Positive
-FN <- conf_matrix[1, 2]  # False Negative
-
-accuracy <- (TP + TN) / sum(conf_matrix)
-precision <- TP / (TP + FP)
-recall <- TP / (TP + FN)
-f1 <- 2 * (precision * recall) / (precision + recall)
-
-cat("Accuracy:  ", round(accuracy, 4), 
-    " - postotak točnih predikcija\n")
-cat("Precision: ", round(precision, 4), 
-    " - od predviđenih pobjednika, koliko je stvarno pobijedilo\n")
-cat("Recall:    ", round(recall, 4), 
-    " - koliko stvarnih pobjednika uspijemo detektirati\n")
-cat("F1 Score:  ", round(f1, 4), 
-    " - harmonijska sredina precision i recall\n")
-```
-
-### Vizualizacija Confusion Matrix
-
-```{r fig.width=8, fig.height=6}
-conf_df <- as.data.frame(conf_matrix)
-colnames(conf_df) <- c("Predicted", "Actual", "Freq")
-
-ggplot(conf_df, aes(x = Actual, y = Predicted, fill = Freq)) +
-  geom_tile(color = "white", linewidth = 1) +
-  geom_text(aes(label = Freq), size = 10, color = "white") +
-  scale_fill_gradient(low = "#a6cee3", high = "#1f78b4") +
-  theme_minimal(base_size = 14) +
-  labs(title = "Confusion Matrix (Model 2)",
-       x = "Stvarni ishod (0=Nominee, 1=Winner)", 
-       y = "Predviđeni ishod") +
-  theme(legend.position = "none")
-```
-
-### Distribucija predviđenih vjerojatnosti
-
-```{r fig.width=10, fig.height=6}
-pred_df <- data.frame(
-  Probability = predicted_probs,
-  Actual = factor(model_data$IsWinner, 
-                  levels = c(0, 1), 
-                  labels = c("Nominee", "Winner"))
+model <- glm(
+  IsWinner ~ IMDB.Rating + Main.Genre + Year.of.Release + Movie.Time,
+  data = oscars,
+  family = binomial(link = "logit")
 )
 
-ggplot(pred_df, aes(x = Probability, fill = Actual)) +
-  geom_histogram(position = "identity", alpha = 0.6, bins = 30, color = "black") +
-  geom_vline(xintercept = threshold, linetype = "dashed", 
-             color = "red", linewidth = 1) +
-  scale_fill_manual(values = c("Nominee" = "#a6cee3", "Winner" = "#1f78b4")) +
-  theme_minimal(base_size = 14) +
-  labs(title = "Distribucija predviđenih vjerojatnosti",
-       subtitle = paste0("Crvena linija = threshold (", 
-                         round(threshold, 3), ")"),
-       x = "Predviđena vjerojatnost pobjede", 
-       y = "Broj filmova",
-       fill = "Stvarni ishod")
+summary(model)
 ```
 
-## Zaključak
+Za evaluaciju kvalitete modela, izračunat ćemo točnost (Accuracy), nacrtati ROC krivulju, izračunati površinu ispod krivulje (AUC) te McFaddenov pseudo-R².
 
-Na temelju rezultata logističke regresije i testova omjera vjerodostojnosti, možemo zaključiti sljedeće:
+#### Evaluacija modela: Accuracy
 
-**Odgovor na glavno pitanje: Možemo li pouzdano razlikovati pobjednike?**
+```{r}
+predicted_probs <- predict(model, type = "response")
+predicted_class <- ifelse(predicted_probs > 0.5, 1, 0)
+accuracy <- mean(predicted_class == oscars$IsWinner)
+print(paste("Accuracy:", round(accuracy, 4)))
+```
 
-Djelomično DA, ali s ograničenjima.
+#### Evaluacija modela: ROC krivulja i AUC
 
-**Pozitivni nalazi:**
+```{r}
+par(family = "sans")
+roc_obj <- roc(oscars$IsWinner, predicted_probs)
+plot(roc_obj, main = "ROC Krivulja", col = "blue")
 
-1.  Model ima statistički značajnu prediktivnu moć (McFadden R² = `r round(as.numeric(mcfadden_r2_m2), 3)`, LR test p < 0.001)
-2.  Broj glasova na IMDB-u je najjači prediktor pobjede
-3.  Model postiže `r round(accuracy*100, 1)`% accuracy
-4.  `r round(recall*100, 1)`% recall - detektiramo većinu stvarnih pobjednika
+auc_value <- auc(roc_obj)
+print(paste("AUC:", round(auc_value, 4)))
+```
 
-**Ograničenja:**
+AUC mjeri sposobnost modela da razlikuje klase. Vrijednost 0.5 predstavlja nasumično pogađanje, a 1.0 predstavlja savršen model. Dobiveni AUC od 0.6991 ukazuje na umjerenu sposobnost modela da razlikuje pobjednike od nominiranih.
 
-1.  Precision je `r round(precision*100, 1)`% - prisutno je puno lažnih pozitiva
-2.  Model objašnjava samo `r round(as.numeric(mcfadden_r2_m2)*100, 1)`% varijance
-3.  `r round((1-as.numeric(mcfadden_r2_m2))*100, 1)`% faktora ostaje neobjašnjeno (kvaliteta glume i režije, marketinška kampanja, politički i kulturni kontekst, subjektivni ukus Akademije)
+#### Evaluacija modela: McFaddenov Pseudo R^2
 
-**Praktična primjena:**
+```{r}
+null_model <- glm(IsWinner ~ 1, data = oscars, family = binomial)
+pseudo_r2 <- 1 - (logLik(model) / logLik(null_model))
+print(paste("McFadden's Pseudo-R^2:", round(pseudo_r2, 4)))
+```
 
-Model je koristan za screening - može identificirati filmove s niskim šansama, ali nije pouzdan za definitivnu predikciju pobjednika. Služi više kao dopunski alat uz druge analize.
-
-Na temelju dostupnih podataka, možemo zaključiti da je pobjeda na Oscarima fenomen koji se ne može potpuno objasniti kvantitativnim mjerama - što potvrđuje kompleksnost i nepredvidivost umjetničkih nagrada.
+Ukazuje na to koliko model bolje objašnjava podatke u usporedbi s nul-modelom. Niska vrijednost (0.0898) sugerira da, iako su varijable statistički značajne, one objašnjavaju samo mali dio varijabilnosti u tome tko će osvojiti Oscara.
