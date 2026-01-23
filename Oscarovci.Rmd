@@ -38,12 +38,9 @@ knitr::opts_chunk$set(echo = TRUE)
 Skup podataka koji analiziramo u projektu sadrži 571 odgovor/redak.
 
 ```{r}
-oscars = read_csv2("oscars_dataset.csv", 
-                 locale = locale(decimal_mark = ",", grouping_mark = "."),
-                 show_col_types = FALSE)
-var_types <- sapply(oscars, class)
-names(oscars) <- make.names(names(oscars))
-cat(paste(names(var_types), ": ", var_types, sep = "", collapse = "\n"))
+oscars <- read.csv("oscars_dataset.csv", sep = ";", 
+                   na.strings = c("NA", "Unknown"), encoding = "UTF-8")
+glimpse(oscars)
 ```
 
 # Priprema podataka za analizu

@@ -1,0 +1,138 @@
+---
+title: "peto_pitanje"
+author: "36557629 Damjan Crnković"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(readr)
+library(stringr)
+library(tidyr)
+library(lubridate)
+library(tidyverse)
+library(tinytex)
+library(vcd)
+library(scales)
+library(nortest)
+library(boot)
+library(fastDummies)
+library(pROC)
+library(knitr)
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+oscars <- read.csv("oscars_dataset.csv", sep = ";", na.strings = c("", "NA", "Unknown"), encoding = "UTF-8")
+#glimpse(oscars)
+#names(oscars) <- make.names(names(oscars))
+#oscars
+oscars$Award <- factor(oscars$Award,
+                       levels = c("Nominee", "Winner"))
+oscars
+oscars$Main.Genre <- factor(oscars$Main.Genre)
+oscars$Subgenre <- factor(oscars$Subgenre)
+oscars$Content.Rating <- factor(oscars$Content.Rating)
+oscars$Movie.Genre <- factor(oscars$Movie.Genre)
+
+oscars$Year.of.Release <- as.numeric(oscars$Year.of.Release)
+oscars$Movie.Time <- as.numeric(oscars$Movie.Time)
+
+oscars$IMDB.Rating <- as.numeric(oscars$IMDB.Rating)
+oscars$IMDB.Votes <- as.numeric(gsub(",", "", oscars$IMDB.Votes))
+
+oscars$Tomatometer.Rating <- as.numeric(oscars$Tomatometer.Rating)
+oscars$Tomatometer.Count <- as.numeric(oscars$Tomatometer.Count)
+
+oscars$Audience.Rating <- as.numeric(oscars$Audience.Rating)
+oscars$Audience.Count <- as.numeric(oscars$Audience.Count)
+
+oscars$Original.Release.Date <- as.Date(oscars$Original.Release.Date)
+
+oscars <- oscars[complete.cases(oscars[, c("IMDB.Rating",
+                                                 "Year.of.Release",
+                                                 "Movie.Time",
+                                                 "Main.Genre",
+                                                 "Content.Rating")]), ]
+small_genres <- c("Animation","Family","Film-Noir","Horror",
+                  "Music","Musical","Romance","Western")
+oscars$Main.Genre2 <- as.character(oscars$Main.Genre)
+oscars$Main.Genre2[oscars$Main.Genre2 %in% small_genres] <- "Other"
+```
+
+
+# Analiza predviđanja pobjednika
+
+U ovoj analizi istražujemo postoje li statistički značajne razlike između filmova koji su osvojili Oscara ("Winner") i onih koji su bili samo nominirani ("Nominee"). Analizu provodimo na temelju dostupnih značajki: IMDb ocjene, žanra, godine izlaska i trajanja filma.
+
+## Priprema podataka  
+
+Prije analize, uređujemo dataset: kreiramo binarnu varijablu za pobjedu te izbacujemo zapise s NA vrijednostima. Žanrovi koji nisu često zastupljeni ranije su grupirani u kolonu Main.Genre2, stoga ćemo nju koristiti za daljnju analizu.
+
+```{r}
+oscars <- oscars %>%
+  mutate(
+    IsWinner = ifelse(Award == "Winner", 1, 0),
+    # Grupiranje žanrova radi stabilnosti modela
+    Main.Genre2 = ifelse(Main.Genre %in% c("Drama", "Comedy", "Biography", "Adventure", "Action", "Crime"), 
+                        Main.Genre, "Other"),
+    Main.Genre2 = factor(Main.Genre2)
+  ) %>%
+  filter(complete.cases(IMDB.Rating, Main.Genre2, Year.of.Release, Movie.Time, IsWinner))
+
+```
+
+-- razdvoji fimove ovisno o ishodu i pogledajmo neke deskriptivne statistike (isključujući žanr)--
+```{r}
+oscars %>%
+  group_by(IsWinner) %>%
+  summarise(
+    n = n(),
+    mean_rating = mean(IMDB.Rating),
+    sd_rating = sd(IMDB.Rating),
+    mean_runtime = mean(Movie.Time),
+    mean_year = mean(Year.of.Release)
+  )
+
+```
+-- moze se izvuci nesto--
+-- pogledajmo jos i o zanru--
+```{r}
+ggplot(oscars, aes(x = IMDB.Rating, y = Movie.Time, color = factor(IsWinner))) +
+  geom_point(alpha = 0.6, size = 3) +
+  scale_color_manual(values = c("grey", "gold"), labels = c("Nominee", "Winner")) +
+  labs(
+    x = "IMDb ocjena",
+    y = "Trajanje filma (min)",
+    color = "Ishod",
+    title = "Pobjednici vs Nominirani: IMDb ocjena i trajanje filma"
+  ) +
+  theme_minimal()
+```
+--teško je uočiti išta--
+
+--Sada ćemo izgraditi prediktivni model koristeći logističku regresiju kako bismo procijenili vjerojatnost pobjede na temelju više značajki istovremeno.--
+
+```{r}
+logreg.mdl <- glm(IsWinner ~ IMDB.Rating + Main.Genre2 + Year.of.Release + Movie.Time,
+             data = oscars,
+             family = binomial())
+summary(logreg.mdl)
+```
+Model pokazuje da svaka jedinica povećanja IMDB.Rating povećava log-odds pobjede za 0.555 (p = 0.0395), a svaka dodatna minuta trajanja filma povećava log-odds za 0.0159 (p = 0.0015). Većina žanrova ima velike standardne pogreške i koeficijente (npr. Animation: -13.54 ± 1384), što znači da njihov efekt nije pouzdan u ovom datasetu.
+
+--mcfadden rsq--
+
+```{r}
+Rsq <- 1 - logreg.mdl$deviance / logreg.mdl$null.deviance
+Rsq
+```
+
+
+
+
+
+
+
