@@ -1,0 +1,136 @@
+---
+title: "drugo_pitanje"
+author: "36557629 Damjan Crnković"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(readr)
+library(stringr)
+library(hflights)
+library(tidyr)
+library(lubridate)
+library(tidyverse)
+library(tinytex)
+library(ggplot2)
+library(nortest)
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+oscars <- read.csv2("oscars_dataset.csv")
+oscars$Award <- factor(oscars$Award,
+                       levels = c("Nominee", "Winner"))
+
+oscars$Main.Genre <- factor(oscars$Main.Genre)
+oscars$Subgenre <- factor(oscars$Subgenre)
+oscars$Content.Rating <- factor(oscars$Content.Rating)
+
+# Numeričke varijable
+oscars$Year.of.Release <- as.integer(oscars$Year.of.Release)
+oscars$Movie.Time <- as.integer(oscars$Movie.Time)
+
+oscars$IMDB.Rating <- as.numeric(oscars$IMDB.Rating)
+oscars$IMDB.Votes <- as.numeric(gsub(",", "", oscars$IMDB.Votes))
+
+oscars$Tomatometer.Rating <- as.numeric(oscars$Tomatometer.Rating)
+oscars$Tomatometer.Count <- as.numeric(oscars$Tomatometer.Count)
+
+oscars$Audience.Rating <- as.numeric(oscars$Audience.Rating)
+oscars$Audience.Count <- as.numeric(oscars$Audience.Count)
+
+# Datumi
+oscars$Original.Release.Date <- as.Date(oscars$Original.Release.Date)
+```
+
+# Analiza razlika u prosječnom trajanju filmova među žanrovima
+
+## Opis problema  
+Glavno pitanje iduće analize je utvrditi postoje li statistički značajne razlike u prosječnom trajanju filmova različitih žanrova. Kako bismo to ispitali, provjerit ćemo razdiobu trajanja filmova po glavnim žanrovima (Main.Genre) te primijeniti odgovarajuće statističke testove. Najprije pregledajmo koliko filmova pripada svakom žanru u našim podacima.  
+
+## Priprema podataka  
+```{r}
+count <- table(oscars$Main.Genre)
+count_df <- as.data.frame(count)
+colnames(count_df) <- c("Glavni žanr", "Broj filmova")
+kable(count_df, caption = "Broj filmova po glavnom žanru")
+```
+Zbog malog broja filmova nekih žanrova, svrstat ćemo te filmove u rang 'Other' kako bi analiza bila pouzdana i rezultati jasni za tumačenje.
+
+```{r}
+oscars$Main.Genre2 <- as.character(oscars$Main.Genre)
+small_genres <- c("Animation","Family","Film-Noir","Horror",
+                  "Music","Musical","Romance","Western")
+oscars$Main.Genre2[oscars$Main.Genre2 %in% small_genres] <- "Other"
+oscars$Main.Genre2 <- factor(oscars$Main.Genre2)
+paste0("Broj filmova sa žanrom 'Other': ", sum(oscars$Main.Genre2=="Other"))
+```
+Do kraja ove analize kao žanr koristit ćemo kolonu Main.Genre2.  
+
+## Pretpostavke ANOVA-e
+Najbolje ćemo utvrditi postoje li razlike u prosječnom trajanju filmova među žanrovima primjenom jednofaktorske ANOVA-e ili njezine neparemetarske alternative, Kruskal-Wallis testa. Prikladni test odabiremo ovisno o tome jesu li zadovoljene iduće pretpostavke:    
+1 - Normalnost raziobe podataka o trajanju filmova  
+2 - Homogenost varijanci podataka o trajanju filmova   
+(3 - Nezavisnost opažanja)    
+
+Provjerimo sada normalnost podataka po žanrovima pomoću Lillieforsova testa na razini značajnosti alfa=0.05. Hipoteze su:  
+H0: Podaci unutar žanra slijede normalnu distribuciju  
+H1: Podaci unutar žanra ne slijede normalnu distribuciju.
+```{r}
+razliciti_genres <- levels(oscars$Main.Genre2)
+normality_results <- data.frame(Genre = character(), 
+                                P_value = numeric(), 
+                                stringsAsFactors = FALSE)
+for (genre in razliciti_genres) {
+  genre_data <- oscars$Movie.Time[oscars$Main.Genre2 == genre]
+  genre_test <- lillie.test(genre_data)
+
+  normality_results <- rbind(normality_results, 
+                             data.frame(Genre = genre, 
+                                        P_value = genre_test$p.value))
+}
+
+kable(normality_results, 
+      col.names = c("Žanr", "P-vrijednost"), 
+      caption = "Lillieforsov test normalnosti trajanja filmova po žanru")
+```
+Budući da većina distribucija trajanja filmova po žanrovima nije normalna (p-vrijednost < 0.05), nećemo primjeniti Barlettov test niti jednofaktorsku ANOVA-u, već koristimo (manje statistički značajan) Kruskal-Wallis test.
+
+## Kruskal-Wallis test
+Provedimo sada test na razini značajnosti alfa=0.05 sa sljedećim hipotezama:  
+H0: Medijani svih uzoraka su jednaki  
+H1: Barem dva medijana nisu jednaka.   
+Uvjet za primjenjivost testa je zadovoljen, odnosno veličina svakog uzorka je barem 5.
+
+
+```{r}
+kruskal.test(Movie.Time ~ Main.Genre2, data = oscars)
+```
+Rezultati Kruskal-Wallis testa pokazuju vrlo malu p-vrijednost, što znači da odbacujemo nul-hipotezu u korist alternativne hipoteze. Barem jedna distribucija trajanja se značajno razlikuje od ostalih, odnosno postoji razlika u medijanima populacija.   
+
+## Vizualna i deskriptivna analiza
+Ostaje nam da vizualno očitamo koje žanrove karakterizira dulje ili kraće trajanje filmova, što možemo prikazati pomoću box-plota po žanrovima.
+```{r}
+boxplot(Movie.Time ~ Main.Genre2,
+        data = oscars,
+        main = "Trajanje filmova po glavnom žanru",
+        xlab = "",
+        ylab = "Trajanje (minute)",
+        las = 2)
+```
+Pogledajmo i srednje vrijednosti:  
+```{r}
+mean_table <- oscars %>%
+  group_by(Main.Genre2) %>%
+  summarise(Mean_Duration = mean(Movie.Time, na.rm = TRUE),
+            Count = n()) %>%
+  arrange(desc(Mean_Duration))
+colnames(mean_table) <- c("Glavni žanr", "Srednje trajanje filma", "Broj filmova")
+kable(mean_table, caption = "Prosječno trajanje filmova po glavnom žanru")
+```
+Ističu se filmovi žanra "Adventure" kao najduži u prosjeku.
