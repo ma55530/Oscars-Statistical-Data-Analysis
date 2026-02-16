@@ -1,0 +1,5 @@
+"0","oscars_long <- oscars %>%"
+"0","  separate_rows(Movie.Genre, sep = "","") %>%"
+"0","  mutate(Movie.Genre = trimws(Movie.Genre))"
+"0",""
+"0","oscars_long"

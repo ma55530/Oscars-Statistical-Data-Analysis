@@ -1,0 +1,4 @@
+"0","qqnorm(rstandard(selected.model), "
+"0","       main = ""Q–Q dijagram standardiziranih reziduala"","
+"0","       xlab = ""Teorijski kvantili normalne razdiobe"","
+"0","       ylab = ""Standardizirani reziduali"")"

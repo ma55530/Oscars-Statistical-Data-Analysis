@@ -1,0 +1,6 @@
+"0","par(mfrow = c(1, 3))"
+"0",""
+"0","# Dohvati originalne procjene JEDNOM"
+"0","original_coefs <- coef(fit_multi)"
+"2","Error: object 'fit_multi' not found
+"

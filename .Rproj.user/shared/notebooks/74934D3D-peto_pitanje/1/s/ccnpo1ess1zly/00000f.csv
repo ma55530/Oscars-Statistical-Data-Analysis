@@ -1,0 +1,6 @@
+"0","boxplot(Movie.Time ~ Main.Genre2,"
+"0","        data = oscars,"
+"0","        main = ""Trajanje filmova po glavnom žanru"","
+"0","        xlab = """","
+"0","        ylab = ""Trajanje (minute)"","
+"0","        las = 2)"

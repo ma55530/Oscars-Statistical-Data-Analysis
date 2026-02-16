@@ -1,0 +1,7 @@
+"0","genre_plot_data <- genre_summary %>%"
+"0","  pivot_longer("
+"0","    cols = c(Winners, NotWinner),"
+"0","    names_to = ""Outcome"","
+"0","    values_to = ""Count"""
+"0","  )"
+"0","genre_summary"

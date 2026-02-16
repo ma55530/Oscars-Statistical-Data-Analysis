@@ -1,0 +1,2 @@
+"0","kable(round(chisq_single$stdres, 2), "
+"0","      caption = ""Standardizirani reziduali (vrijednosti > ±2 su značajne)"")"

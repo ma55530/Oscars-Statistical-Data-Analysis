@@ -1,0 +1,4 @@
+"0","count <- table(oscars$Main.Genre)"
+"0","count_df <- as.data.frame(count)"
+"0","colnames(count_df) <- c(""Glavni žanr"", ""Broj filmova"")"
+"0","kable(count_df, caption = ""Broj filmova po glavnom žanru"")"

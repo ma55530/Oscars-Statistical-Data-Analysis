@@ -1,0 +1,2 @@
+"0","nasum <- colSums(is.na(oscars))"
+"0","kable(nasum[nasum > 0], col.names = ""Broj NA vrijednosti"")"

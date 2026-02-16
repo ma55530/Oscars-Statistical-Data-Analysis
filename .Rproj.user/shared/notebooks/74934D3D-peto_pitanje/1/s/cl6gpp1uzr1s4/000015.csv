@@ -1,0 +1,3 @@
+"0","winners <- oscars %>% filter(Award == ""Winner"")"
+"0","nominees <- oscars %>% filter(Award %in% c(""Nominee"", ""Winner""))"
+"0","nominees"

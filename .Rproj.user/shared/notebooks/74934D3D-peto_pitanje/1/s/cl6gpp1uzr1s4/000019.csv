@@ -1,0 +1,5 @@
+"0",""
+"0","kable(genre_summary[, c(""Main.Genre"", ""Nominations"", ""Winners"", ""Win_Rate"")], "
+"0","      col.names = c(""Žanr"", ""Nominacije"", ""Pobjede"", ""Stopa pobjede (%)""),"
+"0","      digits = 1,"
+"0","      caption = ""Distribucija nominacija i pobjeda po žanrovima (≥5 nominacija)"")"

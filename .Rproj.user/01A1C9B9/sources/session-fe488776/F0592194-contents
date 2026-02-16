@@ -1,0 +1,805 @@
+---
+title: "Oscar Winners Analysis"
+author: "Tim #1"
+date: "2025-11-06"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    fig_height: 3.5
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(lubridate)
+library(tinytex)
+library(vcd)
+library(scales)
+library(nortest)
+library(boot)
+library(fastDummies)
+library(pROC)
+library(knitr)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage
+
+# Dataset Description
+
+The dataset contains information about 571 films nominated for or awarded 
+the Oscar for Best Picture in the period from 1927 to 2020. The data was 
+collected from publicly available sources (IMDb, Rotten Tomatoes) and includes 
+film characteristics, audience and critic ratings, and award information.
+
+The dataset consists of **571 observations** and **20 variables**.
+
+```{r}
+oscars <- read.csv("oscars_dataset.csv", sep = ";", 
+                   na.strings = c("", "NA", "Unknown"), encoding = "UTF-8")
+glimpse(oscars)
+```
+## Key Variables
+
+The dataset contains variables divided into several categories:
+
+**Basic information:** Film (title), Oscar.Year (year of award), Award (Winner/Nominee)
+
+**Film characteristics:** Year.of.Release, Movie.Time (duration in minutes), Main.Genre, Content.Rating (age classification)
+
+**Ratings:** IMDB.Rating (1-10), IMDB.Votes, Tomatometer.Rating (critics, 0-100), Audience.Rating (audience, 0-100)
+
+
+# Data Preparation for Analysis
+Let's convert the data to the appropriate type:
+```{r}
+oscars$Award <- factor(oscars$Award,
+                       levels = c("Nominee", "Winner"))
+oscars$Main.Genre <- factor(oscars$Main.Genre)
+oscars$Subgenre <- factor(oscars$Subgenre)
+oscars$Content.Rating <- factor(oscars$Content.Rating)
+oscars$Movie.Genre <- factor(oscars$Movie.Genre)
+oscars$Year.of.Release <- as.numeric(oscars$Year.of.Release)
+oscars$Movie.Time <- as.numeric(oscars$Movie.Time)
+oscars$IMDB.Rating <- as.numeric(oscars$IMDB.Rating)
+oscars$IMDB.Votes <- as.numeric(gsub(",", "", oscars$IMDB.Votes))
+oscars$Tomatometer.Rating <- as.numeric(oscars$Tomatometer.Rating)
+oscars$Tomatometer.Count <- as.numeric(oscars$Tomatometer.Count)
+oscars$Audience.Rating <- as.numeric(oscars$Audience.Rating)
+oscars$Audience.Count <- as.numeric(oscars$Audience.Count)
+oscars$Original.Release.Date <- as.Date(oscars$Original.Release.Date)
+```
+
+**Data type conversion:**  
+Categorical variables (`Award`, `Main.Genre`, `Content.Rating` etc.) were converted to factors, while numeric variables (`Year.of.Release`, `Movie.Time`, rating variables) were converted to numeric format.
+
+
+**Data filtering:**  
+Let's see how many missing values there are: 
+```{r}
+nasum <- colSums(is.na(oscars))
+kable(nasum[nasum > 0], col.names = "Number of NA values")
+```
+We currently do not remove records with NA values as this would mean significant data loss, so we keep them in the dataset for now.
+
+
+\newpage
+
+# Genre Analysis Among Winners
+
+## Problem Description
+
+The goal of the analysis is to examine whether there is a statistically significant relationship between a film's genre and the probability of winning an Oscar. Due to the multiplicity of genres (one film can belong to multiple genres), we conduct the analysis in two ways:
+
+- **Single-label approach:** We assign one main genre to each film (`Main.Genre`)
+- **Multi-label approach:** A film can belong to multiple genres which are counted separately (`Movie.Genre`)
+
+We test both approaches with the chi-square test of independence at significance level $\alpha = 0.05$ with hypotheses:
+
+- **H0:** There is no significant difference in the frequency of wins among different film genres
+- **H1:** There is a significant difference in the frequency of wins among different film genres
+
+## Single-label Analysis
+
+### Data Preparation for Single-label Analysis
+
+```{r}
+winners <- oscars %>% filter(Award == "Winner")
+nominees <- oscars %>% filter(Award %in% c("Nominee", "Winner"))
+
+genre_summary <- nominees %>%
+  count(Main.Genre, name = "Nominations") %>%
+  left_join(winners %>% count(Main.Genre, name = "Winners"), by = "Main.Genre") %>%
+  mutate(
+    Winners = replace_na(Winners, 0),
+    NotWinner = Nominations - Winners,
+    Win_Rate = Winners / Nominations * 100
+  ) %>%
+  arrange(desc(Win_Rate))
+
+kable(genre_summary[, c("Main.Genre", "Nominations", "Winners", "Win_Rate")], 
+      col.names = c("Genre", "Nominations", "Wins", "Win Rate (%)"),
+      digits = 1,
+      caption = "Distribution of nominations and wins by genre (≥5 nominations)")
+```
+
+From the table, it is evident that the Drama genre has the most nominations (215) and wins (42), but in win rate it is equal to the Adventure genre (~20%). We excluded genres with fewer than 5 nominations for statistical reliability.
+
+### Distribution Visualization  
+
+Due to large differences in the number of occurrences among genres, logarithmic transformation of the data was applied.
+
+```{r}
+genre_plot_data <- genre_summary %>%
+  pivot_longer(
+    cols = c(Winners, NotWinner),
+    names_to = "Outcome",
+    values_to = "Count"
+  )
+
+ggplot(genre_plot_data, aes(x = reorder(Main.Genre, Nominations), 
+                             y = Count + 1, fill = Outcome)) +
+  geom_col(color = "black") +
+  scale_y_log10(breaks = c(1, 10, 100)) +
+  scale_fill_manual(
+    values = c("Winners" = "#66c2a5", "NotWinner" = "#5e31ac"),
+    labels = c("Others", "Winners")
+  ) +
+  labs(x = "Genre", y = "Number of films (log10)", fill = "") +
+  theme_minimal(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Drama dominates in absolute number of films, while the relative ratios of winners and others remain fairly balanced; the graph is polarized because some genres have almost equal ratios, while other bars have no winners at all. 
+
+### Chi-square Test
+
+```{r}
+common_genres <- c("Biography", "Comedy", "Drama")
+oscars$GenreGroup <- ifelse(oscars$Main.Genre %in% common_genres,
+                             as.character(oscars$Main.Genre), "Other")
+
+winner_counts <- as.data.frame(table(subset(oscars, Award == "Winner")$GenreGroup))
+colnames(winner_counts) <- c("GenreGroup", "Winners")
+
+nominee_counts <- as.data.frame(table(subset(oscars, Award %in% c("Winner", "Nominee"))$GenreGroup))
+colnames(nominee_counts) <- c("GenreGroup", "Nominations")
+
+df <- merge(nominee_counts, winner_counts, by = "GenreGroup", all.x = TRUE)
+df$Winners[is.na(df$Winners)] <- 0
+df$NotWinner <- df$Nominations - df$Winners
+
+kontigencijska_single <- as.data.frame(df[, c("Winners", "NotWinner")])
+row.names(kontigencijska_single) <- df$GenreGroup
+
+kable(kontigencijska_single, caption = "Contingency table: Winners vs Others by genre")
+
+```
+
+We prepared a contingency table for the chi-square test. We group rare genres (with fewer than 10 films) into the "Other" category.
+We conduct a chi-square test of independence to check whether there are significant differences in the frequency of wins among genres.
+
+```{r}
+chisq_single <- chisq.test(kontigencijska_single)
+chisq_single
+```
+
+### Results
+
+Given that $p = 0.3011 > 0.05$, we accept H0. There is no statistically significant relationship between genre and winning an Oscar in the single-label approach.
+
+Standardized residuals show how genres deviate from expected values:
+
+```{r}
+kable(round(chisq_single$stdres, 2), 
+      caption = "Standardized residuals (values > ±2 are significant)")
+```
+
+No genre shows extreme deviations (all residuals are between -2 and +2), which confirms the conclusion about the absence of significant relationship.
+
+## Multi-label Analysis 
+
+### Data Preparation 
+
+For multi-label analysis, we separate films with multiple genres into separate rows. Each genre is counted separately, allowing better understanding of complex genre combinations.  
+It should also be noted that in multi-label analysis, the independence assumption may be slightly violated because one film belongs to multiple genres, so the p-value of the chi-square test should be interpreted with caution.
+
+```{r}
+oscars_long <- oscars %>%
+  separate_rows(Movie.Genre, sep = ",") %>%
+  mutate(Movie.Genre = trimws(Movie.Genre))
+```
+
+Each film can now contribute to multiple genre categories (e.g., "Drama, Romance" will be counted in both Drama and Romance).
+
+Calculation of the number of wins and non-wins by genre:
+
+```{r}
+genre_counts <- oscars_long %>%
+  mutate(Outcome = ifelse(Award == "Winner", "Winner", "NotWinner")) %>%
+  count(Movie.Genre, Outcome) %>%
+  pivot_wider(
+    names_from = Outcome,
+    values_from = n,
+    values_fill = 0
+  ) %>%
+  mutate(
+    Total = Winner + NotWinner,
+    GenreGroup = ifelse(Total < 5, "Other", Movie.Genre),
+    SuccessRate = Winner / Total
+  )
+```
+
+We group rare genres (with fewer than 5 occurrences) into the "Other" category to satisfy the chi-square test conditions (expected frequencies > 5).
+
+```{r}
+genre_table_ml <- genre_counts %>%
+  group_by(GenreGroup) %>%
+  summarise(
+    Winners = sum(Winner),
+    NotWinner = sum(NotWinner),
+    Total = sum(Total),
+    SuccessRate = sum(Winner) / sum(Total),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(Total))
+
+kable(genre_table_ml, 
+      digits = 3,
+      col.names = c("Genre", "Wins", "Others", "Total", "Win Rate"),
+      caption = "Multi-label genre distribution")
+```
+\newpage
+
+### Visualization of Multi-label Genre Analysis Results
+```{r}
+genre_melt <- genre_table_ml %>%
+  select(GenreGroup, Winners, NotWinner, Total) %>%
+  pivot_longer(
+    cols = c(Winners, NotWinner),
+    names_to = "Outcome",
+    values_to = "Count"
+  )
+
+ggplot(genre_melt, aes(x = reorder(GenreGroup, Total), 
+                       y = Count + 1, fill = Outcome)) + 
+  geom_col(color = "black") +
+  scale_y_log10(breaks = c(1, 10, 100, 1000)) +
+  scale_fill_manual(values = c("Winners" = "#66c2a5", "NotWinner" = "#5e31ac"),
+                    labels = c("Others", "Winners")) +
+  labs(x = "Genre", y = "Number of occurrences (log10)", fill = "") +
+  theme_minimal(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+The graph shows that Drama, Romance, and Biography dominate in number of occurrences, reflecting their frequency in genre combinations.
+
+### Chi-square Test
+
+We use the contingency table for the multi-label approach and conduct a chi-square test of independence.
+
+```{r}
+kontigencijska_multi <- as.matrix(genre_table_ml[, c("Winners", "NotWinner")])
+row.names(kontigencijska_multi) <- genre_table_ml$GenreGroup
+
+chisq_multi <- chisq.test(kontigencijska_multi)
+chisq_multi
+```
+
+The result obtained is $p = 0.1036 > 0.05$, which means we accept H0. Even in the multi-label approach, there is no statistically significant relationship between genre and the probability of winning an Oscar.
+
+Standardized residuals:
+
+```{r}
+kable(round(chisq_multi$stdres, 2), 
+      caption = "Standardized residuals (multi-label)")
+```
+
+## Conclusion
+
+Based on the results obtained from the Chi-square test in both approaches, we accept H0 and can conclude that there are no significant differences in the frequency of wins among different genres of films nominated for an Oscar. Standardized residuals indicate which genres significantly deviate from expected values, which can be useful for further research and understanding trends in award distribution, as well as the question of why some genres are more frequently nominated than others.
+
+\newpage
+# Analysis of Differences in Average Film Duration Among Genres
+
+## Problem Description  
+The main question of the next analysis is to determine whether there are statistically significant differences in the average duration of films of different genres. To investigate this, we will examine the distribution of film duration by main genres (Main.Genre) and apply appropriate statistical tests. First, let's review how many films belong to each genre in our data.  
+
+## Data Preparation  
+```{r}
+count <- table(oscars$Main.Genre)
+count_df <- as.data.frame(count)
+colnames(count_df) <- c("Main Genre", "Number of Films")
+kable(count_df, caption = "Number of films by main genre")
+```
+Due to the small number of films in some genres, we will classify those films into the 'Other' category so that the analysis is reliable and the results clear for interpretation.
+
+```{r}
+oscars$Main.Genre2 <- as.character(oscars$Main.Genre)
+small_genres <- c("Animation","Family","Film-Noir","Horror",
+                  "Music","Musical","Romance","Western")
+oscars$Main.Genre2[oscars$Main.Genre2 %in% small_genres] <- "Other"
+oscars$Main.Genre2 <- factor(oscars$Main.Genre2)
+paste0("Number of films with 'Other' genre: ", sum(oscars$Main.Genre2=="Other"))
+```
+Until the end of this analysis, we will use the Main.Genre2 column as the genre.  
+
+## ANOVA Assumptions
+We will best determine whether there are differences in average film duration among genres by applying one-way ANOVA or its non-parametric alternative, the Kruskal-Wallis test. We choose the appropriate test depending on whether the following assumptions are satisfied:  
+  
+1 - Normality of film duration data distribution  
+2 - Homogeneity of variances of film duration data   
+3 - Independence of observations   
+
+Let's now check data normality by genre using the Lilliefors test at significance level $\alpha = 0.05$. The hypotheses are:  
+**H0**: Data within the genre follow a normal distribution  
+**H1**: Data within the genre do not follow a normal distribution.
+```{r}
+razliciti_genres <- levels(oscars$Main.Genre2)
+normality_results <- data.frame(Genre = character(), 
+                                P_value = numeric(), 
+                                stringsAsFactors = FALSE)
+for (genre in razliciti_genres) {
+  genre_data <- oscars$Movie.Time[oscars$Main.Genre2 == genre]
+  genre_test <- lillie.test(genre_data)
+
+  normality_results <- rbind(normality_results, 
+                             data.frame(Genre = genre, 
+                                        P_value = genre_test$p.value))
+}
+
+kable(normality_results, 
+      col.names = c("Genre", "P-value"), 
+      caption = "Lilliefors normality test of film duration by genre")
+```
+Since most distributions of film duration by genre are not normal (p-value < 0.05), we will not apply the Bartlett test or one-way ANOVA, but use the (less statistically powerful) Kruskal-Wallis test.
+
+## Kruskal-Wallis Test
+Let's now conduct the test at significance level $\alpha = 0.05$ with the following hypotheses:  
+  
+**H0**: The medians of all samples are equal  
+**H1**: At least two medians are not equal.   
+  
+The condition for test applicability is satisfied, that is, the size of each sample is at least 5.
+
+
+```{r}
+kruskal.test(Movie.Time ~ Main.Genre2, data = oscars)
+```
+The Kruskal-Wallis test results show a very small p-value, which means we reject the null hypothesis in favor of the alternative hypothesis. At least one distribution of duration differs significantly from the others, that is, there is a difference in population medians.   
+
+## Visual and Descriptive Analysis
+It remains for us to visually determine which genres are characterized by longer or shorter film durations, which we can show using box plots by genre.
+```{r}
+boxplot(Movie.Time ~ Main.Genre2,
+        data = oscars,
+        main = "Film duration by main genre",
+        xlab = "",
+        ylab = "Duration (minutes)",
+        las = 2)
+```
+Let's also look at the mean values:  
+```{r}
+mean_table <- oscars %>%
+  group_by(Main.Genre2) %>%
+  summarise(Mean_Duration = mean(Movie.Time, na.rm = TRUE),
+            Count = n()) %>%
+  arrange(desc(Mean_Duration))
+colnames(mean_table) <- c("Main Genre", "Average Film Duration", "Number of Films")
+kable(mean_table, caption = "Average film duration by main genre")
+```
+"Adventure" genre films stand out as the longest on average.
+\newpage
+
+# Investigating the Relationship Between Film Age and Its Rating
+
+## Problem Description
+One of the questions we consider is how films are rated relative to their age, that is, how the year of release affects its rating. The goal is to gain insight into the trend of rating changes over the years and verify whether the year of release and rating are significantly correlated with each other.
+
+
+## Data Visualization
+
+Let's now analyze the relationship between the year of film release and its rating. Since we are observing the influence of one numerical variable (year of release) on another numerical variable (rating), basic insight into their relationship is obtained through graphical representation using a scatter plot. Such a display allows observation of the general trend and any non-linearity.
+
+```{r}
+plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
+     main = "Relationship between year of film release and IMDb rating", 
+     xlab = "Year of film release", 
+     ylab = "IMDb rating")
+```
+
+The scatter plot does not show a clear increase in ratings with release years due to data scatter and the presence of outliers. To better see the trend, we can group films by decades and display ratings using box plots, which allows observation of changes in median and rating range over time.
+```{r}
+oscars$desetljece <- floor(oscars$Year.of.Release / 10) * 10
+boxplot(IMDB.Rating ~ desetljece, data = oscars, 
+        main = "Distribution of IMDb ratings by decade", 
+        xlab = "Decade of film release", 
+        ylab = "IMDb rating")
+```
+From the scatter plot and box plot, it can be inferred that there is a certain relationship between the year of film release and its rating, but it does not appear to be large. 
+
+## Linear Regression
+
+To estimate the strength of the observed relationship, we build a simple linear regression with film rating as the dependent variable and year of release as the independent variable.
+
+```{r}
+fit.year <- lm(IMDB.Rating ~ Year.of.Release, data = oscars)
+plot(oscars$Year.of.Release, oscars$IMDB.Rating, 
+     main = "Linear regression of IMDb rating ~ year of release",
+     xlab = "Year of film release",
+     ylab = "IMDb rating")
+lines(oscars$Year.of.Release, fit.year$fitted.values, col = "blue")
+```
+
+The obtained regression model shows a small positive slope, which means that newer films on average have slightly higher ratings, but the effect is weak. To confirm the validity of such a conclusion, it is necessary to check the fundamental assumptions of linear regression, primarily the normality of the residual distribution (and homogeneity of their variance).
+
+## Residual Analysis
+
+For visual verification of the residual normality assumption, we use a histogram, which provides insight into the error distribution. Complete confirmation of normality will be verified later with appropriate statistical tests.
+```{r}
+selected.model <- fit.year
+hist(selected.model$residuals, breaks = 15, 
+     main = "Histogram of linear regression model residuals",
+     xlab = "Model residuals",
+     ylab = "Frequency")
+```
+
+## Q-Q Plot
+
+We can more precisely check residual normality with a Q-Q plot to determine that the model errors approximately follow a normal distribution, which is an assumption for the validity of statistical tests of coefficients and confidence intervals.
+
+```{r}
+qqnorm(rstandard(selected.model), 
+       main = "Q–Q plot of standardized residuals",
+       xlab = "Theoretical quantiles of normal distribution",
+       ylab = "Standardized residuals")
+qqline(rstandard(selected.model))
+```
+The Q-Q plot shows that the residuals mostly follow the diagonal line, with slight deviations at the ends, suggesting that the normality assumption is not significantly violated.
+
+## Testing with Lilliefors Variant
+
+Let's now check residual normality with the Lilliefors variant of the Kolmogorov-Smirnov test at a 5% significance level with the following hypotheses:  
+  
+**H0**: Residuals are normally distributed  
+**H1**: Residuals are not normally distributed.
+
+```{r}
+lillie.test(rstandard(fit.year))
+```
+The test statistic shows a very high p-value. Since it is greater than 0.05, the test is not statistically significant and we do not have enough evidence to reject the null hypothesis. The residuals can be considered normally distributed.
+
+## Pearson Correlation Coefficient
+
+As the final step of the analysis, we calculate the Pearson correlation coefficient and conduct a test to statistically evaluate the relationship between the year of film creation and its IMDb rating.
+We conduct the test at a 5% significance level with hypotheses:  
+H0: There is no linear relationship between the year of film release and IMDb rating.  
+H1: There is a linear relationship between the year of film release and IMDb rating.
+
+```{r}
+cor.test(oscars$Year.of.Release,oscars$IMDB.Rating)
+```
+The correlation coefficient r is 0.33, indicating a moderate positive correlation between the two variables. The p-value is very small, less than 0.05. Based on this, we reject hypothesis H0 and the positive relationship is statistically significant. The 95% confidence interval is entirely positive, which is another indicator that a positive relationship exists.  
+Based on the initial descriptive statistics, it would be justified to conclude that there is no real correlation between the variables and that the observed positive trend is a consequence of noise. However, the conducted statistical analysis and tests show that the relationship is statistically significant, and due to the large sample, such a conclusion is justified.
+
+\newpage
+
+# Can We Predict How a Film Is Rated?
+
+## Problem Description
+
+We investigate whether film characteristics (year of release, duration, genre, content rating) can statistically significantly explain IMDb rating using a multiple linear regression model. The goal is to build a model that will enable understanding of which characteristics affect the rating and how strong that influence is.
+
+## Descriptive Statistics
+
+We begin with an analysis of basic descriptive measures for the numerical variables we use in the model.
+
+```{r}
+desc_stats <- oscars %>%
+  summarise(
+    across(c(IMDB.Rating, Year.of.Release, Movie.Time),
+           list(Mean = ~mean(., na.rm = TRUE),
+                Median = ~median(., na.rm = TRUE),
+                SD = ~sd(., na.rm = TRUE)))
+  ) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "Value") %>%
+  separate(Variable, into = c("Variable", "Stat"), sep = "_(?=[^_]+$)") %>%
+  pivot_wider(names_from = Stat, values_from = Value)
+
+kable(desc_stats, 
+      col.names = c("Variable", "Mean", "Median", "Std. dev."),
+      digits = 2,
+      caption = "Descriptive statistics of key variables")
+
+```
+
+The average IMDb rating of nominated films is 7.6 (SD = 0.56), indicating relatively high quality and low variability. The average year of release is 1973, reflecting the data range from 1927 to 2020.
+
+### Correlation Matrix
+
+We calculate the correlation matrix to examine linear relationships between our numerical variables.
+
+```{r}
+cor_matrix <- cor(oscars[, c("IMDB.Rating", "Movie.Time", "Year.of.Release")], 
+                  use = "complete.obs")
+
+kable(round(cor_matrix, 3),
+      caption = "Pearson correlation matrix")
+```
+
+We observe a moderate positive correlation between year of release and rating ($r = 0.330$), and a weak positive correlation between duration and rating ($r = 0.292$). Newer and longer films tend toward higher ratings.
+
+## Multiple Linear Regression Model
+
+### Dummy Variable Preparation
+
+We convert categorical variables (genre, content rating) into dummy variables so we can include them in the linear model.
+
+```{r}
+oscars_model <- dummy_cols(oscars, 
+                            select_columns = c("Main.Genre", "Content.Rating"),
+                            remove_first_dummy = TRUE,
+                            remove_selected_columns = FALSE)
+
+names(oscars_model) <- make.names(names(oscars_model))
+genre_cols <- grep("^Main.Genre_", names(oscars_model), value = TRUE)
+rating_cols <- grep("^Content.Rating_", names(oscars_model), value = TRUE)
+
+all_predictors <- c("Year.of.Release", "Movie.Time", genre_cols, rating_cols)
+```
+
+Dummy variables allow inclusion of categorical variables in the model so that each category gets its own indicator variable. It is important to omit one dummy variable from each categorical variable to avoid multicollinearity.
+
+### Model Estimation
+
+We estimate a multiple linear regression model with IMDb rating as the dependent variable.
+
+```{r}
+model_formula <- reformulate(termlabels = all_predictors, response = "IMDB.Rating")
+fit_multi <- lm(model_formula, data = oscars_model)
+
+summary(fit_multi)
+```
+
+From the model summary, we see that Adjusted R² = `r round(summary(fit_multi)$adj.r.squared, 3)`, which means the model explains ~`r round(summary(fit_multi)$adj.r.squared * 100, 1)`% of the variance in IMDb ratings.
+
+Film duration (Movie.Time) proves to be the most consistent predictor, while year of release loses significance after controlling for other factors.
+
+### Model Diagnostics
+
+We check the assumptions of linear regression using a diagnostic Q-Q plot.
+
+```{r}
+qqnorm(residuals(fit_multi),
+       main = "Q–Q plot of residuals",
+       xlab = "Theoretical quantiles",
+       ylab = "Sample quantiles")
+qqline(residuals(fit_multi))
+
+```
+
+The Q–Q plot shows that the residuals largely lie along the diagonal, suggesting an approximately normal distribution of residuals and satisfaction of the normality assumption.  
+We additionally check residual normality with the Lilliefors test.
+
+```{r}
+lillie.test(rstandard(fit_multi))
+```
+
+The Lilliefors test confirms residual normality ($p > 0.05$), validating the assumptions of linear regression.
+
+
+## Bootstrap Analysis
+
+We use bootstrap to estimate the robustness of model coefficients without strict assumptions about data distribution. We conduct 1000 bootstrap iterations to estimate the distribution of coefficients and confidence intervals.
+
+```{r}
+set.seed(42)
+
+formula_string <- paste("IMDB.Rating ~", paste(all_predictors, collapse = " + "))
+n_expected_coefs <- length(all_predictors) + 1
+
+bootstrap_lm <- function(data, indices) {
+  d <- data[indices, ]
+  tryCatch({
+    fit <- lm(as.formula(formula_string), data = d)
+    coefs <- coef(fit)
+    if (length(coefs) == n_expected_coefs) {
+      return(coefs)
+    } else {
+      return(rep(NA, n_expected_coefs))
+    }
+  }, error = function(e) {
+    return(rep(NA, n_expected_coefs))
+  })
+}
+
+boot_results <- boot::boot(data = oscars_model, 
+                           statistic = bootstrap_lm,
+                           R = 1000)
+```
+
+Bootstrap standard errors allow comparison with classical OLS standard errors. The similarity of these values confirms the robustness of the estimates.
+
+### Bootstrap Distribution Visualization
+
+We display bootstrap distributions for three key model coefficients: intercept, year of release, and film duration.
+
+```{r, fig.width=14, fig.height=12}
+par(mfrow = c(2, 2))
+original_coefs <- coef(fit_multi)
+
+hist(boot_results$t[, 1], breaks = 30,
+     main = "Bootstrap: Intercept",
+     xlab = "Coefficient", ylab = "Frequency", col = "yellow", border = "white")
+abline(v = original_coefs[1], col = "red", lwd = 2)
+abline(v = quantile(boot_results$t[, 1], c(0.025, 0.975), na.rm = TRUE),
+       col = "darkred", lwd = 2, lty = 2)
+
+hist(boot_results$t[, 2], breaks = 30,
+     main = "Bootstrap: Year.of.Release",
+     xlab = "Coefficient", ylab = "Frequency", col = "lightblue", border = "white")
+abline(v = original_coefs[2], col = "red", lwd = 2)
+abline(v = quantile(boot_results$t[, 2], c(0.025, 0.975), na.rm = TRUE),
+       col = "darkred", lwd = 2, lty = 2)
+
+hist(boot_results$t[, 3], breaks = 30,
+     main = "Bootstrap: Movie.Time",
+     xlab = "Coefficient", ylab = "Frequency", col = "lightgreen", border = "white")
+abline(v = original_coefs[3], col = "red", lwd = 2)
+abline(v = quantile(boot_results$t[, 3], c(0.025, 0.975), na.rm = TRUE),
+       col = "darkred", lwd = 2, lty = 2)
+
+par(mfrow = c(1, 1))
+```
+
+The red line indicates the estimate from the original model, while the dashed lines represent the 95% bootstrap confidence interval. The bootstrap distributions show the stability of coefficient estimates.
+
+```{r}
+adj_r2 <- summary(fit_multi)$adj.r.squared
+coef_summary <- summary(fit_multi)$coefficients
+significant_coefs <- sum(coef_summary[, 4] < 0.05, na.rm = TRUE)
+total_coefs <- nrow(coef_summary)
+```
+
+## Conclusion
+
+The multiple linear regression model uses year of film release, film duration, genre, and content rating to predict the IMDb rating of films nominated for an Oscar.
+
+Adjusted R² is `r round(adj_r2, 4)`, which means the model explains `r round(adj_r2 * 100, 2)`% of the variance in IMDb ratings. The F-test shows that the model is statistically significant (p < 0.001), meaning the features used have predictive power.
+
+`r significant_coefs` out of `r total_coefs` coefficients are statistically significant at the 5% significance level, indicating that most variables included in the model have a significant contribution to rating prediction.
+
+Bootstrap analysis was used for robustness of estimates. Bootstrap confidence intervals confirm the stability of coefficient estimates and allow inference without strict assumptions about data normality.
+
+Although the model explains a significant portion of variability, the remaining unexplained variance indicates that there are other factors (directing quality, acting, story) that affect ratings but are not included in this model.
+
+\newpage
+
+
+# Winner Prediction Analysis
+
+In this analysis, we investigate whether there are statistically significant differences between films that won an Oscar ("Winner") and those that were only nominated ("Nominee"). We conduct the analysis based on available features: IMDb rating, genre, film duration, number of IMDb votes.
+
+## Data Preparation  
+
+Before analysis, we organize the dataset: we create a binary variable for winning and remove records with NA values. Genres that are not frequently represented were previously grouped in the Main.Genre2 column, so we will use it for further analysis. Data on the year of film release was excluded from further analysis because detailed examination of the dataset showed that the number of winners per year is almost constant (most often 1–2), while the number of nominated films differs significantly between years. Due to this inconsistency, the year variable does not carry stable information but primarily introduces additional noise into the logistic regression model.  
+```{r}
+oscars <- oscars %>%
+  mutate(
+    IsWinner = ifelse(Award == "Winner", 1, 0),
+    # Genre grouping for model stability
+    Main.Genre2 = ifelse(Main.Genre %in% c("Drama", "Comedy", "Biography", 
+                                           "Adventure", "Action", "Crime"), 
+                        Main.Genre, "Other"),
+    Main.Genre2 = factor(Main.Genre2)
+  ) %>%
+  filter(complete.cases(IMDB.Rating, Main.Genre2, Movie.Time, IsWinner, IMDB.Votes))
+
+```
+
+## Construction of a Simpler Logistic Regression Model
+First, we will try to build a simpler logistic regression model in which the dependent variable will be IsWinner (0 = Nominated, 1 = Winner), while the independent variables will be IMDb rating and average film duration (Movie.Time).  
+
+Before building the model, let's review the distribution of the number of films by outcome and calculate the average values of the mentioned parameters to gain insight into the basic characteristics of the dataset.
+
+```{r}
+tablica <- oscars %>%
+  group_by(IsWinner) %>%
+  summarise(
+    `Number of films` = n(),
+    `Average IMDb rating` = mean(IMDB.Rating),
+    `Average duration` = mean(Movie.Time)
+  ) %>%
+  rename(
+    Winner = IsWinner
+  )
+kable(tablica)
+```
+The data shows that among 94 winners, the average IMDb rating and film duration is slightly higher than among 477 nominees, suggesting that these factors may have a positive influence on the probability of winning an Oscar. It is also noticeable that the data is significantly imbalanced - there are far fewer winners compared to nominees, which can make precise prediction by the model more difficult.  
+
+The following graph shows the distribution of films by IMDb rating and duration, separating winners and nominees, so we can visually notice differences between outcomes.
+```{r}
+ggplot(oscars, aes(x = IMDB.Rating, y = Movie.Time, color = factor(IsWinner))) +
+  geom_point(alpha = 0.6, size = 2) +
+  labs(x = "IMDb rating", y = "Film duration (min)", color = "Outcome") +
+  scale_color_brewer(palette = "Set1") +
+  theme_bw()
+```
+From the graph, it is difficult to discern a clear trend that would predictively distinguish outcomes by itself.  
+
+
+Let's now build a simple logistic regression model to estimate the probability of winning an Oscar based on IMDb rating and average film duration.
+
+```{r}
+logreg.mdl <- glm(IsWinner ~ IMDB.Rating + Movie.Time,
+             data = oscars,
+             family = binomial())
+summary(logreg.mdl)
+
+```
+The model shows that both variables (IMDb rating and film duration) significantly affect the probability of winning an Oscar. Positive coefficients indicate that a higher rating or longer film increases the chance of winning. The model fits better than the null model, as shown by the reduced deviance (510.77 → 476.63).
+
+Pseudo-R² is calculated as $$ R^2 = 1 - \frac{\text{model deviance}}{\text{null model deviance}}. $$ The value shows how much better our model explains the data compared to a model without predictors.
+
+```{r}
+Rsq <- 1 - logreg.mdl$deviance / logreg.mdl$null.deviance
+paste0("Pseudo-R² for simple model: ", round(Rsq, 4))
+
+```
+The obtained result indicates that the model explains only about 6.7% of the variability in the outcome, showing that most factors affecting Oscar wins are not covered by this model.
+
+## Construction of a More Complex Logistic Regression Model  
+
+Let's create a more complex logistic regression model expanded with additional predictors: grouped film genre (Main.Genre2) and number of IMDb votes (IMDB.Votes). The goal is to improve the model's ability to distinguish winners from nominees by including more information about film characteristics.  
+
+```{r}
+logreg.mdl2 <- glm(IsWinner ~ IMDB.Rating + Movie.Time + Main.Genre2 + IMDB.Votes,
+             data = oscars,
+             family = binomial())
+summary(logreg.mdl2)
+```
+Added predictors (genre and number of votes) show different influences on the probability of winning, with some genres suggesting greater, and some lesser chances of winning the award.
+
+To assess the significance of model improvement by adding new predictors, we use the Likelihood Ratio Test (LRT). This test compares the deviance of two models: the null model (simpler) and the expanded model (with additional variables) at significance level $\alpha = 0.05$. The test hypotheses are:  
+H0: Additional predictors are not significant  
+H1: At least one additional predictor is significant.
+
+```{r}
+anova(logreg.mdl, logreg.mdl2, test = "LRT")
+```
+The results show that adding the Main.Genre2 and IMDB.Votes variables to the model statistically significantly improves its fit, that is, the new model has significantly lower deviance.  
+Let's also calculate Pseudo-R² for the new model:
+```{r}
+Rsq2 <- 1 - logreg.mdl2$deviance / logreg.mdl2$null.deviance
+paste0("Pseudo-R² for expanded model: ", round(Rsq2, 4))
+```
+It is still relatively low, but there is an increase in explainable variability compared to the simple model.
+
+## Model Evaluation 
+For evaluation of the classification performance of the more complex model, we can use a confusion matrix, which compares actual and predicted values. Based on it, we calculate key measures: accuracy, precision, recall, and specificity, which provide more detailed insight into the model's ability to correctly predict winners and nominees.
+
+```{r}
+yHat <- logreg.mdl2$fitted.values >= 0.5
+tab <- table(oscars$IsWinner, yHat)
+kable(tab)
+```
+The table shows that the model very rarely correctly predicts winners, but False Positive values also occur rarely. This explains why overall accuracy can be high, even though the model poorly recognizes actual winners. Let's calculate all measures:
+```{r}
+tocnost <- sum(diag(tab)) / sum(tab)
+preciznost <- tab[2,2] / sum(tab[,2])
+odziv <- tab[2,2] / sum(tab[2,])
+specificnost <- tab[1,1] / sum(tab[,1])
+metrics <- data.frame(
+  `Accuracy` = round(tocnost,4),
+  `Precision` = round(preciznost,4),
+  `Recall` = round(odziv,4),
+  `Specificity` = round(specificnost,4)
+)
+kable(metrics)
+```
+
+As we could have predicted from the first results table, the accuracy parameter is high, while the recall parameter defined as $\dfrac{TP}{TP+FN}$ is extremely low.

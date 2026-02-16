@@ -1,0 +1,1 @@
+"0","plot(selected.model$fitted.values, selected.model$residuals)"

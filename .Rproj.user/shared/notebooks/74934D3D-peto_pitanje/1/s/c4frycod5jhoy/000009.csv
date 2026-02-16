@@ -1,0 +1,5 @@
+"0","fit.year <- lm(IMDB.Rating ~ Year.of.Release, data = oscars)"
+"0","plot(oscars$Year.of.Release, oscars$IMDB.Rating, "
+"0","     main = ""Linearna regresija IMDb ocjene ~ godina izlaska"","
+"0","     xlab = ""Godina izlaska filma"","
+"0","     ylab = ""IMDb ocjena"")"

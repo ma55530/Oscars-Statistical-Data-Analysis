@@ -1,0 +1,7 @@
+"0","mean_table <- oscars %>%"
+"0","  group_by(Main.Genre2) %>%"
+"0","  summarise(Mean_Duration = mean(Movie.Time, na.rm = TRUE),"
+"0","            Count = n()) %>%"
+"0","  arrange(desc(Mean_Duration))"
+"0","colnames(mean_table) <- c(""Glavni žanr"", ""Srednje trajanje filma"", ""Broj filmova"")"
+"0","kable(mean_table, caption = ""Prosječno trajanje filmova po glavnom žanru"")"

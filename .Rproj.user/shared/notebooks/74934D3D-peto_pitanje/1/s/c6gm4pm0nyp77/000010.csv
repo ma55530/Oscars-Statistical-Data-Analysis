@@ -1,0 +1,2 @@
+"0","kable(round(chisq_multi$stdres, 2), "
+"0","      caption = ""Standardizirani reziduali (multi-label)"")"

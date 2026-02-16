@@ -1,0 +1,5 @@
+"0","selected.model <- fit.year"
+"0","hist(selected.model$residuals, breaks = 15, "
+"0","     main = ""Histogram reziduala linearnog regresijskog modela"","
+"0","     xlab = ""Reziduali modela"","
+"0","     ylab = ""Frekvencija"")"

@@ -1,0 +1,5 @@
+"0","oscars$desetljece <- floor(oscars$Year.of.Release / 10) * 10"
+"0","boxplot(IMDB.Rating ~ desetljece, data = oscars, "
+"0","        main = ""Distribucija IMDb ocjena po desetljećima"", "
+"0","        xlab = ""Desetljeće izlaska filma"", "
+"0","        ylab = ""IMDb ocjena"")"

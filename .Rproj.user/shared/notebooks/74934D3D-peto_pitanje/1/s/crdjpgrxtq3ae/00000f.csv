@@ -1,0 +1,4 @@
+"0","plot(oscars$Year.of.Release, oscars$IMDB.Rating, "
+"0","     main = ""Odnos godine izlaska filma i IMDb ocjene"", "
+"0","     xlab = ""Godina izlaska filma"", "
+"0","     ylab = ""IMDb ocjena"")"
